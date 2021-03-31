@@ -79,53 +79,8 @@ find_package(LattigoLib REQUIRED)
 # lattigo-cpp Library #
 ###############
 
-
-
 set(CGO_INCLUDE_PATH ${CMAKE_CURRENT_BINARY_DIR})
 set(CGO_BUILD_ROOT ${CGO_INCLUDE_PATH}/cgo)
 set(PRNG_LIB_NAME liblattigo.so)
 set(LIB_FULL_PATH ${CGO_BUILD_ROOT}/${PRNG_LIB_NAME})
 file(MAKE_DIRECTORY ${CGO_BUILD_ROOT})
-
-# Add the main source tree object library
-add_subdirectory(src)
-
-# Always build the static library
-add_library(aws-lattigo-cpp STATIC $<TARGET_OBJECTS:lattigo_cpp_obj>)
-target_compile_features(aws-lattigo-cpp PUBLIC cxx_std_17)
-target_include_directories(aws-lattigo-cpp
-    PUBLIC
-        $<BUILD_INTERFACE:${LATTICPP_INCLUDES_BUILD_DIR}>
-        $<INSTALL_INTERFACE:${LATTICPP_INCLUDES_INSTALL_DIR}>
-    PRIVATE
-        ${CGO_INCLUDE_PATH}
-        ${LATTICPP_SOURCE_DIR}
-)
-set_common_flags(aws-lattigo-cpp)
-
-# Link dependencies
-target_link_libraries(aws-lattigo-cpp ${LIB_FULL_PATH} lattigo_cpp_gowrapper)
-
-install(TARGETS aws-lattigo-cpp EXPORT LatticppTargets
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-
-# We export LatticppTargets from the build tree so it can be used by other projects
-# without requiring an install.
-export(
-    EXPORT LatticppTargets
-    NAMESPACE latticpp::
-    FILE ${LATTICPP_TARGETS_FILENAME})
-
-export(TARGETS aws-lattigo-cpp lattigo_cpp_gowrapper FILE ${LATTICPP_TARGETS_FILENAME})
-
-############
-# Examples #
-############
-
-# Build wrapped examples
-option(LATTICPP_BUILD_EXAMPLES "Build the wrapped Lattigo examples." OFF)
-if (LATTICPP_BUILD_EXAMPLES)
-    add_subdirectory(examples)
-endif ()

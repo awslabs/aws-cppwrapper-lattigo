@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 function(download_external_project project_dir)
-    set(COMMAND_WORK_DIR ${HIT_THIRD_PARTY_DIR}/${project_dir})
+    set(COMMAND_WORK_DIR ${LATTICPP_THIRD_PARTY_DIR}/${project_dir})
     message(STATUS "Cleaning ${project_dir} directory...")
     execute_process(
         # delete all items in ${COMMAND_WORK_DIR} _execpt_

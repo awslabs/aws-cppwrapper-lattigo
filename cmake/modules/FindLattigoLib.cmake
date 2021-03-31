@@ -3,4 +3,3 @@
 
 # Download and install dependency - Lattigo.
 download_external_project("lattigo")
-find_package(lattigo 2.1.1 REQUIRED)
