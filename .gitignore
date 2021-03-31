@@ -1,0 +1,7 @@
+bin
+build
+cleanbuild.sh
+external/lattigo
+lib
+src/pkg
+**/*.sum

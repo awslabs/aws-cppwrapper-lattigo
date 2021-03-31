@@ -1,0 +1,17 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
+
+FROM ubuntu:20.04
+
+SHELL ["/bin/bash", "-c"]
+
+ENV CMAKE_VERSION=3.16.3
+
+RUN set -ex && \
+    apt-get update && \
+    apt-get -y --no-install-recommends upgrade && \
+    apt-get -y --no-install-recommends install \
+    ninja-build \
+    cmake && \
+    apt-get clean && \
+    apt-get autoclean
