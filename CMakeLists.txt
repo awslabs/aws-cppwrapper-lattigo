@@ -53,7 +53,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 # And custom modules
 include(set-common-flags)
-#include(download-external-project)
+include(download-external-project)
 
 ############################
 # Third party dependencies #
@@ -73,7 +73,7 @@ include(set-common-flags)
 # need a tiny fraction of it. The required headers are zipped and included in the repository,
 # so if Boost is not installed on the system, we just extract the headers.
 
-# find_package(LattigoLib REQUIRED)
+find_package(LattigoLib REQUIRED)
 
 ###############
 # lattigo-cpp Library #
