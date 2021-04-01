@@ -12,6 +12,12 @@ RUN set -ex && \
     apt-get -y --no-install-recommends upgrade && \
     apt-get -y --no-install-recommends install \
     ninja-build \
-    cmake && \
+    ca-certificates \
+    cmake \
+    golang \
+    clang && \
     apt-get clean && \
     apt-get autoclean
+
+ENV CC=clang
+ENV CXX=clang++
