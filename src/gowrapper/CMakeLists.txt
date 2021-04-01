@@ -10,10 +10,10 @@
 add_custom_command(
   OUTPUT
     ${LIB_FULL_PATH}
-    ${CGO_BUILD_ROOT}/params.h
-    ${CGO_BUILD_ROOT}/storage.h
-  COMMAND go tool cgo -exportheader ${CGO_BUILD_ROOT}/params.h ckks/params.go
-  COMMAND go tool cgo -exportheader ${CGO_BUILD_ROOT}/storage.h marshall/storage.go
+    ${CGO_HEADER_DST}/params.h
+    ${CGO_HEADER_DST}/storage.h
+  COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/params.h ckks/params.go
+  COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/storage.h marshall/storage.go
   COMMAND go build -buildmode=c-shared -o ${LIB_FULL_PATH}
   COMMAND rm -rf _obj
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
@@ -24,7 +24,7 @@ add_custom_command(
 )
 
 add_library(lattigo_cpp_gowrapper STATIC
-    ${CGO_BUILD_ROOT}/params.h
-    ${CGO_BUILD_ROOT}/storage.h)
+    ${CGO_HEADER_DST}/params.h
+    ${CGO_HEADER_DST}/storage.h)
 target_include_directories(lattigo_cpp_gowrapper PUBLIC ${CMAKE_BINARY_DIR})
 set_target_properties(lattigo_cpp_gowrapper PROPERTIES LINKER_LANGUAGE CXX)
