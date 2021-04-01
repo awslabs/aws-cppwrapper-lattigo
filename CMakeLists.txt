@@ -90,3 +90,13 @@ export(
     FILE ${LATTICPP_TARGETS_FILENAME})
 
 export(TARGETS aws-lattigo-cpp lattigo_cpp_gowrapper FILE ${LATTICPP_TARGETS_FILENAME})
+
+############
+# Examples #
+############
+
+# Build wrapped examples
+option(LATTICPP_BUILD_EXAMPLES "Build the wrapped Lattigo examples." OFF)
+if (LATTICPP_BUILD_EXAMPLES)
+    add_subdirectory(examples)
+endif ()
