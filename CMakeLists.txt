@@ -68,8 +68,8 @@ target_include_directories(aws-lattigo-cpp
     PUBLIC
         $<BUILD_INTERFACE:${LATTICPP_INCLUDES_BUILD_DIR}>
         $<INSTALL_INTERFACE:${LATTICPP_INCLUDES_INSTALL_DIR}>
-    PRIVATE
         ${CGO_INCLUDE_PATH}
+    PRIVATE
         ${LATTICPP_SOURCE_DIR}
 )
 set_common_flags(aws-lattigo-cpp)
