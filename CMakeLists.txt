@@ -51,8 +51,9 @@ include(set-common-flags)
 # lattigo-cpp Library #
 ###############
 
-set(CGO_INCLUDE_PATH ${CMAKE_CURRENT_BINARY_DIR})
-set(CGO_BUILD_ROOT ${CGO_INCLUDE_PATH}/cgo)
+set(CGO_BUILD_ROOT ${CMAKE_CURRENT_BINARY_DIR}/cgo_output)
+set(CGO_INCLUDE_PATH ${CGO_BUILD_ROOT}/cgo_output/include)
+set(CGO_HEADER_DST ${CGO_INCLUDE_PATH}/cgo)
 set(PRNG_LIB_NAME liblattigo.so)
 set(LIB_FULL_PATH ${CGO_BUILD_ROOT}/${PRNG_LIB_NAME})
 file(MAKE_DIRECTORY ${CGO_BUILD_ROOT})
