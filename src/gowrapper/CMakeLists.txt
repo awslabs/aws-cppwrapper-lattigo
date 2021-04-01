@@ -7,16 +7,20 @@
 # The `go tool` command also doesn't like creating directories, so we have to create them externally
 #
 # Buidling a static library (-buildmode=c-archive) results in threading linker errors.
+#
+# I can't figure out how to build the go headers and library in-place without creating temporary files in the source directory.
+# As a work-around, I copy the source files into the build directory, and then build them there.
+
 add_custom_command(
   OUTPUT
     ${LIB_FULL_PATH}
     ${CGO_HEADER_DST}/params.h
     ${CGO_HEADER_DST}/storage.h
+  COMMAND cp -r ${CMAKE_CURRENT_SOURCE_DIR}/. .
   COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/params.h ckks/params.go
   COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/storage.h marshall/storage.go
   COMMAND go build -buildmode=c-shared -o ${LIB_FULL_PATH}
-  COMMAND rm -rf _obj
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
     latticppMain.go
     ckks/params.go
