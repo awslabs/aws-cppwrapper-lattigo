@@ -1,7 +1,4 @@
 bin
 build
-cleanbuild.sh
-external
 lib
-src/pkg
 **/*.sum

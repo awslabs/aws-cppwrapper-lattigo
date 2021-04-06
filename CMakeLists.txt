@@ -3,7 +3,7 @@
 
 cmake_minimum_required(VERSION 3.12)
 
-project(lattigo-cpp VERSION 0.0.1 LANGUAGES CXX)
+project(aws-lattigo-cpp VERSION 0.0.1 LANGUAGES CXX)
 
 #################
 # CMAKE OPTIONS #
@@ -47,9 +47,9 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 # And custom modules
 include(set-common-flags)
 
-###############
+#######################
 # lattigo-cpp Library #
-###############
+#######################
 
 set(CGO_BUILD_ROOT ${CMAKE_CURRENT_BINARY_DIR}/cgo_output)
 set(CGO_INCLUDE_PATH ${CGO_BUILD_ROOT}/cgo_output/include)

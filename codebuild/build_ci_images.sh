@@ -12,7 +12,6 @@ echo "Uploading docker images to ${ECS_REPO}."
 
 $(aws ecr get-login --no-include-email --region us-west-2)
 
-# Tag images with date to help find old images, CodeBuild uses the latest tag and gets updated automatically
 docker build -f ci_ubuntu-20.04_clang-10.docker -t latticpp_ubuntu-20.04:base .
 docker tag latticpp_ubuntu-20.04:base ${ECS_REPO}:latticpp_ubuntu-20.04_base
 docker push ${ECS_REPO}:latticpp_ubuntu-20.04_base
