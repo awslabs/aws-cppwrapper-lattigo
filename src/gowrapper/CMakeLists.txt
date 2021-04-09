@@ -24,6 +24,8 @@ add_custom_command(
     ${CGO_HEADER_DST}/storage.h
   COMMAND cp -r ${CMAKE_CURRENT_SOURCE_DIR}/. .
 
+  COMMAND go vet
+
   COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/ciphertext.go
   COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/decryptor.go
   COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/encoder.go
