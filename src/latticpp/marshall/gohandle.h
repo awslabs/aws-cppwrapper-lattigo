@@ -9,7 +9,7 @@
 
 namespace latticpp {
 
-    enum GoType {
+    enum class GoType {
         Parameters,
         Encoder,
         KeyGenerator,
@@ -81,5 +81,18 @@ namespace latticpp {
     private:
         uint64_t handle;
     };
+
+    using Parameters = GoHandle<GoType::Parameters>;
+    using Encoder = GoHandle<GoType::Encoder>;
+    using KeyGenerator = GoHandle<GoType::KeyGenerator>;
+    using KeyPair = GoHandle<GoType::KeyPair>;
+    using RelinKey = GoHandle<GoType::RelinKey>;
+    using Encryptor = GoHandle<GoType::Encryptor>;
+    using Decryptor = GoHandle<GoType::Decryptor>;
+    using Evaluator = GoHandle<GoType::Evaluator>;
+    using SecretKey = GoHandle<GoType::SecretKey>;
+    using PublicKey = GoHandle<GoType::PublicKey>;
+    using Plaintext = GoHandle<GoType::Plaintext>;
+    using Ciphertext = GoHandle<GoType::Ciphertext>;
 
 }  // namespace latticpp

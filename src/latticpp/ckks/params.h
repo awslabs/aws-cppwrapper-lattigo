@@ -31,23 +31,23 @@ namespace latticpp {
         PN16QP1654pq
     };
 
-    GoHandle<Parameters> getParams(HEParams paramId);
+    Parameters getParams(HEParams paramId);
 
-    uint64_t numSlots(const GoHandle<Parameters> &params);
+    uint64_t numSlots(const Parameters &params);
 
-    uint64_t logN(const GoHandle<Parameters> &params);
+    uint64_t logN(const Parameters &params);
 
-    uint64_t logQP(const GoHandle<Parameters> &params);
+    uint64_t logQP(const Parameters &params);
 
-    uint64_t maxLevel(const GoHandle<Parameters> &params);
+    uint64_t maxLevel(const Parameters &params);
 
-    double scale(const GoHandle<Parameters> &params);
+    double scale(const Parameters &params);
 
-    double sigma(const GoHandle<Parameters> &params);
+    double sigma(const Parameters &params);
 
-    uint64_t getQi(const GoHandle<Parameters> &params, uint64_t i);
+    uint64_t getQi(const Parameters &params, uint64_t i);
 
-    uint64_t logQLvl(const GoHandle<Parameters> &params, uint64_t lvl);
+    uint64_t logQLvl(const Parameters &params, uint64_t lvl);
 
-    uint64_t logSlots(const GoHandle<Parameters> &params);
+    uint64_t logSlots(const Parameters &params);
 }  // namespace latticpp
