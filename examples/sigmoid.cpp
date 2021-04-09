@@ -67,22 +67,13 @@ int bitCount(int x) {
     return ceil(log2((double)(x + 1)));
 }
 
-bool contains(ChebyMap c, uint64_t k) {
+bool contains(const ChebyMap &c, uint64_t k) {
     // if iterator == c.end(), then `k` is not in the map
     // http://www.cplusplus.com/reference/map/map/find/
     return c.find(k) != c.end();
 }
 
-Ciphertext get(ChebyMap &m, const uint64_t k) {
-    ChebyMap::iterator it;
-    it = m.find(k);
-    if (it == m.end()) {
-        throw invalid_argument("key not found");
-    }
-    return it->second;
-}
-
-void computePowerBasisCheby(uint64_t n, ChebyMap &cMap, Evaluator eval, RelinKey evakey, Parameters params) {
+void computePowerBasisCheby(uint64_t n, ChebyMap &cMap, Evaluator &eval, RelinKey &evakey, Parameters &params) {
 
     // Given a hash table with the first three evaluations of the Chebyshev ring at x in the interval a, b:
     // C0 = 1 (actually not stored in the hash table)
@@ -109,26 +100,26 @@ void computePowerBasisCheby(uint64_t n, ChebyMap &cMap, Evaluator eval, RelinKey
         }
 
         // Computes cMap[n] = cMap[a]*cMap[b]
-        cMap.insert(ChebyKeyValuePair(n, mulRelinNew(eval, get(cMap, a), get(cMap, b), evakey)));
-        rescale(eval, get(cMap, n), scale(params), get(cMap, n));
+        cMap.insert(ChebyKeyValuePair(n, mulRelinNew(eval, cMap.at(a), cMap.at(b), evakey)));
+        rescale(eval, cMap.at(n), scale(params), cMap.at(n));
 
         // Computes cMap[n] = 2*cMap[a]*cMap[b]
-        add(eval, get(cMap, n), get(cMap, n), get(cMap, n));
+        add(eval, cMap.at(n), cMap.at(n), cMap.at(n));
 
         // Computes cMap[n] = 2*cMap[a]*cMap[b] - cMap[c]
         if (c == 0) {
-            addConst(eval, get(cMap, n), -1, get(cMap, n));
+            addConst(eval, cMap.at(n), -1, cMap.at(n));
         } else {
-            sub(eval, get(cMap, n), get(cMap, c), get(cMap, n));
+            sub(eval, cMap.at(n), cMap.at(c), cMap.at(n));
         }
     }
 }
 
-Ciphertext evaluatePolyFromPowerBasis(double targetScale, ChebyshevInterpolation &cheby, ChebyMap &cMap, Evaluator eval, Parameters params) {
+Ciphertext evaluatePolyFromPowerBasis(double targetScale, ChebyshevInterpolation &cheby, ChebyMap &cMap, Evaluator &eval, Parameters &params) {
 
     if (cheby.degree() == 0) {
 
-        Ciphertext res = newCiphertext(params, 1, level(get(cMap, 1)), targetScale);
+        Ciphertext res = newCiphertext(params, 1, level(cMap.at(1)), targetScale);
 
         if (abs(cheby.coeffs[0]) > 1e-14) {
             addConst(eval, res, cheby.coeffs[0], res);
@@ -137,11 +128,11 @@ Ciphertext evaluatePolyFromPowerBasis(double targetScale, ChebyshevInterpolation
         return res;
     }
 
-    double currentQi = (double)getQi(params, level(get(cMap, cheby.degree())));
+    double currentQi = (double)getQi(params, level(cMap.at(cheby.degree())));
 
     double ctScale = targetScale * currentQi;
 
-    Ciphertext res = newCiphertext(params, 1, level(get(cMap, cheby.degree())), ctScale);
+    Ciphertext res = newCiphertext(params, 1, level(cMap.at(cheby.degree())), ctScale);
 
     if (abs(cheby.coeffs[0]) > 1e-14) {
         addConst(eval, res, cheby.coeffs[0], res);
@@ -152,12 +143,12 @@ Ciphertext evaluatePolyFromPowerBasis(double targetScale, ChebyshevInterpolation
         if (key != 0 && abs(cheby.coeffs[key]) > 1e-14) {
 
             // Target scale * rescale-scale / power basis scale
-            double constScale = targetScale * currentQi / scale(get(cMap, key));
+            double constScale = targetScale * currentQi / scale(cMap.at(key));
 
             uint64_t cReal = (int64_t)(cheby.coeffs[key] * constScale);
             uint64_t cImag = 0; //int64(imag(coeffs.coeffs[key]) * constScale)
 
-            multByGaussianIntegerAndAdd(eval, get(cMap, key), cReal, cImag, res);
+            multByGaussianIntegerAndAdd(eval, cMap.at(key), cReal, cImag, res);
         }
     }
 
@@ -205,7 +196,7 @@ ChebyPair splitCoeffsCheby(ChebyshevInterpolation &cheby, uint64_t split) {
     return ChebyPair{coeffsq, coeffsr};
 }
 
-Ciphertext recurseCheby(double targetScale, int logSplit, int logDegree, ChebyshevInterpolation &cheby, ChebyMap cMap, Evaluator eval, RelinKey evakey, Parameters params) {
+Ciphertext recurseCheby(double targetScale, int logSplit, int logDegree, ChebyshevInterpolation &cheby, ChebyMap &cMap, Evaluator &eval, RelinKey &evakey, Parameters &params) {
     // Recursively computes the evalution of the Chebyshev polynomial using a baby-set giant-step algorithm.
     if (cheby.degree() < (((uint64_t)1) << logSplit)) {
         if (cheby.lead && cheby.maxDeg > ((((uint64_t)1) << logDegree) - (((uint64_t)1) << (logSplit-1))) && logSplit > 1) {
@@ -228,7 +219,7 @@ Ciphertext recurseCheby(double targetScale, int logSplit, int logDegree, Chebysh
     ChebyshevInterpolation coeffsq = coeffs.coeffsq;
     ChebyshevInterpolation coeffsr = coeffs.coeffsr;
 
-    int ctLevel = level(get(cMap, nextPower)) - 1;
+    int ctLevel = level(cMap.at(nextPower)) - 1;
 
     if (coeffsq.maxDeg >= (((uint64_t)1) << (logDegree-1)) && coeffsq.lead) {
         ctLevel++;
@@ -236,7 +227,7 @@ Ciphertext recurseCheby(double targetScale, int logSplit, int logDegree, Chebysh
 
     double currentQi = (double)getQi(params, ctLevel);
 
-    Ciphertext res = recurseCheby(targetScale*currentQi/scale(get(cMap, nextPower)), logSplit, logDegree, coeffsq, cMap, eval, evakey, params);
+    Ciphertext res = recurseCheby(targetScale*currentQi/scale(cMap.at(nextPower)), logSplit, logDegree, coeffsq, cMap, eval, evakey, params);
 
     Ciphertext tmp = recurseCheby(targetScale, logSplit, logDegree, coeffsr, cMap, eval, evakey, params);
 
@@ -246,7 +237,7 @@ Ciphertext recurseCheby(double targetScale, int logSplit, int logDegree, Chebysh
         }
     }
 
-    mulRelin(eval, res, get(cMap, nextPower), evakey, res);
+    mulRelin(eval, res, cMap.at(nextPower), evakey, res);
 
     if (level(res) > level(tmp)) {
         rescale(eval, res, scale(params), res);
@@ -263,7 +254,7 @@ Ciphertext recurseCheby(double targetScale, int logSplit, int logDegree, Chebysh
 // Returns an error if the input ciphertext does not have enough level to carry out the full polynomial evaluation.
 // Returns an error if something is wrong with the scale.
 // A change of basis ct' = (2/(b-a)) * (ct + (-a-b)/(b-a)) is necessary before the polynomial evaluation to ensure correctness.
-Ciphertext evaluateCheby(Evaluator eval, Ciphertext op, ChebyshevInterpolation &cheby, RelinKey evakey, Parameters params) {
+Ciphertext evaluateCheby(Evaluator &eval, Ciphertext &op, ChebyshevInterpolation &cheby, RelinKey &evakey, Parameters &params) {
 
     checkEnoughLevels(level(op), cheby.coeffs.size(), 1);
 
@@ -294,7 +285,7 @@ int main() {
     // initialize Lattigo-cpp
     initStorage();
     // initialize random generator
-    srand(time(NULL));
+    srand(time(nullptr));
 
     // Scheme params
     Parameters params = getParams(PN14QP438);
