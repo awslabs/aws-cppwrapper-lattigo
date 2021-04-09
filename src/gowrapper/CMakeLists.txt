@@ -23,6 +23,16 @@ add_custom_command(
     ${CGO_HEADER_DST}/params.h
     ${CGO_HEADER_DST}/storage.h
   COMMAND cp -r ${CMAKE_CURRENT_SOURCE_DIR}/. .
+
+  COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/ciphertext.go
+  COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/decryptor.go
+  COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/encoder.go
+  COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/encryptor.go
+  COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/evaluator.go
+  COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/keygen.go
+  COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/params.go
+  COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/marshall/storage.go
+
   COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/ciphertext.h ckks/ciphertext.go
   COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/decryptor.h ckks/decryptor.go
   COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/encoder.h ckks/encoder.go
