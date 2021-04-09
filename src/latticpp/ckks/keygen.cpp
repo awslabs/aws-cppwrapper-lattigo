@@ -5,18 +5,18 @@
 
 namespace latticpp {
 
-    GoHandle<KeyGenerator> newKeyGenerator(const GoHandle<Parameters> &params) {
-        return GoHandle<KeyGenerator>(lattigo_newKeyGenerator(params.getRawHandle()));
+    KeyGenerator newKeyGenerator(const Parameters &params) {
+        return KeyGenerator(lattigo_newKeyGenerator(params.getRawHandle()));
     }
 
-    KeyPairHandle genKeyPair(const GoHandle<KeyGenerator> &keygen) {
+    KeyPairHandle genKeyPair(const KeyGenerator &keygen) {
         Lattigo_KeyPairHandle kp = lattigo_genKeyPair(keygen.getRawHandle());
-        return KeyPairHandle { GoHandle<SecretKey>(kp.sk), GoHandle<PublicKey>(kp.pk) };
+        return KeyPairHandle { SecretKey(kp.sk), PublicKey(kp.pk) };
     }
 
 
-    GoHandle<RelinKey> genRelinKey(const GoHandle<KeyGenerator> &keygen, const GoHandle<SecretKey> &sk) {
-        return GoHandle<RelinKey>(lattigo_genRelinKey(keygen.getRawHandle(), sk.getRawHandle()));
+    RelinKey genRelinKey(const KeyGenerator &keygen, const SecretKey &sk) {
+        return RelinKey(lattigo_genRelinKey(keygen.getRawHandle(), sk.getRawHandle()));
     }
 }  // namespace latticpp
 

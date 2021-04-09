@@ -5,11 +5,11 @@
 
 namespace latticpp {
 
-    GoHandle<Decryptor> newDecryptor(const GoHandle<Parameters> &params, const GoHandle<SecretKey> &sk) {
-        return GoHandle<Decryptor>(lattigo_newDecryptor(params.getRawHandle(), sk.getRawHandle()));
+    Decryptor newDecryptor(const Parameters &params, const SecretKey &sk) {
+        return Decryptor(lattigo_newDecryptor(params.getRawHandle(), sk.getRawHandle()));
     }
 
-    GoHandle<Plaintext> decryptNew(const GoHandle<Decryptor> &decryptor, const GoHandle<Ciphertext> &ct) {
-        return GoHandle<Plaintext>(lattigo_decryptNew(decryptor.getRawHandle(), ct.getRawHandle()));
+    Plaintext decryptNew(const Decryptor &decryptor, const Ciphertext &ct) {
+        return Plaintext(lattigo_decryptNew(decryptor.getRawHandle(), ct.getRawHandle()));
     }
 }  // namespace latticpp

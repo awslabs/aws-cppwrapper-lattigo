@@ -9,14 +9,14 @@
 namespace latticpp {
 
     struct KeyPairHandle {
-        GoHandle<SecretKey> sk;
-        GoHandle<PublicKey> pk;
+        SecretKey sk;
+        PublicKey pk;
     };
 
-    GoHandle<KeyGenerator> newKeyGenerator(const GoHandle<Parameters> &params);
+    KeyGenerator newKeyGenerator(const Parameters &params);
 
-    KeyPairHandle genKeyPair(const GoHandle<KeyGenerator> &keygen);
+    KeyPairHandle genKeyPair(const KeyGenerator &keygen);
 
-    GoHandle<RelinKey> genRelinKey(const GoHandle<KeyGenerator> &keygen, const GoHandle<SecretKey> &sk);
+    RelinKey genRelinKey(const KeyGenerator &keygen, const SecretKey &sk);
 
 }  // namespace latticpp

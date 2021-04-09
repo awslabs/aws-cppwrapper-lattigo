@@ -8,11 +8,11 @@
 
 namespace latticpp {
 
-    uint64_t level(const GoHandle<Ciphertext> &ct);
+    uint64_t level(const Ciphertext &ct);
 
-    double scale(const GoHandle<Ciphertext> &ct);
+    double scale(const Ciphertext &ct);
 
-    GoHandle<Ciphertext> copyNew(const GoHandle<Ciphertext> &ct);
+    Ciphertext copyNew(const Ciphertext &ct);
 
-    GoHandle<Ciphertext> newCiphertext(const GoHandle<Parameters> &params, uint64_t degree, uint64_t level, double scale);
+    Ciphertext newCiphertext(const Parameters &params, uint64_t degree, uint64_t level, double scale);
 }  // namespace latticpp

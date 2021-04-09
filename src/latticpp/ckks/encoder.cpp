@@ -10,11 +10,11 @@ using namespace std;
 
 namespace latticpp {
 
-    GoHandle<Encoder> newEncoder(const GoHandle<Parameters> &params) {
-        return GoHandle<Encoder>(lattigo_newEncoder(params.getRawHandle()));
+    Encoder newEncoder(const Parameters &params) {
+        return Encoder(lattigo_newEncoder(params.getRawHandle()));
     }
 
-    GoHandle<Plaintext> encodeNew(const GoHandle<Encoder> &encoder, vector<double> &values) {
+    Plaintext encodeNew(const Encoder &encoder, vector<double> &values) {
 
         int len = values.size();
         int logLen = log2(len);
@@ -23,10 +23,10 @@ namespace latticpp {
             throw invalid_argument("Invalid input length for encodeNew");
         }
 
-        return GoHandle<Plaintext>(lattigo_encodeNew(encoder.getRawHandle(), values.data(), logLen));
+        return Plaintext(lattigo_encodeNew(encoder.getRawHandle(), values.data(), logLen));
     }
 
-    vector<double> decode(const GoHandle<Encoder> &encoder, const GoHandle<Plaintext> &pt, uint64_t logSlots) {
+    vector<double> decode(const Encoder &encoder, const Plaintext &pt, uint64_t logSlots) {
         vector<double> coeffs(((uint64_t)1) << logSlots);
         lattigo_decode(encoder.getRawHandle(), pt.getRawHandle(), logSlots, coeffs.data());
         return coeffs;

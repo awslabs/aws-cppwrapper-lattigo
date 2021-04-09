@@ -5,19 +5,19 @@
 
 namespace latticpp {
 
-    uint64_t level(const GoHandle<Ciphertext> &ct) {
+    uint64_t level(const Ciphertext &ct) {
         return lattigo_level(ct.getRawHandle());
     }
 
-    double scale(const GoHandle<Ciphertext> &ct) {
+    double scale(const Ciphertext &ct) {
         return lattigo_ciphertextScale(ct.getRawHandle());
     }
 
-    GoHandle<Ciphertext> copyNew(const GoHandle<Ciphertext> &ct) {
+    Ciphertext copyNew(const Ciphertext &ct) {
         return lattigo_copyNew(ct.getRawHandle());
     }
 
-    GoHandle<Ciphertext> newCiphertext(const GoHandle<Parameters> &params, uint64_t degree, uint64_t level, double scale) {
-        return GoHandle<Ciphertext>(lattigo_newCiphertext(params.getRawHandle(), degree, level, scale));
+    Ciphertext newCiphertext(const Parameters &params, uint64_t degree, uint64_t level, double scale) {
+        return Ciphertext(lattigo_newCiphertext(params.getRawHandle(), degree, level, scale));
     }
 }  // namespace latticpp

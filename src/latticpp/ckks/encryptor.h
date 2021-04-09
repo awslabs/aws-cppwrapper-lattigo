@@ -8,7 +8,7 @@
 
 namespace latticpp {
 
-    GoHandle<Encryptor> newEncryptorFromPk(const GoHandle<Parameters> &params, const GoHandle<PublicKey> &pk);
+    Encryptor newEncryptorFromPk(const Parameters &params, const PublicKey &pk);
 
-    GoHandle<Ciphertext> encryptNew(const GoHandle<Encryptor> &encryptor, const GoHandle<Plaintext> &pt);
+    Ciphertext encryptNew(const Encryptor &encryptor, const Plaintext &pt);
 }  // namespace latticpp

@@ -5,11 +5,11 @@
 
 namespace latticpp {
 
-    GoHandle<Encryptor> newEncryptorFromPk(const GoHandle<Parameters> &params, const GoHandle<PublicKey> &pk) {
-        return GoHandle<Encryptor>(lattigo_newEncryptorFromPk(params.getRawHandle(), pk.getRawHandle()));
+    Encryptor newEncryptorFromPk(const Parameters &params, const PublicKey &pk) {
+        return Encryptor(lattigo_newEncryptorFromPk(params.getRawHandle(), pk.getRawHandle()));
     }
 
-    GoHandle<Ciphertext> encryptNew(const GoHandle<Encryptor> &encryptor, const GoHandle<Plaintext> &pt) {
-        return GoHandle<Ciphertext>(lattigo_encryptNew(encryptor.getRawHandle(), pt.getRawHandle()));
+    Ciphertext encryptNew(const Encryptor &encryptor, const Plaintext &pt) {
+        return Ciphertext(lattigo_encryptNew(encryptor.getRawHandle(), pt.getRawHandle()));
     }
 }  // namespace latticpp

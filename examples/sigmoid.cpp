@@ -19,8 +19,8 @@
 using namespace std;
 using namespace latticpp;
 
-typedef map<uint64_t, GoHandle<Ciphertext>> ChebyMap;
-typedef pair<uint64_t, GoHandle<Ciphertext>> ChebyKeyValuePair;
+typedef map<uint64_t, Ciphertext> ChebyMap;
+typedef pair<uint64_t, Ciphertext> ChebyKeyValuePair;
 
 // generate a random vector of the given dimension, where each value is in the range [-maxNorm, maxNorm].
 vector<double> randomVector(int dim, double maxNorm) {
@@ -73,7 +73,7 @@ bool contains(ChebyMap c, uint64_t k) {
     return c.find(k) != c.end();
 }
 
-GoHandle<Ciphertext> get(ChebyMap &m, const uint64_t k) {
+Ciphertext get(ChebyMap &m, const uint64_t k) {
     ChebyMap::iterator it;
     it = m.find(k);
     if (it == m.end()) {
@@ -82,7 +82,7 @@ GoHandle<Ciphertext> get(ChebyMap &m, const uint64_t k) {
     return it->second;
 }
 
-void computePowerBasisCheby(uint64_t n, ChebyMap &cMap, GoHandle<Evaluator> eval, GoHandle<RelinKey> evakey, GoHandle<Parameters> params) {
+void computePowerBasisCheby(uint64_t n, ChebyMap &cMap, Evaluator eval, RelinKey evakey, Parameters params) {
 
     // Given a hash table with the first three evaluations of the Chebyshev ring at x in the interval a, b:
     // C0 = 1 (actually not stored in the hash table)
@@ -124,11 +124,11 @@ void computePowerBasisCheby(uint64_t n, ChebyMap &cMap, GoHandle<Evaluator> eval
     }
 }
 
-GoHandle<Ciphertext> evaluatePolyFromPowerBasis(double targetScale, ChebyshevInterpolation &cheby, ChebyMap &cMap, GoHandle<Evaluator> eval, GoHandle<Parameters> params) {
+Ciphertext evaluatePolyFromPowerBasis(double targetScale, ChebyshevInterpolation &cheby, ChebyMap &cMap, Evaluator eval, Parameters params) {
 
     if (cheby.degree() == 0) {
 
-        GoHandle<Ciphertext> res = newCiphertext(params, 1, level(get(cMap, 1)), targetScale);
+        Ciphertext res = newCiphertext(params, 1, level(get(cMap, 1)), targetScale);
 
         if (abs(cheby.coeffs[0]) > 1e-14) {
             addConst(eval, res, cheby.coeffs[0], res);
@@ -141,7 +141,7 @@ GoHandle<Ciphertext> evaluatePolyFromPowerBasis(double targetScale, ChebyshevInt
 
     double ctScale = targetScale * currentQi;
 
-    GoHandle<Ciphertext> res = newCiphertext(params, 1, level(get(cMap, cheby.degree())), ctScale);
+    Ciphertext res = newCiphertext(params, 1, level(get(cMap, cheby.degree())), ctScale);
 
     if (abs(cheby.coeffs[0]) > 1e-14) {
         addConst(eval, res, cheby.coeffs[0], res);
@@ -205,7 +205,7 @@ ChebyPair splitCoeffsCheby(ChebyshevInterpolation &cheby, uint64_t split) {
     return ChebyPair{coeffsq, coeffsr};
 }
 
-GoHandle<Ciphertext> recurseCheby(double targetScale, int logSplit, int logDegree, ChebyshevInterpolation &cheby, ChebyMap cMap, GoHandle<Evaluator> eval, GoHandle<RelinKey> evakey, GoHandle<Parameters> params) {
+Ciphertext recurseCheby(double targetScale, int logSplit, int logDegree, ChebyshevInterpolation &cheby, ChebyMap cMap, Evaluator eval, RelinKey evakey, Parameters params) {
     // Recursively computes the evalution of the Chebyshev polynomial using a baby-set giant-step algorithm.
     if (cheby.degree() < (((uint64_t)1) << logSplit)) {
         if (cheby.lead && cheby.maxDeg > ((((uint64_t)1) << logDegree) - (((uint64_t)1) << (logSplit-1))) && logSplit > 1) {
@@ -236,9 +236,9 @@ GoHandle<Ciphertext> recurseCheby(double targetScale, int logSplit, int logDegre
 
     double currentQi = (double)getQi(params, ctLevel);
 
-    GoHandle<Ciphertext> res = recurseCheby(targetScale*currentQi/scale(get(cMap, nextPower)), logSplit, logDegree, coeffsq, cMap, eval, evakey, params);
+    Ciphertext res = recurseCheby(targetScale*currentQi/scale(get(cMap, nextPower)), logSplit, logDegree, coeffsq, cMap, eval, evakey, params);
 
-    GoHandle<Ciphertext> tmp = recurseCheby(targetScale, logSplit, logDegree, coeffsr, cMap, eval, evakey, params);
+    Ciphertext tmp = recurseCheby(targetScale, logSplit, logDegree, coeffsr, cMap, eval, evakey, params);
 
     if (level(res) > level(tmp)) {
         while (level(res) != level(tmp)+1) {
@@ -263,7 +263,7 @@ GoHandle<Ciphertext> recurseCheby(double targetScale, int logSplit, int logDegre
 // Returns an error if the input ciphertext does not have enough level to carry out the full polynomial evaluation.
 // Returns an error if something is wrong with the scale.
 // A change of basis ct' = (2/(b-a)) * (ct + (-a-b)/(b-a)) is necessary before the polynomial evaluation to ensure correctness.
-GoHandle<Ciphertext> evaluateCheby(GoHandle<Evaluator> eval, GoHandle<Ciphertext> op, ChebyshevInterpolation &cheby, GoHandle<RelinKey> evakey, GoHandle<Parameters> params) {
+Ciphertext evaluateCheby(Evaluator eval, Ciphertext op, ChebyshevInterpolation &cheby, RelinKey evakey, Parameters params) {
 
     checkEnoughLevels(level(op), cheby.coeffs.size(), 1);
 
@@ -281,7 +281,7 @@ GoHandle<Ciphertext> evaluateCheby(GoHandle<Evaluator> eval, GoHandle<Ciphertext
         computePowerBasisCheby(((uint64_t)1) << i, cMap, eval, evakey, params);
     }
 
-    GoHandle<Ciphertext> opOut = recurseCheby(scale(params), logSplit, logDegree, cheby, cMap, eval, evakey, params);
+    Ciphertext opOut = recurseCheby(scale(params), logSplit, logDegree, cheby, cMap, eval, evakey, params);
 
     return opOut;
 }
@@ -297,25 +297,25 @@ int main() {
     srand(time(NULL));
 
     // Scheme params
-    GoHandle<Parameters> params = getParams(PN14QP438);
+    Parameters params = getParams(PN14QP438);
 
-    GoHandle<Encoder> encoder = newEncoder(params);
+    Encoder encoder = newEncoder(params);
 
     // Keys
-    GoHandle<KeyGenerator> kgen = newKeyGenerator(params);
+    KeyGenerator kgen = newKeyGenerator(params);
     struct KeyPairHandle kp = genKeyPair(kgen);
 
     // Relinearization key
-    GoHandle<RelinKey> rlk = genRelinKey(kgen, kp.sk);
+    RelinKey rlk = genRelinKey(kgen, kp.sk);
 
     // Encryptor
-    GoHandle<Encryptor> encryptor = newEncryptorFromPk(params, kp.pk);
+    Encryptor encryptor = newEncryptorFromPk(params, kp.pk);
 
     // Decryptor
-    GoHandle<Decryptor> decryptor = newDecryptor(params, kp.sk);
+    Decryptor decryptor = newDecryptor(params, kp.sk);
 
     // Evaluator
-    GoHandle<Evaluator> evaluator = newEvaluator(params);
+    Evaluator evaluator = newEvaluator(params);
 
     // Values to encrypt
     uint64_t num_slots = numSlots(params);
@@ -326,10 +326,10 @@ int main() {
     cout << "Values: " << values[0] << " " << values[1] << " " << values[2] << " " << values[3] << endl;
 
     // Plaintext creation and encoding process
-    GoHandle<Plaintext> plaintext = encodeNew(encoder, values);
+    Plaintext plaintext = encodeNew(encoder, values);
 
     // Encryption process
-    GoHandle<Ciphertext> ciphertext = encryptNew(encryptor, plaintext);
+    Ciphertext ciphertext = encryptNew(encryptor, plaintext);
 
     cout << "Evaluation of the function 1/(exp(-x)+1) in the range [-8, 8] (degree of approximation: 32)" << endl;
 

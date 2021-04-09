@@ -8,23 +8,23 @@
 
 namespace latticpp {
 
-    GoHandle<Evaluator> newEvaluator(const GoHandle<Parameters> &params);
+    Evaluator newEvaluator(const Parameters &params);
 
-    void multByConst(const GoHandle<Evaluator> &eval, const GoHandle<Ciphertext> &ctIn, double constant, const GoHandle<Ciphertext> &ctOut);
+    void multByConst(const Evaluator &eval, const Ciphertext &ctIn, double constant, const Ciphertext &ctOut);
 
-    void addConst(const GoHandle<Evaluator> &eval, const GoHandle<Ciphertext> &ctIn, double constant, const GoHandle<Ciphertext> &ctOut);
+    void addConst(const Evaluator &eval, const Ciphertext &ctIn, double constant, const Ciphertext &ctOut);
 
-    void rescale(const GoHandle<Evaluator> &eval, const GoHandle<Ciphertext> &ctIn, double threshold, const GoHandle<Ciphertext> &ctOut);
+    void rescale(const Evaluator &eval, const Ciphertext &ctIn, double threshold, const Ciphertext &ctOut);
 
-    GoHandle<Ciphertext> mulRelinNew(const GoHandle<Evaluator> &eval, const GoHandle<Ciphertext> &ct0, const GoHandle<Ciphertext> &ct1, const GoHandle<RelinKey> &evakey);
+    Ciphertext mulRelinNew(const Evaluator &eval, const Ciphertext &ct0, const Ciphertext &ct1, const RelinKey &evakey);
 
-    void mulRelin(const GoHandle<Evaluator> &eval, const GoHandle<Ciphertext> &ct0, const GoHandle<Ciphertext> &ct1, const GoHandle<RelinKey> &evakey, const GoHandle<Ciphertext> &ctOut);
+    void mulRelin(const Evaluator &eval, const Ciphertext &ct0, const Ciphertext &ct1, const RelinKey &evakey, const Ciphertext &ctOut);
 
-    void add(const GoHandle<Evaluator> &eval, const GoHandle<Ciphertext> &ct0, const GoHandle<Ciphertext> &ct1, const GoHandle<Ciphertext> &ctOut);
+    void add(const Evaluator &eval, const Ciphertext &ct0, const Ciphertext &ct1, const Ciphertext &ctOut);
 
-    void sub(const GoHandle<Evaluator> &eval, const GoHandle<Ciphertext> &ct0, const GoHandle<Ciphertext> &ct1, const GoHandle<Ciphertext> &ctOut);
+    void sub(const Evaluator &eval, const Ciphertext &ct0, const Ciphertext &ct1, const Ciphertext &ctOut);
 
-    void multByGaussianIntegerAndAdd(const GoHandle<Evaluator> &eval, const GoHandle<Ciphertext> &ctIn, uint64_t cReal, uint64_t cImag, const GoHandle<Ciphertext> &ctOut);
+    void multByGaussianIntegerAndAdd(const Evaluator &eval, const Ciphertext &ctIn, uint64_t cReal, uint64_t cImag, const Ciphertext &ctOut);
 
-    void dropLevel(const GoHandle<Evaluator> &eval, const GoHandle<Ciphertext> &ct, uint64_t levels);
+    void dropLevel(const Evaluator &eval, const Ciphertext &ct, uint64_t levels);
 }  // namespace latticpp
