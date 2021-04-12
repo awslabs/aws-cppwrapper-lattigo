@@ -14,20 +14,56 @@
 add_custom_command(
   OUTPUT
     ${LIB_FULL_PATH}
+    ${CGO_HEADER_DST}/ciphertext.h
+    ${CGO_HEADER_DST}/decryptor.h
+    ${CGO_HEADER_DST}/encoder.h
+    ${CGO_HEADER_DST}/encryptor.h
+    ${CGO_HEADER_DST}/evaluator.h
+    ${CGO_HEADER_DST}/keygen.h
     ${CGO_HEADER_DST}/params.h
     ${CGO_HEADER_DST}/storage.h
   COMMAND cp -r ${CMAKE_CURRENT_SOURCE_DIR}/. .
+
+  COMMAND go vet
+
+  COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/ciphertext.go
+  COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/decryptor.go
+  COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/encoder.go
+  COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/encryptor.go
+  COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/evaluator.go
+  COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/keygen.go
+  COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/params.go
+  COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/marshall/storage.go
+
+  COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/ciphertext.h ckks/ciphertext.go
+  COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/decryptor.h ckks/decryptor.go
+  COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/encoder.h ckks/encoder.go
+  COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/encryptor.h ckks/encryptor.go
+  COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/evaluator.h ckks/evaluator.go
+  COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/keygen.h ckks/keygen.go
   COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/params.h ckks/params.go
   COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/storage.h marshall/storage.go
   COMMAND go build -buildmode=c-shared -o ${LIB_FULL_PATH}
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
     latticppMain.go
+    ckks/ciphertext.go
+    ckks/decryptor.go
+    ckks/encoder.go
+    ckks/encryptor.go
+    ckks/evaluator.go
+    ckks/keygen.go
     ckks/params.go
     marshall/storage.go
 )
 
 add_library(lattigo_cpp_gowrapper STATIC
+    ${CGO_HEADER_DST}/ciphertext.h
+    ${CGO_HEADER_DST}/decryptor.h
+    ${CGO_HEADER_DST}/encoder.h
+    ${CGO_HEADER_DST}/encryptor.h
+    ${CGO_HEADER_DST}/evaluator.h
+    ${CGO_HEADER_DST}/keygen.h
     ${CGO_HEADER_DST}/params.h
     ${CGO_HEADER_DST}/storage.h)
 target_include_directories(lattigo_cpp_gowrapper PUBLIC ${CMAKE_BINARY_DIR})
