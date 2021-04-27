@@ -1,6 +1,6 @@
 ## Lattigo Bindings for C++
 
-![Lattigo](https://github.com/ldsec/lattigo) is a Go (Golang) library for homomorphic encryption. This library provides a C++ interface for the Lattigo HE library.
+[Lattigo](https://github.com/ldsec/lattigo) is a Go (Golang) library for homomorphic encryption. This library provides a C++ interface for the Lattigo HE library.
 
 ## Building
 Status:
@@ -15,7 +15,7 @@ cmake -Bbuild -GNinja
 ninja -Cbuild
 ```
 
-This library includes an example, which matches the corresponding ![Lattigo example](https://github.com/ldsec/lattigo/blob/fa4175901a31d20b5336e7705e6a1243d0477e62/examples/ckks/sigmoid/main.go) as closely as possible.
+This library includes an example, which matches the corresponding [Lattigo example](https://github.com/ldsec/lattigo/blob/fa4175901a31d20b5336e7705e6a1243d0477e62/examples/ckks/sigmoid/main.go) as closely as possible.
 The example can be run with
 ```!sh
 cmake -Bbuild -GNinja -DLATTICPP_BUILD_EXAMPLES=ON

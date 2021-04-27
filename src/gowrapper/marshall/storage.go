@@ -4,7 +4,7 @@
 // Adapted from https://github.com/justinfx/gofileseq/blob/97d877d68cdef5939f4db199f52e4424fe9a691a/exp/cpp/export/storage.go,
 // commit 97d877d68cdef5939f4db199f52e4424fe9a691a, MIT License.
 
-package marshall
+package marshal
 
 import "C"
 
@@ -36,10 +36,12 @@ type xlangRef struct {
 //export initStorage
 func initStorage() {
 	CrossLangObjMap = &xlangRefMap{
-		lock:  new(sync.RWMutex),
-		m:     make(map[Handle]*xlangRef),
+		lock: new(sync.RWMutex),
+		m:    make(map[Handle]*xlangRef),
+		// in C++, the default constructor uses a handle value of 0,
+		// which should never point to a real object for safety.
+		// Start the counter here at 1.
 		idCtr: 1,
-		// rand: NewRandSource(),
 	}
 }
 

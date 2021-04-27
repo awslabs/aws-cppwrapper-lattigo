@@ -4,7 +4,7 @@ import "C"
 
 import (
 	"github.com/ldsec/lattigo/v2/ckks"
-	"lattigo-cpp/marshall"
+	"lattigo-cpp/marshal"
 	"unsafe"
 )
 
@@ -12,7 +12,7 @@ import (
 type Handle8 = uint64
 
 func getStoredCiphertext(ctHandle Handle8) *ckks.Ciphertext {
-	ref := marshall.CrossLangObjMap.Get(ctHandle)
+	ref := marshal.CrossLangObjMap.Get(ctHandle)
 	return (*ckks.Ciphertext)(ref.Ptr)
 }
 
@@ -37,7 +37,7 @@ func lattigo_copyNew(ctHandle Handle8) Handle8 {
 
 	var ctClone *ckks.Ciphertext
 	ctClone = ctIn.CopyNew().Ciphertext()
-	return marshall.CrossLangObjMap.Add(unsafe.Pointer(ctClone))
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(ctClone))
 }
 
 //export lattigo_newCiphertext
@@ -47,5 +47,5 @@ func lattigo_newCiphertext(paramsHandle Handle8, degree uint64, level uint64, sc
 
 	var newCt *ckks.Ciphertext
 	newCt = ckks.NewCiphertext(params, degree, level, scale)
-	return marshall.CrossLangObjMap.Add(unsafe.Pointer(newCt))
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(newCt))
 }

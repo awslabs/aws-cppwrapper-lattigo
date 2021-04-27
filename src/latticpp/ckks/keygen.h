@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "latticpp/marshall/gohandle.h"
+#include "latticpp/marshal/gohandle.h"
 #include "cgo/keygen.h"
 
 namespace latticpp {
@@ -17,6 +17,6 @@ namespace latticpp {
 
     KeyPairHandle genKeyPair(const KeyGenerator &keygen);
 
-    RelinKey genRelinKey(const KeyGenerator &keygen, const SecretKey &sk);
+    RelinKeys genRelinKeys(const KeyGenerator &keygen, const SecretKey &sk);
 
 }  // namespace latticpp

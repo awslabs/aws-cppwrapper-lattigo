@@ -4,7 +4,7 @@ import "C"
 
 import (
 	"github.com/ldsec/lattigo/v2/ckks"
-	"lattigo-cpp/marshall"
+	"lattigo-cpp/marshal"
 	"unsafe"
 )
 
@@ -12,7 +12,7 @@ import (
 type Handle6 = uint64
 
 func getStoredParameters(paramHandle Handle6) *ckks.Parameters {
-	ref := marshall.CrossLangObjMap.Get(paramHandle)
+	ref := marshal.CrossLangObjMap.Get(paramHandle)
 	return (*ckks.Parameters)(ref.Ptr)
 }
 
@@ -20,7 +20,7 @@ func getStoredParameters(paramHandle Handle6) *ckks.Parameters {
 func lattigo_getParams(paramEnum uint8) Handle6 {
 	var params *ckks.Parameters
 	params = ckks.DefaultParams[paramEnum]
-	return marshall.CrossLangObjMap.Add(unsafe.Pointer(params))
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(params))
 }
 
 //export lattigo_numSlots

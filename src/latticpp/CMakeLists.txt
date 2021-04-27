@@ -5,7 +5,7 @@ add_subdirectory(ckks)
 
 install(
     FILES
-        ${CMAKE_CURRENT_LIST_DIR}/marshall/gohandle.h
+        ${CMAKE_CURRENT_LIST_DIR}/marshal/gohandle.h
     DESTINATION
-        ${LATTICPP_INCLUDES_INSTALL_DIR}/marshall
+        ${LATTICPP_INCLUDES_INSTALL_DIR}/marshal
 )

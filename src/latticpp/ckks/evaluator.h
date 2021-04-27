@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "latticpp/marshall/gohandle.h"
+#include "latticpp/marshal/gohandle.h"
 #include "cgo/evaluator.h"
 
 namespace latticpp {
@@ -16,9 +16,9 @@ namespace latticpp {
 
     void rescale(const Evaluator &eval, const Ciphertext &ctIn, double threshold, const Ciphertext &ctOut);
 
-    Ciphertext mulRelinNew(const Evaluator &eval, const Ciphertext &ct0, const Ciphertext &ct1, const RelinKey &evakey);
+    Ciphertext mulRelinNew(const Evaluator &eval, const Ciphertext &ct0, const Ciphertext &ct1, const RelinKeys &evakey);
 
-    void mulRelin(const Evaluator &eval, const Ciphertext &ct0, const Ciphertext &ct1, const RelinKey &evakey, const Ciphertext &ctOut);
+    void mulRelin(const Evaluator &eval, const Ciphertext &ct0, const Ciphertext &ct1, const RelinKeys &evakey, const Ciphertext &ctOut);
 
     void add(const Evaluator &eval, const Ciphertext &ct0, const Ciphertext &ct1, const Ciphertext &ctOut);
 

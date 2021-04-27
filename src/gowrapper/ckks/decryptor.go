@@ -4,7 +4,7 @@ import "C"
 
 import (
 	"github.com/ldsec/lattigo/v2/ckks"
-	"lattigo-cpp/marshall"
+	"lattigo-cpp/marshal"
 	"unsafe"
 )
 
@@ -12,7 +12,7 @@ import (
 type Handle1 = uint64
 
 func getStoredDecryptor(decryptoHandle Handle8) *ckks.Decryptor {
-	ref := marshall.CrossLangObjMap.Get(decryptoHandle)
+	ref := marshal.CrossLangObjMap.Get(decryptoHandle)
 	return (*ckks.Decryptor)(ref.Ptr)
 }
 
@@ -22,7 +22,7 @@ func lattigo_newDecryptor(paramHandle Handle1, skHandle Handle1) Handle1 {
 	sk := getStoredSecretKey(skHandle)
 	var decryptor ckks.Decryptor
 	decryptor = ckks.NewDecryptor(params, sk)
-	return marshall.CrossLangObjMap.Add(unsafe.Pointer(&decryptor))
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(&decryptor))
 }
 
 //export lattigo_decryptNew
@@ -35,5 +35,5 @@ func lattigo_decryptNew(decryptoHandle Handle1, ctHandle Handle1) Handle1 {
 
 	var pt *ckks.Plaintext
 	pt = (*dec).DecryptNew(ct)
-	return marshall.CrossLangObjMap.Add(unsafe.Pointer(pt))
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(pt))
 }

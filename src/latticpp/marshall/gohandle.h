@@ -21,12 +21,16 @@ namespace latticpp {
         SecretKey,
         PublicKey,
         Plaintext,
-        Ciphertext
+        Ciphertext,
+        RotationKeys
     };
 
     template<GoType t>
     struct GoHandle {
     public:
+        // Valid Go handles are > 0, so 0 can never refer to a real Go object.
+        GoHandle() : handle(0) { }
+
         // constructor: This should only be called by Go code, which automatically sets the reference count to 1
         GoHandle(uint64_t handle) : handle(handle) { }
 
@@ -86,7 +90,7 @@ namespace latticpp {
     using Encoder = GoHandle<GoType::Encoder>;
     using KeyGenerator = GoHandle<GoType::KeyGenerator>;
     using KeyPair = GoHandle<GoType::KeyPair>;
-    using RelinKey = GoHandle<GoType::RelinKey>;
+    using RelinKeys = GoHandle<GoType::RelinKey>;
     using Encryptor = GoHandle<GoType::Encryptor>;
     using Decryptor = GoHandle<GoType::Decryptor>;
     using Evaluator = GoHandle<GoType::Evaluator>;
@@ -94,5 +98,6 @@ namespace latticpp {
     using PublicKey = GoHandle<GoType::PublicKey>;
     using Plaintext = GoHandle<GoType::Plaintext>;
     using Ciphertext = GoHandle<GoType::Ciphertext>;
+    using GaloisKeys = GoHandle<GoType::RotationKeys>;
 
 }  // namespace latticpp

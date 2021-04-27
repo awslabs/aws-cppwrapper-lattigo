@@ -4,7 +4,7 @@ import "C"
 
 import (
 	"github.com/ldsec/lattigo/v2/ckks"
-	"lattigo-cpp/marshall"
+	"lattigo-cpp/marshal"
 	"math"
 	"unsafe"
 )
@@ -13,7 +13,7 @@ import (
 type Handle2 = uint64
 
 func getStoredEncoder(encoderHandle Handle2) *ckks.Encoder {
-	ref := marshall.CrossLangObjMap.Get(encoderHandle)
+	ref := marshal.CrossLangObjMap.Get(encoderHandle)
 	return (*ckks.Encoder)(ref.Ptr)
 }
 
@@ -22,7 +22,7 @@ func lattigo_newEncoder(paramHandle Handle2) Handle2 {
 	paramPtr := getStoredParameters(paramHandle)
 	var encoder ckks.Encoder
 	encoder = ckks.NewEncoder(paramPtr)
-	return marshall.CrossLangObjMap.Add(unsafe.Pointer(&encoder))
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(&encoder))
 }
 
 // Take the encoder handle and an array of _real_ numbers of length 2^logLen (checked in C++-land)
@@ -41,7 +41,7 @@ func lattigo_encodeNew(encoderHandle Handle2, realValues *C.double, logLen uint6
 	}
 	var plaintext *ckks.Plaintext
 	plaintext = (*encoderPtr).EncodeNew(complexValues, logLen)
-	return marshall.CrossLangObjMap.Add(unsafe.Pointer(plaintext))
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(plaintext))
 }
 
 //export lattigo_decode

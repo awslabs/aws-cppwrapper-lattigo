@@ -4,7 +4,7 @@ import "C"
 
 import (
 	"github.com/ldsec/lattigo/v2/ckks"
-	"lattigo-cpp/marshall"
+	"lattigo-cpp/marshal"
 	"unsafe"
 )
 
@@ -12,7 +12,7 @@ import (
 type Handle4 = uint64
 
 func getStoredEvaluator(evalHandle Handle4) *ckks.Evaluator {
-	ref := marshall.CrossLangObjMap.Get(evalHandle)
+	ref := marshal.CrossLangObjMap.Get(evalHandle)
 	return (*ckks.Evaluator)(ref.Ptr)
 }
 
@@ -23,7 +23,24 @@ func lattigo_newEvaluator(paramsHandle Handle4) Handle4 {
 
 	var evaluator ckks.Evaluator
 	evaluator = ckks.NewEvaluator(params)
-	return marshall.CrossLangObjMap.Add(unsafe.Pointer(&evaluator))
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(&evaluator))
+}
+
+//export lattigo_rotate
+func lattigo_rotate(evalHandle Handle4, ctInHandle Handle4, k uint64, rotKeysHandle Handle4, ctOutHandle Handle4) {
+	var eval *ckks.Evaluator
+	eval = getStoredEvaluator(evalHandle)
+
+	var ctIn *ckks.Ciphertext
+	ctIn = getStoredCiphertext(ctInHandle)
+
+	var rotKeys *ckks.RotationKeys
+	rotKeys = getStoredRotationKeys(rotKeysHandle)
+
+	var ctOut *ckks.Ciphertext
+	ctOut = getStoredCiphertext(ctOutHandle)
+
+	(*eval).Rotate(ctIn, k, rotKeys, ctOut)
 }
 
 //export lattigo_multByConst
@@ -88,7 +105,7 @@ func lattigo_mulRelinNew(evalHandle Handle4, op0Handle Handle4, op1Handle Handle
 	var ctOut *ckks.Ciphertext
 	ctOut = (*eval).MulRelinNew(ct0, ct1, evakey)
 
-	return marshall.CrossLangObjMap.Add(unsafe.Pointer(ctOut))
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(ctOut))
 }
 
 //export lattigo_mulRelin
