@@ -65,17 +65,31 @@ namespace latticpp {
         return toString(buf);
     }
 
-    Ciphertext unmarshalBinaryCiphertext(string buf);
+    Ciphertext unmarshalBinaryCiphertext(string buf) {
+        return Ciphertext(lattigo_unmarshalBinaryCiphertext(buf.c_str(), buf.size()));
+    }
 
-    Parameters unmarshalBinaryParameters(string buf);
+    Parameters unmarshalBinaryParameters(string buf) {
+        return Parameters(lattigo_unmarshalBinaryParameters(buf.c_str(), buf.size()));
+    }
 
-    SecretKey unmarshalBinarySecretKey(string buf);
+    SecretKey unmarshalBinarySecretKey(string buf) {
+        return SecretKey(lattigo_unmarshalBinarySecretKey(buf.c_str(), buf.size()));
+    }
 
-    PublicKey unmarshalBinaryPublicKey(string buf);
+    PublicKey unmarshalBinaryPublicKey(string buf) {
+        return PublicKey(lattigo_unmarshalBinaryPublicKey(buf.c_str(), buf.size()));
+    }
 
-    EvaluationKey unmarshalBinaryEvaluationKey(string buf);
+    EvaluationKey unmarshalBinaryEvaluationKey(string buf) {
+        return EvaluationKey(lattigo_unmarshalBinaryEvaluationKey(buf.c_str(), buf.size()));
+    }
 
-    SwitchingKey unmarshalBinarySwitchingKey(string buf);
+    SwitchingKey unmarshalBinarySwitchingKey(string buf) {
+        return SwitchingKey(lattigo_unmarshalBinarySwitchingKey(buf.c_str(), buf.size()));
+    }
 
-    RotationKeys unmarshalBinaryRotationKeys(string buf);
+    RotationKeys unmarshalBinaryRotationKeys(string buf) {
+        return RotationKeys(lattigo_unmarshalBinaryRotationKeys(buf.c_str(), buf.size()));
+    }
 }  // namespace latticpp
