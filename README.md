@@ -8,6 +8,7 @@ Status:
 ![Build Status](https://codebuild.us-west-2.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiVkVjR3d0UVVQKys0Rk5sUy9UVEUyNGRhbUJoSWdTZ2pXdXpYVlQ5RVVpYXBraFdkOWpTNHk1QUljUy90a3JIMS84UERuaVBIR2ZOWVJjN2N6QzFFMzZVPSIsIml2UGFyYW1ldGVyU3BlYyI6IjNxdENBZlZNU210VHdndHciLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=main)
 
 ## Usage
+Based on https://github.com/ldsec/lattigo/commit/2bc7250a4bc59fc1e9050fcf299be56569f61a23
 This library uses the CMake build system. You can build the library by running
 
 ```!sh

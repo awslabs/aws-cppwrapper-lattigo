@@ -3,6 +3,9 @@
 
 #pragma once
 
+#ifndef DEFINE_GOHANDLE_H
+#define DEFINE_GOHANDLE_H
+
 #include <cstdint>
 #include "cgo/storage.h"
 #include <iostream>
@@ -14,7 +17,7 @@ namespace latticpp {
         Encoder,
         KeyGenerator,
         KeyPair,
-        RelinKey,
+        EvaluationKey,
         Encryptor,
         Decryptor,
         Evaluator,
@@ -22,7 +25,8 @@ namespace latticpp {
         PublicKey,
         Plaintext,
         Ciphertext,
-        RotationKeys
+        RotationKeys,
+        SwitchingKey
     };
 
     template<GoType t>
@@ -90,7 +94,7 @@ namespace latticpp {
     using Encoder = GoHandle<GoType::Encoder>;
     using KeyGenerator = GoHandle<GoType::KeyGenerator>;
     using KeyPair = GoHandle<GoType::KeyPair>;
-    using RelinKeys = GoHandle<GoType::RelinKey>;
+    using EvaluationKey = GoHandle<GoType::EvaluationKey>;
     using Encryptor = GoHandle<GoType::Encryptor>;
     using Decryptor = GoHandle<GoType::Decryptor>;
     using Evaluator = GoHandle<GoType::Evaluator>;
@@ -98,6 +102,8 @@ namespace latticpp {
     using PublicKey = GoHandle<GoType::PublicKey>;
     using Plaintext = GoHandle<GoType::Plaintext>;
     using Ciphertext = GoHandle<GoType::Ciphertext>;
-    using GaloisKeys = GoHandle<GoType::RotationKeys>;
+    using RotationKeys = GoHandle<GoType::RotationKeys>;
+    using SwitchingKey = GoHandle<GoType::SwitchingKey>;
 
 }  // namespace latticpp
+#endif

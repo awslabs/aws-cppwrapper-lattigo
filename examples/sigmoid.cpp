@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "latticpp/ckks/ciphertext.h"
+#include "latticpp/ckks/ciphertext.h"
 #include "latticpp/ckks/decryptor.h"
 #include "latticpp/ckks/encoder.h"
 #include "latticpp/ckks/encryptor.h"
 #include "latticpp/ckks/evaluator.h"
 #include "latticpp/ckks/keygen.h"
 #include "latticpp/ckks/params.h"
-#include "latticpp/marshall/gohandle.h"
 
 #include <cmath>
 #include <iostream>
@@ -73,7 +73,7 @@ bool contains(const ChebyMap &c, uint64_t k) {
     return c.find(k) != c.end();
 }
 
-void computePowerBasisCheby(uint64_t n, ChebyMap &cMap, Evaluator &eval, RelinKey &evakey, Parameters &params) {
+void computePowerBasisCheby(uint64_t n, ChebyMap &cMap, Evaluator &eval, EvaluationKey &evakey, Parameters &params) {
 
     // Given a hash table with the first three evaluations of the Chebyshev ring at x in the interval a, b:
     // C0 = 1 (actually not stored in the hash table)
@@ -196,7 +196,7 @@ ChebyPair splitCoeffsCheby(ChebyshevInterpolation &cheby, uint64_t split) {
     return ChebyPair{coeffsq, coeffsr};
 }
 
-Ciphertext recurseCheby(double targetScale, int logSplit, int logDegree, ChebyshevInterpolation &cheby, ChebyMap &cMap, Evaluator &eval, RelinKey &evakey, Parameters &params) {
+Ciphertext recurseCheby(double targetScale, int logSplit, int logDegree, ChebyshevInterpolation &cheby, ChebyMap &cMap, Evaluator &eval, EvaluationKey &evakey, Parameters &params) {
     // Recursively computes the evalution of the Chebyshev polynomial using a baby-set giant-step algorithm.
     if (cheby.degree() < (((uint64_t)1) << logSplit)) {
         if (cheby.lead && cheby.maxDeg > ((((uint64_t)1) << logDegree) - (((uint64_t)1) << (logSplit-1))) && logSplit > 1) {
@@ -254,7 +254,7 @@ Ciphertext recurseCheby(double targetScale, int logSplit, int logDegree, Chebysh
 // Returns an error if the input ciphertext does not have enough level to carry out the full polynomial evaluation.
 // Returns an error if something is wrong with the scale.
 // A change of basis ct' = (2/(b-a)) * (ct + (-a-b)/(b-a)) is necessary before the polynomial evaluation to ensure correctness.
-Ciphertext evaluateCheby(Evaluator &eval, Ciphertext &op, ChebyshevInterpolation &cheby, RelinKey &evakey, Parameters &params) {
+Ciphertext evaluateCheby(Evaluator &eval, Ciphertext &op, ChebyshevInterpolation &cheby, EvaluationKey &evakey, Parameters &params) {
 
     checkEnoughLevels(level(op), cheby.coeffs.size(), 1);
 
@@ -297,7 +297,7 @@ int main() {
     struct KeyPairHandle kp = genKeyPair(kgen);
 
     // Relinearization key
-    RelinKey rlk = genRelinKey(kgen, kp.sk);
+    EvaluationKey rlk = genRelinKey(kgen, kp.sk);
 
     // Encryptor
     Encryptor encryptor = newEncryptorFromPk(params, kp.pk);

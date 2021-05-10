@@ -18,3 +18,5 @@ target_include_directories(lattigo_cpp_obj
         ${LATTICPP_SOURCE_DIR}
         ${CGO_INCLUDE_PATH}
     )
+
+set_common_flags(lattigo_cpp_obj)

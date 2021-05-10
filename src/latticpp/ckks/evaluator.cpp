@@ -21,11 +21,11 @@ namespace latticpp {
         lattigo_rescale(eval.getRawHandle(), ctIn.getRawHandle(), threshold, ctOut.getRawHandle());
     }
 
-    Ciphertext mulRelinNew(const Evaluator &eval, const Ciphertext &ct0, const Ciphertext &ct1, const RelinKeys &evakey) {
+    Ciphertext mulRelinNew(const Evaluator &eval, const Ciphertext &ct0, const Ciphertext &ct1, const EvaluationKey &evakey) {
         return Ciphertext(lattigo_mulRelinNew(eval.getRawHandle(), ct0.getRawHandle(), ct1.getRawHandle(), evakey.getRawHandle()));
     }
 
-    void mulRelin(const Evaluator &eval, const Ciphertext &ct0, const Ciphertext &ct1, const RelinKeys &evakey, const Ciphertext &ctOut) {
+    void mulRelin(const Evaluator &eval, const Ciphertext &ct0, const Ciphertext &ct1, const EvaluationKey &evakey, const Ciphertext &ctOut) {
         lattigo_mulRelin(eval.getRawHandle(), ct0.getRawHandle(), ct1.getRawHandle(), evakey.getRawHandle(), ctOut.getRawHandle());
     }
 

@@ -20,6 +20,7 @@ add_custom_command(
     ${CGO_HEADER_DST}/encryptor.h
     ${CGO_HEADER_DST}/evaluator.h
     ${CGO_HEADER_DST}/keygen.h
+    ${CGO_HEADER_DST}/marshaler.h
     ${CGO_HEADER_DST}/params.h
     ${CGO_HEADER_DST}/storage.h
   COMMAND cp -r ${CMAKE_CURRENT_SOURCE_DIR}/. .
@@ -32,6 +33,7 @@ add_custom_command(
   COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/encryptor.go
   COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/evaluator.go
   COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/keygen.go
+  COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/marshaler.go
   COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/params.go
   COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/marshal/storage.go
 
@@ -41,6 +43,7 @@ add_custom_command(
   COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/encryptor.h ckks/encryptor.go
   COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/evaluator.h ckks/evaluator.go
   COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/keygen.h ckks/keygen.go
+  COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/marshaler.h ckks/marshaler.go
   COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/params.h ckks/params.go
   COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/storage.h marshal/storage.go
   COMMAND go build -buildmode=c-shared -o ${LIB_FULL_PATH}
@@ -53,6 +56,7 @@ add_custom_command(
     ckks/encryptor.go
     ckks/evaluator.go
     ckks/keygen.go
+    ckks/marshaler.go
     ckks/params.go
     marshal/storage.go
 )
@@ -64,6 +68,7 @@ add_library(lattigo_cpp_gowrapper STATIC
     ${CGO_HEADER_DST}/encryptor.h
     ${CGO_HEADER_DST}/evaluator.h
     ${CGO_HEADER_DST}/keygen.h
+    ${CGO_HEADER_DST}/marshaler.h
     ${CGO_HEADER_DST}/params.h
     ${CGO_HEADER_DST}/storage.h)
 target_include_directories(lattigo_cpp_gowrapper PUBLIC ${CMAKE_BINARY_DIR})

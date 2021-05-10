@@ -9,6 +9,7 @@ target_sources(lattigo_cpp_obj
         ${CMAKE_CURRENT_LIST_DIR}/encryptor.cpp
         ${CMAKE_CURRENT_LIST_DIR}/evaluator.cpp
         ${CMAKE_CURRENT_LIST_DIR}/keygen.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/marshaler.cpp
         ${CMAKE_CURRENT_LIST_DIR}/params.cpp
 )
 
@@ -20,6 +21,7 @@ install(
         ${CMAKE_CURRENT_LIST_DIR}/encryptor.h
         ${CMAKE_CURRENT_LIST_DIR}/evaluator.h
         ${CMAKE_CURRENT_LIST_DIR}/keygen.h
+        ${CMAKE_CURRENT_LIST_DIR}/marshaler.h
         ${CMAKE_CURRENT_LIST_DIR}/params.h
     DESTINATION
         ${LATTICPP_INCLUDES_INSTALL_DIR}/ckks

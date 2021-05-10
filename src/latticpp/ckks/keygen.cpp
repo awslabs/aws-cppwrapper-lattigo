@@ -14,11 +14,7 @@ namespace latticpp {
         return KeyPairHandle { SecretKey(kp.sk), PublicKey(kp.pk) };
     }
 
-
-    RelinKeys genRelinKeys(const KeyGenerator &keygen, const SecretKey &sk) {
-        return RelinKeys(lattigo_genRelinKey(keygen.getRawHandle(), sk.getRawHandle()));
+    EvaluationKey genRelinKey(const KeyGenerator &keygen, const SecretKey &sk) {
+        return EvaluationKey(lattigo_genRelinKey(keygen.getRawHandle(), sk.getRawHandle()));
     }
 }  // namespace latticpp
-
-
-

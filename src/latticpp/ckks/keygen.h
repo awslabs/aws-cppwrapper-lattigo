@@ -17,6 +17,5 @@ namespace latticpp {
 
     KeyPairHandle genKeyPair(const KeyGenerator &keygen);
 
-    RelinKeys genRelinKeys(const KeyGenerator &keygen, const SecretKey &sk);
-
+    EvaluationKey genRelinKey(const KeyGenerator &keygen, const SecretKey &sk);
 }  // namespace latticpp

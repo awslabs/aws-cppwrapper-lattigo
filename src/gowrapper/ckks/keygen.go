@@ -45,6 +45,11 @@ func getStoredRotationKeys(rotKeysHandle Handle4) *ckks.RotationKeys {
 	return (*ckks.RotationKeys)(ref.Ptr)
 }
 
+func getStoredSwitchingKey(switchKeyHandle Handle4) *ckks.SwitchingKey {
+	ref := marshal.CrossLangObjMap.Get(switchKeyHandle)
+	return (*ckks.SwitchingKey)(ref.Ptr)
+}
+
 //export lattigo_newKeyGenerator
 func lattigo_newKeyGenerator(paramHandle Handle5) Handle5 {
 	paramPtr := getStoredParameters(paramHandle)
