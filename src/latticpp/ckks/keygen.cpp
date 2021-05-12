@@ -17,4 +17,8 @@ namespace latticpp {
     EvaluationKey genRelinKey(const KeyGenerator &keygen, const SecretKey &sk) {
         return EvaluationKey(lattigo_genRelinKey(keygen.getRawHandle(), sk.getRawHandle()));
     }
+
+    RotationKeys genRotationKeysPow2(const KeyGenerator &keygen, const SecretKey &sk) {
+        return RotationKeys(lattigo_genRotationKeysPow2(keygen.getRawHandle(), sk.getRawHandle()));
+    }
 }  // namespace latticpp
