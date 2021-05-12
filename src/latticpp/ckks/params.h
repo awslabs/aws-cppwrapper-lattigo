@@ -5,6 +5,7 @@
 
 #include "latticpp/marshal/gohandle.h"
 #include "cgo/params.h"
+#include <vector>
 
 namespace latticpp {
 
@@ -33,6 +34,9 @@ namespace latticpp {
 
     Parameters getParams(HEParams paramId);
 
+    // logN is the log of the polynomial ring degree. Alternatively, it is log(num_slots) + 1
+    Parameters newParametersFromLogModuli(uint64_t logN, std::vector<uint8_t> logQi, uint8_t numQi, std::vector<uint8_t> logPi, uint8_t numPi);
+
     uint64_t numSlots(const Parameters &params);
 
     uint64_t logN(const Parameters &params);
@@ -45,7 +49,13 @@ namespace latticpp {
 
     double sigma(const Parameters &params);
 
-    uint64_t getQi(const Parameters &params, uint64_t i);
+    uint64_t qi(const Parameters &params, uint64_t i);
+
+    uint64_t pi(const Parameters &params, uint64_t i);
+
+    uint64_t qiCount(const Parameters &params);
+
+    uint64_t piCount(const Parameters &params);
 
     uint64_t logQLvl(const Parameters &params, uint64_t lvl);
 

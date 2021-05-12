@@ -11,7 +11,7 @@ namespace latticpp {
 
     Encoder newEncoder(const Parameters &params);
 
-    Plaintext encodeNew(const Encoder &encoder, std::vector<double> &values);
+    Plaintext encodeNew(const Encoder &encoder, const std::vector<double> &values);
 
     std::vector<double> decode(const Encoder &encoder, const Plaintext &pt, uint64_t logSlots);
 }  // namespace latticpp

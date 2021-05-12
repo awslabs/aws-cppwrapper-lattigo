@@ -14,7 +14,7 @@ namespace latticpp {
         return Encoder(lattigo_newEncoder(params.getRawHandle()));
     }
 
-    Plaintext encodeNew(const Encoder &encoder, vector<double> &values) {
+    Plaintext encodeNew(const Encoder &encoder, const vector<double> &values) {
 
         int len = values.size();
         int logLen = log2(len);

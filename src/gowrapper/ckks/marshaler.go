@@ -1,8 +1,5 @@
 package ckks
 
-/*
-typedef const char cchar;
-*/
 import "C"
 
 import (
@@ -87,19 +84,6 @@ func lattigo_marshalBinaryEvaluationKey(evakeyHandle Handle9, output *C.uchar) {
 	marshalBytes(data, output)
 }
 
-//export lattigo_marshalBinarySwitchingKey
-func lattigo_marshalBinarySwitchingKey(switchkeyHandle Handle9, output *C.uchar) {
-	var switchkey *ckks.SwitchingKey
-	switchkey = getStoredSwitchingKey(switchkeyHandle)
-
-	data, err := switchkey.MarshalBinary()
-	if err != nil {
-		panic(err)
-	}
-
-	marshalBytes(data, output)
-}
-
 //export lattigo_marshalBinaryRotationKeys
 func lattigo_marshalBinaryRotationKeys(rotkeyHandle Handle9, output *C.uchar) {
 	var rotkeys *ckks.RotationKeys
@@ -114,7 +98,7 @@ func lattigo_marshalBinaryRotationKeys(rotkeyHandle Handle9, output *C.uchar) {
 }
 
 //export lattigo_unmarshalBinaryCiphertext
-func lattigo_unmarshalBinaryCiphertext(buf *C.cchar, len uint64) Handle9 {
+func lattigo_unmarshalBinaryCiphertext(buf *C.char, len uint64) Handle9 {
 	var serializedBytes []byte
 	serializedBytes = C.GoBytes(unsafe.Pointer(buf), C.int(len))
 
@@ -127,7 +111,7 @@ func lattigo_unmarshalBinaryCiphertext(buf *C.cchar, len uint64) Handle9 {
 }
 
 //export lattigo_unmarshalBinaryParameters
-func lattigo_unmarshalBinaryParameters(buf *C.cchar, len uint64) Handle9 {
+func lattigo_unmarshalBinaryParameters(buf *C.char, len uint64) Handle9 {
 	var serializedBytes []byte
 	serializedBytes = C.GoBytes(unsafe.Pointer(buf), C.int(len))
 
@@ -140,7 +124,7 @@ func lattigo_unmarshalBinaryParameters(buf *C.cchar, len uint64) Handle9 {
 }
 
 //export lattigo_unmarshalBinarySecretKey
-func lattigo_unmarshalBinarySecretKey(buf *C.cchar, len uint64) Handle9 {
+func lattigo_unmarshalBinarySecretKey(buf *C.char, len uint64) Handle9 {
 	var serializedBytes []byte
 	serializedBytes = C.GoBytes(unsafe.Pointer(buf), C.int(len))
 
@@ -153,7 +137,7 @@ func lattigo_unmarshalBinarySecretKey(buf *C.cchar, len uint64) Handle9 {
 }
 
 //export lattigo_unmarshalBinaryPublicKey
-func lattigo_unmarshalBinaryPublicKey(buf *C.cchar, len uint64) Handle9 {
+func lattigo_unmarshalBinaryPublicKey(buf *C.char, len uint64) Handle9 {
 	var serializedBytes []byte
 	serializedBytes = C.GoBytes(unsafe.Pointer(buf), C.int(len))
 
@@ -166,7 +150,7 @@ func lattigo_unmarshalBinaryPublicKey(buf *C.cchar, len uint64) Handle9 {
 }
 
 //export lattigo_unmarshalBinaryEvaluationKey
-func lattigo_unmarshalBinaryEvaluationKey(buf *C.cchar, len uint64) Handle9 {
+func lattigo_unmarshalBinaryEvaluationKey(buf *C.char, len uint64) Handle9 {
 	var serializedBytes []byte
 	serializedBytes = C.GoBytes(unsafe.Pointer(buf), C.int(len))
 
@@ -178,21 +162,8 @@ func lattigo_unmarshalBinaryEvaluationKey(buf *C.cchar, len uint64) Handle9 {
 	return marshal.CrossLangObjMap.Add(unsafe.Pointer(evakey))
 }
 
-//export lattigo_unmarshalBinarySwitchingKey
-func lattigo_unmarshalBinarySwitchingKey(buf *C.cchar, len uint64) Handle9 {
-	var serializedBytes []byte
-	serializedBytes = C.GoBytes(unsafe.Pointer(buf), C.int(len))
-
-	switchkey := new(ckks.SwitchingKey)
-	err := switchkey.UnmarshalBinary(serializedBytes)
-	if err != nil {
-		panic(err)
-	}
-	return marshal.CrossLangObjMap.Add(unsafe.Pointer(switchkey))
-}
-
 //export lattigo_unmarshalBinaryRotationKeys
-func lattigo_unmarshalBinaryRotationKeys(buf *C.cchar, len uint64) Handle9 {
+func lattigo_unmarshalBinaryRotationKeys(buf *C.char, len uint64) Handle9 {
 	var serializedBytes []byte
 	serializedBytes = C.GoBytes(unsafe.Pointer(buf), C.int(len))
 
@@ -243,13 +214,6 @@ func lattigo_getDataLenEvaluationKey(evakeyHandle Handle9, withMetaData bool) ui
 	var evakey *ckks.EvaluationKey
 	evakey = getStoredEvalKey(evakeyHandle)
 	return evakey.GetDataLen(withMetaData)
-}
-
-//export lattigo_getDataLenSwitchingKey
-func lattigo_getDataLenSwitchingKey(switchkeyHandle Handle9, withMetaData bool) uint64 {
-	var switchkey *ckks.SwitchingKey
-	switchkey = getStoredSwitchingKey(switchkeyHandle)
-	return switchkey.GetDataLen(withMetaData)
 }
 
 //export lattigo_getDataLenRotationKeys

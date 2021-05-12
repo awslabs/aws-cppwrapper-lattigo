@@ -8,31 +8,27 @@
 
 namespace latticpp {
 
-    const std::string marshalBinaryCiphertext(Ciphertext ct);
+    std::string marshalBinaryCiphertext(Ciphertext ct);
 
-    const std::string marshalBinaryParameters(Parameters params);
+    std::string marshalBinaryParameters(Parameters params);
 
-    const std::string marshalBinarySecretKey(SecretKey sk);
+    std::string marshalBinarySecretKey(SecretKey sk);
 
-    const std::string marshalBinaryPublicKey(PublicKey pk);
+    std::string marshalBinaryPublicKey(PublicKey pk);
 
-    const std::string marshalBinaryEvaluationKey(EvaluationKey evaKey);
+    std::string marshalBinaryEvaluationKey(EvaluationKey evaKey);
 
-    const std::string marshalBinarySwitchingKey(SwitchingKey switchKey);
+    std::string marshalBinaryRotationKeys(RotationKeys rotKeys);
 
-    const std::string marshalBinaryRotationKeys(RotationKeys rotKeys);
+    Ciphertext unmarshalBinaryCiphertext(std::istream &stream);
 
-    Ciphertext unmarshalBinaryCiphertext(std::string buf);
+    Parameters unmarshalBinaryParameters(std::istream &stream);
 
-    Parameters unmarshalBinaryParameters(std::string buf);
+    SecretKey unmarshalBinarySecretKey(std::istream &stream);
 
-    SecretKey unmarshalBinarySecretKey(std::string buf);
+    PublicKey unmarshalBinaryPublicKey(std::istream &stream);
 
-    PublicKey unmarshalBinaryPublicKey(std::string buf);
+    EvaluationKey unmarshalBinaryEvaluationKey(std::istream &stream);
 
-    EvaluationKey unmarshalBinaryEvaluationKey(std::string buf);
-
-    SwitchingKey unmarshalBinarySwitchingKey(std::string buf);
-
-    RotationKeys unmarshalBinaryRotationKeys(std::string buf);
+    RotationKeys unmarshalBinaryRotationKeys(std::istream &stream);
 }  // namespace latticpp

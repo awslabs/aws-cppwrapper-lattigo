@@ -25,8 +25,7 @@ namespace latticpp {
         PublicKey,
         Plaintext,
         Ciphertext,
-        RotationKeys,
-        SwitchingKey
+        RotationKeys
     };
 
     template<GoType t>
@@ -103,7 +102,6 @@ namespace latticpp {
     using Plaintext = GoHandle<GoType::Plaintext>;
     using Ciphertext = GoHandle<GoType::Ciphertext>;
     using RotationKeys = GoHandle<GoType::RotationKeys>;
-    using SwitchingKey = GoHandle<GoType::SwitchingKey>;
 
 }  // namespace latticpp
 #endif

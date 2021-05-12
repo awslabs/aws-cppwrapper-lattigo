@@ -1,5 +1,8 @@
 package ckks
 
+/*
+typedef const double constDouble;
+*/
 import "C"
 
 import (
@@ -28,7 +31,7 @@ func lattigo_newEncoder(paramHandle Handle2) Handle2 {
 // Take the encoder handle and an array of _real_ numbers of length 2^logLen (checked in C++-land)
 // Converts these doubles to complex numbers where the imaginary component is 0, then encode with Lattigo
 //export lattigo_encodeNew
-func lattigo_encodeNew(encoderHandle Handle2, realValues *C.double, logLen uint64) Handle2 {
+func lattigo_encodeNew(encoderHandle Handle2, realValues *C.constDouble, logLen uint64) Handle2 {
 	encoderPtr := getStoredEncoder(encoderHandle)
 	complexValues := make([]complex128, uint64(math.Pow(2, float64(logLen))))
 	size := unsafe.Sizeof(float64(0))
