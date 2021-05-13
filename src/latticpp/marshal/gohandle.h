@@ -63,7 +63,7 @@ namespace latticpp {
 
         // move contructor: the moved-from object *will still be destructed*, so increment the ref counter
         // https://stackoverflow.com/a/20589077/925978
-        GoHandle (const GoHandle&& other) {
+        GoHandle (GoHandle&& other) noexcept {
             handle = other.handle;
             incref(handle);
         }
@@ -71,7 +71,7 @@ namespace latticpp {
         // move assignment operator: we are overwriting the contents of this handle,
         // so decrement references to the current handle, and increment references to the moved-from handle
         // (see move constructor for details)
-        GoHandle& operator= (const GoHandle&& other) {
+        GoHandle& operator= (GoHandle&& other) noexcept {
             if (handle == other.handle) {
                 return *this;
             }

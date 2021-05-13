@@ -128,7 +128,7 @@ Ciphertext evaluatePolyFromPowerBasis(double targetScale, ChebyshevInterpolation
         return res;
     }
 
-    double currentQi = (double)getQi(params, level(cMap.at(cheby.degree())));
+    double currentQi = (double)qi(params, level(cMap.at(cheby.degree())));
 
     double ctScale = targetScale * currentQi;
 
@@ -225,7 +225,7 @@ Ciphertext recurseCheby(double targetScale, int logSplit, int logDegree, Chebysh
         ctLevel++;
     }
 
-    double currentQi = (double)getQi(params, ctLevel);
+    double currentQi = (double)qi(params, ctLevel);
 
     Ciphertext res = recurseCheby(targetScale*currentQi/scale(cMap.at(nextPower)), logSplit, logDegree, coeffsq, cMap, eval, evakey, params);
 
