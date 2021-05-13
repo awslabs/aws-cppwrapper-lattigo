@@ -35,7 +35,7 @@ namespace latticpp {
     Parameters getParams(HEParams paramId);
 
     // logN is the log of the polynomial ring degree. Alternatively, it is log(num_slots) + 1
-    Parameters newParametersFromLogModuli(uint64_t logN, std::vector<uint8_t> logQi, uint8_t numQi, std::vector<uint8_t> logPi, uint8_t numPi);
+    Parameters newParametersFromLogModuli(uint64_t logN, std::vector<uint8_t> logQi, uint8_t numQi, std::vector<uint8_t> logPi, uint8_t numPi, uint8_t logScale);
 
     uint64_t numSlots(const Parameters &params);
 

@@ -24,8 +24,8 @@ func lattigo_getParams(paramEnum uint8) Handle6 {
 }
 
 //export lattigo_newParametersFromLogModuli
-func lattigo_newParametersFromLogModuli(logN uint64, logQi *C.uchar, numQi uint8, logPi *C.uchar, numPi uint8) Handle6 {
-	size := unsafe.Sizeof(float64(0))
+func lattigo_newParametersFromLogModuli(logN uint64, logQi *C.uchar, numQi uint8, logPi *C.uchar, numPi uint8, logScale uint8) Handle6 {
+	size := unsafe.Sizeof(uint8(0))
 
 	LogQi := make([]uint64, numQi)
 	qiPtr := uintptr(unsafe.Pointer(logQi))
@@ -48,6 +48,8 @@ func lattigo_newParametersFromLogModuli(logN uint64, logQi *C.uchar, numQi uint8
 	if err != nil {
 		panic(err)
 	}
+	params.SetLogSlots(logN - 1)
+	params.SetScale(float64(uint64(1) << uint64(logScale)))
 	return marshal.CrossLangObjMap.Add(unsafe.Pointer(params))
 }
 
@@ -55,42 +57,42 @@ func lattigo_newParametersFromLogModuli(logN uint64, logQi *C.uchar, numQi uint8
 func lattigo_numSlots(paramHandle Handle6) uint64 {
 	var params *ckks.Parameters
 	params = getStoredParameters(paramHandle)
-	return (*params).Slots()
+	return params.Slots()
 }
 
 //export lattigo_logN
 func lattigo_logN(paramHandle Handle6) uint64 {
 	var params *ckks.Parameters
 	params = getStoredParameters(paramHandle)
-	return (*params).LogN()
+	return params.LogN()
 }
 
 //export lattigo_logQP
 func lattigo_logQP(paramHandle Handle6) uint64 {
 	var params *ckks.Parameters
 	params = getStoredParameters(paramHandle)
-	return (*params).LogQP()
+	return params.LogQP()
 }
 
 //export lattigo_maxLevel
 func lattigo_maxLevel(paramHandle Handle6) uint64 {
 	var params *ckks.Parameters
 	params = getStoredParameters(paramHandle)
-	return (*params).MaxLevel()
+	return params.MaxLevel()
 }
 
 //export lattigo_paramsScale
 func lattigo_paramsScale(paramHandle Handle6) float64 {
 	var params *ckks.Parameters
 	params = getStoredParameters(paramHandle)
-	return (*params).Scale()
+	return params.Scale()
 }
 
 //export lattigo_sigma
 func lattigo_sigma(paramHandle Handle6) float64 {
 	var params *ckks.Parameters
 	params = getStoredParameters(paramHandle)
-	return (*params).Sigma()
+	return params.Sigma()
 }
 
 //export lattigo_getQi
@@ -125,12 +127,12 @@ func lattigo_piCount(paramHandle Handle6) uint64 {
 func lattigo_logQLvl(paramHandle Handle6, i uint64) uint64 {
 	var params *ckks.Parameters
 	params = getStoredParameters(paramHandle)
-	return (*params).LogQLvl(i)
+	return params.LogQLvl(i)
 }
 
 //export lattigo_logSlots
 func lattigo_logSlots(paramHandle Handle6) uint64 {
 	var params *ckks.Parameters
 	params = getStoredParameters(paramHandle)
-	return (*params).LogSlots()
+	return params.LogSlots()
 }
