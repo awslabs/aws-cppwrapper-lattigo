@@ -18,9 +18,14 @@ import (
 
 type Handle = uint64
 
-var (
-	CrossLangObjMap *xlangRefMap
-)
+var CrossLangObjMap *xlangRefMap = &xlangRefMap{
+	lock: new(sync.RWMutex),
+	m:    make(map[Handle]*xlangRef),
+	// in C++, the default constructor uses a handle value of 0,
+	// which should never point to a real object for safety.
+	// Start the counter here at 1.
+	idCtr: 1,
+}
 
 type xlangRefMap struct {
 	lock  *sync.RWMutex
@@ -31,18 +36,6 @@ type xlangRefMap struct {
 type xlangRef struct {
 	Ptr  unsafe.Pointer
 	refs uint32
-}
-
-//export initStorage
-func initStorage() {
-	CrossLangObjMap = &xlangRefMap{
-		lock: new(sync.RWMutex),
-		m:    make(map[Handle]*xlangRef),
-		// in C++, the default constructor uses a handle value of 0,
-		// which should never point to a real object for safety.
-		// Start the counter here at 1.
-		idCtr: 1,
-	}
 }
 
 func (m *xlangRefMap) Len() int {

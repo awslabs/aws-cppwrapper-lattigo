@@ -14,6 +14,10 @@ namespace latticpp {
     }
 
     Ciphertext copyNew(const Ciphertext &ct) {
+        // a handle of 0 is an invalid Go reference (my equivalent of a nil/null pointer)
+        if (ct.getRawHandle() == 0) {
+            return ct;
+        }
         return lattigo_copyNew(ct.getRawHandle());
     }
 

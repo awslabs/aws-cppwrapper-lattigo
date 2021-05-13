@@ -282,8 +282,6 @@ double sigmoid(double x) {
 }
 
 int main() {
-    // initialize Lattigo-cpp
-    initStorage();
     // initialize random generator
     srand(time(nullptr));
 

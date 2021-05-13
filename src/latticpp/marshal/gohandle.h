@@ -39,13 +39,19 @@ namespace latticpp {
 
         // destructor: decrement the references to this handle
         ~GoHandle() {
-            decref(handle);
+            // a handle of 0 is an invalid Go reference (my equivalent of a nil/null pointer)
+            if (handle != 0) {
+                decref(handle);
+            }
         }
 
         // copy constructor: increment the references to this handle
         GoHandle(const GoHandle& other) {
             handle = other.handle;
-            incref(handle);
+            // a handle of 0 is an invalid Go reference (my equivalent of a nil/null pointer)
+            if (handle != 0) {
+                incref(handle);
+            }
         }
 
         // copy assignment operator: we are overwriting the contents of this handle,
@@ -55,9 +61,14 @@ namespace latticpp {
             if (handle == other.handle) {
                 return *this;
             }
-            decref(handle);
+            // a handle of 0 is an invalid Go reference (my equivalent of a nil/null pointer)
+            if (handle != 0) {
+                decref(handle);
+            }
             handle = other.handle;
-            incref(handle);
+            if (handle != 0) {
+                incref(handle);
+            }
             return *this;
         }
 
@@ -65,7 +76,10 @@ namespace latticpp {
         // https://stackoverflow.com/a/20589077/925978
         GoHandle (GoHandle&& other) noexcept {
             handle = other.handle;
-            incref(handle);
+            // a handle of 0 is an invalid Go reference (my equivalent of a nil/null pointer)
+            if (handle != 0) {
+                incref(handle);
+            }
         }
 
         // move assignment operator: we are overwriting the contents of this handle,
@@ -75,9 +89,14 @@ namespace latticpp {
             if (handle == other.handle) {
                 return *this;
             }
-            decref(handle);
+            // a handle of 0 is an invalid Go reference (my equivalent of a nil/null pointer)
+            if (handle != 0) {
+                decref(handle);
+            }
             handle = other.handle;
-            incref(handle);
+            if (handle != 0) {
+                incref(handle);
+            }
             return *this;
         }
 
