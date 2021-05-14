@@ -315,7 +315,7 @@ int main() {
     cout << "Values: " << values[0] << " " << values[1] << " " << values[2] << " " << values[3] << endl;
 
     // Plaintext creation and encoding process
-    Plaintext plaintext = encodeNew(encoder, values);
+    Plaintext plaintext = encodeNTTAtLvlNew(params, encoder, values, maxLevel(params), scale(params));
 
     // Encryption process
     Ciphertext ciphertext = encryptNew(encryptor, plaintext);
