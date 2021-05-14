@@ -1,5 +1,8 @@
 package ckks
 
+/*
+#include <stdint.h>
+*/
 import "C"
 
 import (
@@ -41,6 +44,33 @@ func lattigo_rotate(evalHandle Handle4, ctInHandle Handle4, k uint64, rotKeysHan
 	ctOut = getStoredCiphertext(ctOutHandle)
 
 	(*eval).Rotate(ctIn, k, rotKeys, ctOut)
+}
+
+//export lattigo_rotateHoisted
+func lattigo_rotateHoisted(evalHandle Handle4, ctInHandle Handle4, ks *C.uint64_t, ksLen uint64, rotKeysHandle Handle4, outHandles *C.uint64_t) {
+	var eval *ckks.Evaluator
+	eval = getStoredEvaluator(evalHandle)
+
+	var ctIn *ckks.Ciphertext
+	ctIn = getStoredCiphertext(ctInHandle)
+
+	var rotKeys *ckks.RotationKeys
+	rotKeys = getStoredRotationKeys(rotKeysHandle)
+
+	rotations := make([]uint64, ksLen)
+	size := unsafe.Sizeof(uint64(0))
+	basePtrIn := uintptr(unsafe.Pointer(ks))
+	for i := range rotations {
+		rotations[i] = *(*uint64)(unsafe.Pointer(basePtrIn + size*uintptr(i)))
+	}
+
+	var rotatedCts map[uint64]*ckks.Ciphertext
+	rotatedCts = (*eval).RotateHoisted(ctIn, rotations, rotKeys)
+
+	basePtrOut := uintptr(unsafe.Pointer(outHandles))
+	for i := range rotations {
+		*(*uint64)(unsafe.Pointer(basePtrOut + size*uintptr(i))) = marshal.CrossLangObjMap.Add(unsafe.Pointer(rotatedCts[rotations[i]]))
+	}
 }
 
 //export lattigo_multByConst

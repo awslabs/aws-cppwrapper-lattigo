@@ -5,12 +5,15 @@
 
 #include "latticpp/marshal/gohandle.h"
 #include "cgo/evaluator.h"
+#include <vector>
 
 namespace latticpp {
 
     Evaluator newEvaluator(const Parameters &params);
 
     void rotate(const Evaluator &eval, const Ciphertext &ctIn, uint64_t k, const RotationKeys &rotKeys, Ciphertext &ctOut);
+
+    std::vector<Ciphertext> rotateHoisted(const Evaluator &eval, const Ciphertext &ctIn, std::vector<uint64_t> ks, const RotationKeys &rotKeys);
 
     void multByConst(const Evaluator &eval, const Ciphertext &ctIn, double constant, Ciphertext &ctOut);
 

@@ -3,6 +3,8 @@
 
 #include "evaluator.h"
 
+using namespace std;
+
 namespace latticpp {
 
     Evaluator newEvaluator(const Parameters &params) {
@@ -11,6 +13,16 @@ namespace latticpp {
 
     void rotate(const Evaluator &eval, const Ciphertext &ctIn, uint64_t k, const RotationKeys &rotKeys, Ciphertext &ctOut) {
         lattigo_rotate(eval.getRawHandle(), ctIn.getRawHandle(), k, rotKeys.getRawHandle(), ctOut.getRawHandle());
+    }
+
+    vector<Ciphertext> rotateHoisted(const Evaluator &eval, const Ciphertext &ctIn, vector<uint64_t> ks, const RotationKeys &rotKeys) {
+        vector<uint64_t> outputHandles(ks.size());
+        lattigo_rotateHoisted(eval.getRawHandle(), ctIn.getRawHandle(), ks.data(), ks.size(), rotKeys.getRawHandle(), outputHandles.data());
+        vector<Ciphertext> outputCts(ks.size());
+        for (int i = 0; i < ks.size(); i++) {
+            outputCts[i] = Ciphertext(outputHandles[i]);
+        }
+        return outputCts;
     }
 
     void multByConst(const Evaluator &eval, const Ciphertext &ctIn, double constant, Ciphertext &ctOut) {
