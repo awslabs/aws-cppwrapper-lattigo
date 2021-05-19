@@ -13,7 +13,7 @@
 
 add_custom_command(
   OUTPUT
-    ${LIB_FULL_PATH}
+    ${LATTIGO_LIB_FULL_PATH}
     ${CGO_HEADER_DST}/ciphertext.h
     ${CGO_HEADER_DST}/decryptor.h
     ${CGO_HEADER_DST}/encoder.h
@@ -46,7 +46,7 @@ add_custom_command(
   COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/marshaler.h ckks/marshaler.go
   COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/params.h ckks/params.go
   COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/storage.h marshal/storage.go
-  COMMAND go build -buildmode=c-shared -o ${LIB_FULL_PATH}
+  COMMAND go build -buildmode=c-shared -o ${LATTIGO_LIB_FULL_PATH}
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
     latticppMain.go
@@ -62,7 +62,7 @@ add_custom_command(
     go.mod
 )
 
-add_library(lattigo_cpp_gowrapper STATIC
+add_library(latticpp_gowrapper STATIC
     ${CGO_HEADER_DST}/ciphertext.h
     ${CGO_HEADER_DST}/decryptor.h
     ${CGO_HEADER_DST}/encoder.h
@@ -72,5 +72,5 @@ add_library(lattigo_cpp_gowrapper STATIC
     ${CGO_HEADER_DST}/marshaler.h
     ${CGO_HEADER_DST}/params.h
     ${CGO_HEADER_DST}/storage.h)
-target_include_directories(lattigo_cpp_gowrapper PUBLIC ${CMAKE_BINARY_DIR})
-set_target_properties(lattigo_cpp_gowrapper PROPERTIES LINKER_LANGUAGE CXX)
+target_include_directories(latticpp_gowrapper PUBLIC ${CMAKE_BINARY_DIR})
+set_target_properties(latticpp_gowrapper PROPERTIES LINKER_LANGUAGE CXX)
