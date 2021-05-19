@@ -59,6 +59,7 @@ add_custom_command(
     ckks/marshaler.go
     ckks/params.go
     marshal/storage.go
+    go.mod
 )
 
 add_library(lattigo_cpp_gowrapper STATIC

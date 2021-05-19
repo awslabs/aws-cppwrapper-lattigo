@@ -74,6 +74,34 @@ namespace latticpp {
 
         // move contructor: the moved-from object *will still be destructed*, so increment the ref counter
         // https://stackoverflow.com/a/20589077/925978
+        GoHandle (const GoHandle&& other) noexcept {
+            handle = other.handle;
+            // a handle of 0 is an invalid Go reference (my equivalent of a nil/null pointer)
+            if (handle != 0) {
+                incref(handle);
+            }
+        }
+
+        // move assignment operator: we are overwriting the contents of this handle,
+        // so decrement references to the current handle, and increment references to the moved-from handle
+        // (see move constructor for details)
+        GoHandle& operator= (const GoHandle&& other) noexcept {
+            if (handle == other.handle) {
+                return *this;
+            }
+            // a handle of 0 is an invalid Go reference (my equivalent of a nil/null pointer)
+            if (handle != 0) {
+                decref(handle);
+            }
+            handle = other.handle;
+            if (handle != 0) {
+                incref(handle);
+            }
+            return *this;
+        }
+
+        // move contructor: the moved-from object *will still be destructed*, so increment the ref counter
+        // https://stackoverflow.com/a/20589077/925978
         GoHandle (GoHandle&& other) noexcept {
             handle = other.handle;
             // a handle of 0 is an invalid Go reference (my equivalent of a nil/null pointer)
@@ -98,6 +126,14 @@ namespace latticpp {
                 incref(handle);
             }
             return *this;
+        }
+
+        bool operator == (const GoHandle& other) const {
+           return handle == other.handle;
+        }
+
+        bool operator != (const GoHandle& other) const {
+           return handle != other.handle;
         }
 
         uint64_t getRawHandle() const {
