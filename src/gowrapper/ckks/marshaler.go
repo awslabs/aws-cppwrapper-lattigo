@@ -3,8 +3,10 @@ package ckks
 import "C"
 
 import (
+	"errors"
 	"github.com/ldsec/lattigo/v2/ckks"
 	"lattigo-cpp/marshal"
+	"reflect"
 	"unsafe"
 )
 
@@ -97,10 +99,51 @@ func lattigo_marshalBinaryRotationKeys(rotkeyHandle Handle9, output *C.uchar) {
 	marshalBytes(data, output)
 }
 
+// We need a way to convert C-allocated memory into a Go Slice.
+// One option is to use C.GoBytes. This is safe, but there are
+// two problems. First, it copies the data, which is not great
+// when we're talking about serialized keys which are 10s of GBs.
+// More importantly, it takes the length of the C memory as a C.int,
+// which is a signed 32-bit type on my 64-bit system. However,
+// rotation keys handily exceed 2^31 bytes, resulting in a runtime
+// error when I try to use the memory allocated this way.
+//
+// Instead, we can create an unallocated slice, and then use
+// the reflection package to make it point to the C-allocated memory.
+// This gets around both problems with C.GoBytes: it does not copy the
+// C memory, and the length of the slize is a Go `int`, which is
+// 32 bits on a 32-bit system and 64-bits on a 64-bit system.
+// The caveat is that it's not very "safe". First, Go could modify
+// the C memory, but we ensure this function is only used to create
+// slices used for read-only functions. Second, the Go garbage collector
+// could GC the data. But that can't happen since the memory was
+// allocated by C, and therefore is unknown to the garbage collector.
+// Thus, this seems like a safe solution. See
+// https://stackoverflow.com/questions/6878590/the-maximum-value-for-an-int-type-in-go
+func unsafeCPtrToSlice(buf *C.char, len uint64) []byte {
+	// Check if the uint64-length of the buffer is larger than the system `int` type.
+	// Technically, this check assumes that `len` is < 2^63. However, this is a
+	// reasonable assumption since 2^63 bytes is over 9000 PB, which is large even
+	// by HE-key standards.
+	if int64(len) != int64(int(len)) {
+		panic(errors.New("Unable to make a slice of the requested size"))
+	}
+	// declare an unallocated slice
+	var serializedBytes []byte
+	// get the SliceHeader of the new slice using the `reflect` API
+	// Modifying `hdr` implicitly modifies `serializedBytes` via reflection.
+	hdr := (*reflect.SliceHeader)(unsafe.Pointer(&serializedBytes))
+	// set the data, length, and capacity of the slice
+	hdr.Data = uintptr(unsafe.Pointer(buf))
+	hdr.Cap = int(len)
+	hdr.Len = int(len)
+	// return the "allocated" slice
+	return serializedBytes
+}
+
 //export lattigo_unmarshalBinaryCiphertext
 func lattigo_unmarshalBinaryCiphertext(buf *C.char, len uint64) Handle9 {
-	var serializedBytes []byte
-	serializedBytes = C.GoBytes(unsafe.Pointer(buf), C.int(len))
+	var serializedBytes []byte = unsafeCPtrToSlice(buf, len)
 
 	ct := new(ckks.Ciphertext)
 	err := ct.UnmarshalBinary(serializedBytes)
@@ -112,8 +155,7 @@ func lattigo_unmarshalBinaryCiphertext(buf *C.char, len uint64) Handle9 {
 
 //export lattigo_unmarshalBinaryParameters
 func lattigo_unmarshalBinaryParameters(buf *C.char, len uint64) Handle9 {
-	var serializedBytes []byte
-	serializedBytes = C.GoBytes(unsafe.Pointer(buf), C.int(len))
+	var serializedBytes []byte = unsafeCPtrToSlice(buf, len)
 
 	params := new(ckks.Parameters)
 	err := params.UnmarshalBinary(serializedBytes)
@@ -125,8 +167,7 @@ func lattigo_unmarshalBinaryParameters(buf *C.char, len uint64) Handle9 {
 
 //export lattigo_unmarshalBinarySecretKey
 func lattigo_unmarshalBinarySecretKey(buf *C.char, len uint64) Handle9 {
-	var serializedBytes []byte
-	serializedBytes = C.GoBytes(unsafe.Pointer(buf), C.int(len))
+	var serializedBytes []byte = unsafeCPtrToSlice(buf, len)
 
 	sk := new(ckks.SecretKey)
 	err := sk.UnmarshalBinary(serializedBytes)
@@ -138,8 +179,7 @@ func lattigo_unmarshalBinarySecretKey(buf *C.char, len uint64) Handle9 {
 
 //export lattigo_unmarshalBinaryPublicKey
 func lattigo_unmarshalBinaryPublicKey(buf *C.char, len uint64) Handle9 {
-	var serializedBytes []byte
-	serializedBytes = C.GoBytes(unsafe.Pointer(buf), C.int(len))
+	var serializedBytes []byte = unsafeCPtrToSlice(buf, len)
 
 	pk := new(ckks.PublicKey)
 	err := pk.UnmarshalBinary(serializedBytes)
@@ -151,8 +191,7 @@ func lattigo_unmarshalBinaryPublicKey(buf *C.char, len uint64) Handle9 {
 
 //export lattigo_unmarshalBinaryEvaluationKey
 func lattigo_unmarshalBinaryEvaluationKey(buf *C.char, len uint64) Handle9 {
-	var serializedBytes []byte
-	serializedBytes = C.GoBytes(unsafe.Pointer(buf), C.int(len))
+	var serializedBytes []byte = unsafeCPtrToSlice(buf, len)
 
 	evakey := new(ckks.EvaluationKey)
 	err := evakey.UnmarshalBinary(serializedBytes)
@@ -164,8 +203,7 @@ func lattigo_unmarshalBinaryEvaluationKey(buf *C.char, len uint64) Handle9 {
 
 //export lattigo_unmarshalBinaryRotationKeys
 func lattigo_unmarshalBinaryRotationKeys(buf *C.char, len uint64) Handle9 {
-	var serializedBytes []byte
-	serializedBytes = C.GoBytes(unsafe.Pointer(buf), C.int(len))
+	var serializedBytes []byte = unsafeCPtrToSlice(buf, len)
 
 	rotkeys := new(ckks.RotationKeys)
 	err := rotkeys.UnmarshalBinary(serializedBytes)
