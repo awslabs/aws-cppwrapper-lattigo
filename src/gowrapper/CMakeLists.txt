@@ -6,7 +6,7 @@
 #
 # The `go tool` command also doesn't like creating directories, so we have to create them externally
 #
-# Buidling a static library (-buildmode=c-archive) results in threading linker errors.
+# Building a static library (-buildmode=c-archive) results in threading linker errors.
 #
 # I can't figure out how to build the go headers and library in-place without creating temporary files in the source directory.
 # As a work-around, I copy the source files into the build directory, and then build them there.
