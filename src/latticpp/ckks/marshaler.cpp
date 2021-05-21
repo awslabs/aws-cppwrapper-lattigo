@@ -2,60 +2,38 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "marshaler.h"
-#include <vector>
 #include <sstream>
 
 using namespace std;
 
 namespace latticpp {
-    string toString(vector<uint8_t> v) {
-        ostringstream out;
-        for (const uint8_t &c : v) {
-            out << c;
-        }
-        return out.str();
+
+    void writeToStream(void* ostreamPtr, void* data, uint64_t len) {
+        (*((ostream*)ostreamPtr)).write((const char*)data, len);
     }
 
-    string marshalBinaryCiphertext(Ciphertext ct) {
-        uint64_t serializedLength = lattigo_getDataLenCiphertext(ct.getRawHandle(), true);
-        vector<uint8_t> buf(serializedLength);
-        lattigo_marshalBinaryCiphertext(ct.getRawHandle(), buf.data());
-        return toString(buf);
+    void marshalBinaryCiphertext(Ciphertext ct, std::ostream &stream) {
+        lattigo_marshalBinaryCiphertext(ct.getRawHandle(), &writeToStream, (void*)(&stream));
     }
 
-    string marshalBinaryParameters(Parameters params) {
-        uint64_t serializedLength = lattigo_getDataLenParameters(params.getRawHandle(), true);
-        vector<uint8_t> buf(serializedLength);
-        lattigo_marshalBinaryParameters(params.getRawHandle(), buf.data());
-        return toString(buf);
+    void marshalBinaryParameters(Parameters params, std::ostream &stream) {
+        lattigo_marshalBinaryParameters(params.getRawHandle(), &writeToStream, (void*)(&stream));
     }
 
-    string marshalBinarySecretKey(SecretKey sk) {
-        uint64_t serializedLength = lattigo_getDataLenSecretKey(sk.getRawHandle(), true);
-        vector<uint8_t> buf(serializedLength);
-        lattigo_marshalBinarySecretKey(sk.getRawHandle(), buf.data());
-        return toString(buf);
+    void marshalBinarySecretKey(SecretKey sk, std::ostream &stream) {
+        lattigo_marshalBinarySecretKey(sk.getRawHandle(), &writeToStream, (void*)(&stream));
     }
 
-    string marshalBinaryPublicKey(PublicKey pk) {
-        uint64_t serializedLength = lattigo_getDataLenPublicKey(pk.getRawHandle(), true);
-        vector<uint8_t> buf(serializedLength);
-        lattigo_marshalBinaryPublicKey(pk.getRawHandle(), buf.data());
-        return toString(buf);
+    void marshalBinaryPublicKey(PublicKey pk, std::ostream &stream) {
+        lattigo_marshalBinaryPublicKey(pk.getRawHandle(), &writeToStream, (void*)(&stream));
     }
 
-    string marshalBinaryEvaluationKey(EvaluationKey evaKey) {
-        uint64_t serializedLength = lattigo_getDataLenEvaluationKey(evaKey.getRawHandle(), true);
-        vector<uint8_t> buf(serializedLength);
-        lattigo_marshalBinaryEvaluationKey(evaKey.getRawHandle(), buf.data());
-        return toString(buf);
+    void marshalBinaryEvaluationKey(EvaluationKey evaKey, std::ostream &stream) {
+        lattigo_marshalBinaryEvaluationKey(evaKey.getRawHandle(), &writeToStream, (void*)(&stream));
     }
 
-    string marshalBinaryRotationKeys(RotationKeys rotKeys) {
-        uint64_t serializedLength = lattigo_getDataLenRotationKeys(rotKeys.getRawHandle(), true);
-        vector<uint8_t> buf(serializedLength);
-        lattigo_marshalBinaryRotationKeys(rotKeys.getRawHandle(), buf.data());
-        return toString(buf);
+    void marshalBinaryRotationKeys(RotationKeys rotKeys, std::ostream &stream) {
+        lattigo_marshalBinaryRotationKeys(rotKeys.getRawHandle(), &writeToStream, (void*)(&stream));
     }
 
     Ciphertext unmarshalBinaryCiphertext(istream &stream) {

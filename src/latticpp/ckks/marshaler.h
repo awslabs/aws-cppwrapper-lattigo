@@ -8,17 +8,17 @@
 
 namespace latticpp {
 
-    std::string marshalBinaryCiphertext(Ciphertext ct);
+    void marshalBinaryCiphertext(Ciphertext ct, std::ostream &stream);
 
-    std::string marshalBinaryParameters(Parameters params);
+    void marshalBinaryParameters(Parameters params, std::ostream &stream);
 
-    std::string marshalBinarySecretKey(SecretKey sk);
+    void marshalBinarySecretKey(SecretKey sk, std::ostream &stream);
 
-    std::string marshalBinaryPublicKey(PublicKey pk);
+    void marshalBinaryPublicKey(PublicKey pk, std::ostream &stream);
 
-    std::string marshalBinaryEvaluationKey(EvaluationKey evaKey);
+    void marshalBinaryEvaluationKey(EvaluationKey evaKey, std::ostream &stream);
 
-    std::string marshalBinaryRotationKeys(RotationKeys rotKeys);
+    void marshalBinaryRotationKeys(RotationKeys rotKeys, std::ostream &stream);
 
     Ciphertext unmarshalBinaryCiphertext(std::istream &stream);
 

@@ -1,5 +1,15 @@
 package ckks
 
+/*
+#include <stdint.h>
+typedef void (*streamWriter) (void*, void*, uint64_t);
+
+// https://golang.org/cmd/cgo/#hdr-Go_references_to_C
+// https://nelkinda.com/blog/suppress-warnings-in-gcc-and-clang/
+__attribute__((unused)) static void callStreamWriter(streamWriter f, void* stream, void* data, uint64_t len) {
+  f(stream, data, len);
+}
+*/
 import "C"
 
 import (
@@ -13,16 +23,8 @@ import (
 // https://github.com/golang/go/issues/35715#issuecomment-791039692
 type Handle9 = uint64
 
-func marshalBytes(input []byte, output *C.uchar) {
-	size := unsafe.Sizeof(uint8(0))
-	basePtr := uintptr(unsafe.Pointer(output))
-	for i := range input {
-		*(*uint8)(unsafe.Pointer(basePtr + size*uintptr(i))) = input[i]
-	}
-}
-
 //export lattigo_marshalBinaryCiphertext
-func lattigo_marshalBinaryCiphertext(ctHandle Handle9, output *C.uchar) {
+func lattigo_marshalBinaryCiphertext(ctHandle Handle9, callback C.streamWriter, stream *C.void) {
 	var ct *ckks.Ciphertext
 	ct = getStoredCiphertext(ctHandle)
 
@@ -31,11 +33,11 @@ func lattigo_marshalBinaryCiphertext(ctHandle Handle9, output *C.uchar) {
 		panic(err)
 	}
 
-	marshalBytes(data, output)
+	C.callStreamWriter(callback, unsafe.Pointer(stream), unsafe.Pointer(&data[0]), C.uint64_t(len(data)))
 }
 
 //export lattigo_marshalBinaryParameters
-func lattigo_marshalBinaryParameters(paramsHandle Handle9, output *C.uchar) {
+func lattigo_marshalBinaryParameters(paramsHandle Handle9, callback C.streamWriter, stream *C.void) {
 	var params *ckks.Parameters
 	params = getStoredParameters(paramsHandle)
 
@@ -44,11 +46,11 @@ func lattigo_marshalBinaryParameters(paramsHandle Handle9, output *C.uchar) {
 		panic(err)
 	}
 
-	marshalBytes(data, output)
+	C.callStreamWriter(callback, unsafe.Pointer(stream), unsafe.Pointer(&data[0]), C.uint64_t(len(data)))
 }
 
 //export lattigo_marshalBinarySecretKey
-func lattigo_marshalBinarySecretKey(skHandle Handle9, output *C.uchar) {
+func lattigo_marshalBinarySecretKey(skHandle Handle9, callback C.streamWriter, stream *C.void) {
 	var sk *ckks.SecretKey
 	sk = getStoredSecretKey(skHandle)
 
@@ -57,11 +59,11 @@ func lattigo_marshalBinarySecretKey(skHandle Handle9, output *C.uchar) {
 		panic(err)
 	}
 
-	marshalBytes(data, output)
+	C.callStreamWriter(callback, unsafe.Pointer(stream), unsafe.Pointer(&data[0]), C.uint64_t(len(data)))
 }
 
 //export lattigo_marshalBinaryPublicKey
-func lattigo_marshalBinaryPublicKey(pkHandle Handle9, output *C.uchar) {
+func lattigo_marshalBinaryPublicKey(pkHandle Handle9, callback C.streamWriter, stream *C.void) {
 	var pk *ckks.PublicKey
 	pk = getStoredPublicKey(pkHandle)
 
@@ -70,11 +72,11 @@ func lattigo_marshalBinaryPublicKey(pkHandle Handle9, output *C.uchar) {
 		panic(err)
 	}
 
-	marshalBytes(data, output)
+	C.callStreamWriter(callback, unsafe.Pointer(stream), unsafe.Pointer(&data[0]), C.uint64_t(len(data)))
 }
 
 //export lattigo_marshalBinaryEvaluationKey
-func lattigo_marshalBinaryEvaluationKey(evakeyHandle Handle9, output *C.uchar) {
+func lattigo_marshalBinaryEvaluationKey(evakeyHandle Handle9, callback C.streamWriter, stream *C.void) {
 	var evakey *ckks.EvaluationKey
 	evakey = getStoredEvalKey(evakeyHandle)
 
@@ -83,11 +85,11 @@ func lattigo_marshalBinaryEvaluationKey(evakeyHandle Handle9, output *C.uchar) {
 		panic(err)
 	}
 
-	marshalBytes(data, output)
+	C.callStreamWriter(callback, unsafe.Pointer(stream), unsafe.Pointer(&data[0]), C.uint64_t(len(data)))
 }
 
 //export lattigo_marshalBinaryRotationKeys
-func lattigo_marshalBinaryRotationKeys(rotkeyHandle Handle9, output *C.uchar) {
+func lattigo_marshalBinaryRotationKeys(rotkeyHandle Handle9, callback C.streamWriter, stream *C.void) {
 	var rotkeys *ckks.RotationKeys
 	rotkeys = getStoredRotationKeys(rotkeyHandle)
 
@@ -96,7 +98,7 @@ func lattigo_marshalBinaryRotationKeys(rotkeyHandle Handle9, output *C.uchar) {
 		panic(err)
 	}
 
-	marshalBytes(data, output)
+	C.callStreamWriter(callback, unsafe.Pointer(stream), unsafe.Pointer(&data[0]), C.uint64_t(len(data)))
 }
 
 // We need a way to convert C-allocated memory into a Go Slice.
@@ -118,7 +120,9 @@ func lattigo_marshalBinaryRotationKeys(rotkeyHandle Handle9, output *C.uchar) {
 // slices used for read-only functions. Second, the Go garbage collector
 // could GC the data. But that can't happen since the memory was
 // allocated by C, and therefore is unknown to the garbage collector.
-// Thus, this seems like a safe solution. See
+// Finally, and most importantly, the reflect.SliceHeader data type
+// could change without notice in future Go releases.
+// Overall, this is the best solution I've come up with. See
 // https://stackoverflow.com/questions/6878590/the-maximum-value-for-an-int-type-in-go
 func unsafeCPtrToSlice(buf *C.char, len uint64) []byte {
 	// Check if the uint64-length of the buffer is larger than the system `int` type.
