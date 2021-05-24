@@ -8,7 +8,7 @@
 #include "latticpp/ckks/evaluator.h"
 #include "latticpp/ckks/keygen.h"
 #include "latticpp/ckks/params.h"
-#include "latticpp/marshall/gohandle.h"
+#include "latticpp/marshal/gohandle.h"
 
 #include <cmath>
 #include <iostream>
@@ -73,7 +73,7 @@ bool contains(const ChebyMap &c, uint64_t k) {
     return c.find(k) != c.end();
 }
 
-void computePowerBasisCheby(uint64_t n, ChebyMap &cMap, Evaluator &eval, RelinKey &evakey, Parameters &params) {
+void computePowerBasisCheby(uint64_t n, ChebyMap &cMap, Evaluator &eval, EvaluationKey &evakey, Parameters &params) {
 
     // Given a hash table with the first three evaluations of the Chebyshev ring at x in the interval a, b:
     // C0 = 1 (actually not stored in the hash table)
@@ -128,7 +128,7 @@ Ciphertext evaluatePolyFromPowerBasis(double targetScale, ChebyshevInterpolation
         return res;
     }
 
-    double currentQi = (double)getQi(params, level(cMap.at(cheby.degree())));
+    double currentQi = (double)qi(params, level(cMap.at(cheby.degree())));
 
     double ctScale = targetScale * currentQi;
 
@@ -196,7 +196,7 @@ ChebyPair splitCoeffsCheby(ChebyshevInterpolation &cheby, uint64_t split) {
     return ChebyPair{coeffsq, coeffsr};
 }
 
-Ciphertext recurseCheby(double targetScale, int logSplit, int logDegree, ChebyshevInterpolation &cheby, ChebyMap &cMap, Evaluator &eval, RelinKey &evakey, Parameters &params) {
+Ciphertext recurseCheby(double targetScale, int logSplit, int logDegree, ChebyshevInterpolation &cheby, ChebyMap &cMap, Evaluator &eval, EvaluationKey &evakey, Parameters &params) {
     // Recursively computes the evalution of the Chebyshev polynomial using a baby-set giant-step algorithm.
     if (cheby.degree() < (((uint64_t)1) << logSplit)) {
         if (cheby.lead && cheby.maxDeg > ((((uint64_t)1) << logDegree) - (((uint64_t)1) << (logSplit-1))) && logSplit > 1) {
@@ -225,7 +225,7 @@ Ciphertext recurseCheby(double targetScale, int logSplit, int logDegree, Chebysh
         ctLevel++;
     }
 
-    double currentQi = (double)getQi(params, ctLevel);
+    double currentQi = (double)qi(params, ctLevel);
 
     Ciphertext res = recurseCheby(targetScale*currentQi/scale(cMap.at(nextPower)), logSplit, logDegree, coeffsq, cMap, eval, evakey, params);
 
@@ -254,7 +254,7 @@ Ciphertext recurseCheby(double targetScale, int logSplit, int logDegree, Chebysh
 // Returns an error if the input ciphertext does not have enough level to carry out the full polynomial evaluation.
 // Returns an error if something is wrong with the scale.
 // A change of basis ct' = (2/(b-a)) * (ct + (-a-b)/(b-a)) is necessary before the polynomial evaluation to ensure correctness.
-Ciphertext evaluateCheby(Evaluator &eval, Ciphertext &op, ChebyshevInterpolation &cheby, RelinKey &evakey, Parameters &params) {
+Ciphertext evaluateCheby(Evaluator &eval, Ciphertext &op, ChebyshevInterpolation &cheby, EvaluationKey &evakey, Parameters &params) {
 
     checkEnoughLevels(level(op), cheby.coeffs.size(), 1);
 
@@ -282,8 +282,6 @@ double sigmoid(double x) {
 }
 
 int main() {
-    // initialize Lattigo-cpp
-    initStorage();
     // initialize random generator
     srand(time(nullptr));
 
@@ -297,7 +295,7 @@ int main() {
     struct KeyPairHandle kp = genKeyPair(kgen);
 
     // Relinearization key
-    RelinKey rlk = genRelinKey(kgen, kp.sk);
+    EvaluationKey rlk = genRelinKey(kgen, kp.sk);
 
     // Encryptor
     Encryptor encryptor = newEncryptorFromPk(params, kp.pk);
@@ -317,7 +315,7 @@ int main() {
     cout << "Values: " << values[0] << " " << values[1] << " " << values[2] << " " << values[3] << endl;
 
     // Plaintext creation and encoding process
-    Plaintext plaintext = encodeNew(encoder, values);
+    Plaintext plaintext = encodeNTTAtLvlNew(params, encoder, values, maxLevel(params), scale(params));
 
     // Encryption process
     Ciphertext ciphertext = encryptNew(encryptor, plaintext);

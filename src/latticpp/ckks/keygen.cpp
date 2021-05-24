@@ -14,11 +14,11 @@ namespace latticpp {
         return KeyPairHandle { SecretKey(kp.sk), PublicKey(kp.pk) };
     }
 
+    EvaluationKey genRelinKey(const KeyGenerator &keygen, const SecretKey &sk) {
+        return EvaluationKey(lattigo_genRelinKey(keygen.getRawHandle(), sk.getRawHandle()));
+    }
 
-    RelinKey genRelinKey(const KeyGenerator &keygen, const SecretKey &sk) {
-        return RelinKey(lattigo_genRelinKey(keygen.getRawHandle(), sk.getRawHandle()));
+    RotationKeys genRotationKeysPow2(const KeyGenerator &keygen, const SecretKey &sk) {
+        return RotationKeys(lattigo_genRotationKeysPow2(keygen.getRawHandle(), sk.getRawHandle()));
     }
 }  // namespace latticpp
-
-
-

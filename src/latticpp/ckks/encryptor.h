@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "latticpp/marshall/gohandle.h"
+#include "latticpp/marshal/gohandle.h"
 #include "cgo/encryptor.h"
 
 namespace latticpp {

@@ -13,7 +13,7 @@ import "C"
 
 import (
 	"github.com/ldsec/lattigo/v2/ckks"
-	"lattigo-cpp/marshall"
+	"lattigo-cpp/marshal"
 	"unsafe"
 )
 
@@ -21,23 +21,28 @@ import (
 type Handle5 = uint64
 
 func getStoredKeyGenerator(keygenHandle Handle5) *ckks.KeyGenerator {
-	ref := marshall.CrossLangObjMap.Get(keygenHandle)
+	ref := marshal.CrossLangObjMap.Get(keygenHandle)
 	return (*ckks.KeyGenerator)(ref.Ptr)
 }
 
 func getStoredSecretKey(skHandle Handle5) *ckks.SecretKey {
-	ref := marshall.CrossLangObjMap.Get(skHandle)
+	ref := marshal.CrossLangObjMap.Get(skHandle)
 	return (*ckks.SecretKey)(ref.Ptr)
 }
 
 func getStoredPublicKey(pkHandle Handle5) *ckks.PublicKey {
-	ref := marshall.CrossLangObjMap.Get(pkHandle)
+	ref := marshal.CrossLangObjMap.Get(pkHandle)
 	return (*ckks.PublicKey)(ref.Ptr)
 }
 
 func getStoredEvalKey(evalKeyHandle Handle4) *ckks.EvaluationKey {
-	ref := marshall.CrossLangObjMap.Get(evalKeyHandle)
+	ref := marshal.CrossLangObjMap.Get(evalKeyHandle)
 	return (*ckks.EvaluationKey)(ref.Ptr)
+}
+
+func getStoredRotationKeys(rotKeysHandle Handle4) *ckks.RotationKeys {
+	ref := marshal.CrossLangObjMap.Get(rotKeysHandle)
+	return (*ckks.RotationKeys)(ref.Ptr)
 }
 
 //export lattigo_newKeyGenerator
@@ -45,25 +50,38 @@ func lattigo_newKeyGenerator(paramHandle Handle5) Handle5 {
 	paramPtr := getStoredParameters(paramHandle)
 	var keyGenerator ckks.KeyGenerator
 	keyGenerator = ckks.NewKeyGenerator(paramPtr)
-	return marshall.CrossLangObjMap.Add(unsafe.Pointer(&keyGenerator))
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(&keyGenerator))
 }
 
 //export lattigo_genKeyPair
 func lattigo_genKeyPair(keygenHandle Handle5) C.struct_Lattigo_KeyPairHandle {
-	keygen := getStoredKeyGenerator(keygenHandle)
+	var keygen *ckks.KeyGenerator
+	keygen = getStoredKeyGenerator(keygenHandle)
 	var sk *ckks.SecretKey
 	var pk *ckks.PublicKey
 	sk, pk = (*keygen).GenKeyPair()
 	var kpHandle C.struct_Lattigo_KeyPairHandle
-	kpHandle.sk = C.uint64_t(marshall.CrossLangObjMap.Add(unsafe.Pointer(sk)))
-	kpHandle.pk = C.uint64_t(marshall.CrossLangObjMap.Add(unsafe.Pointer(pk)))
+	kpHandle.sk = C.uint64_t(marshal.CrossLangObjMap.Add(unsafe.Pointer(sk)))
+	kpHandle.pk = C.uint64_t(marshal.CrossLangObjMap.Add(unsafe.Pointer(pk)))
 	return kpHandle
 }
 
 //export lattigo_genRelinKey
 func lattigo_genRelinKey(keygenHandle Handle5, skHandle Handle5) Handle5 {
-	keygen := getStoredKeyGenerator(keygenHandle)
+	var keygen *ckks.KeyGenerator
+	keygen = getStoredKeyGenerator(keygenHandle)
 	var sk *ckks.SecretKey
 	sk = getStoredSecretKey(skHandle)
-	return marshall.CrossLangObjMap.Add(unsafe.Pointer((*keygen).GenRelinKey(sk)))
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer((*keygen).GenRelinKey(sk)))
+}
+
+//export lattigo_genRotationKeysPow2
+func lattigo_genRotationKeysPow2(keygenHandle Handle5, skHandle Handle5) Handle5 {
+	var keygen *ckks.KeyGenerator
+	keygen = getStoredKeyGenerator(keygenHandle)
+	var sk *ckks.SecretKey
+	sk = getStoredSecretKey(skHandle)
+	var rotKeys *ckks.RotationKeys
+	rotKeys = (*keygen).GenRotationKeysPow2(sk)
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(rotKeys))
 }

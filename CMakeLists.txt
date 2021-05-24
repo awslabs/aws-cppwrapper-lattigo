@@ -47,22 +47,23 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 # And custom modules
 include(set-common-flags)
 
-#######################
-# lattigo-cpp Library #
-#######################
+###########################
+# aws-lattigo-cpp Library #
+###########################
 
 set(CGO_BUILD_ROOT ${CMAKE_CURRENT_BINARY_DIR}/cgo_output)
 set(CGO_INCLUDE_PATH ${CGO_BUILD_ROOT}/cgo_output/include)
 set(CGO_HEADER_DST ${CGO_INCLUDE_PATH}/cgo)
-set(PRNG_LIB_NAME liblattigo.so)
-set(LIB_FULL_PATH ${CGO_BUILD_ROOT}/${PRNG_LIB_NAME})
+# This library is compiled from the code in the gowrapper directory.
+# It is where all cross-language calls from C++ into Go go.
+set(LATTIGO_LIB_FULL_PATH ${CGO_BUILD_ROOT}/liblattigo.so)
 file(MAKE_DIRECTORY ${CGO_BUILD_ROOT})
 
 # Add the main source tree object library
 add_subdirectory(src)
 
 # Always build the static library
-add_library(aws-lattigo-cpp STATIC $<TARGET_OBJECTS:lattigo_cpp_obj>)
+add_library(aws-lattigo-cpp STATIC $<TARGET_OBJECTS:latticpp_obj>)
 target_compile_features(aws-lattigo-cpp PUBLIC cxx_std_17)
 target_include_directories(aws-lattigo-cpp
     PUBLIC
@@ -75,7 +76,7 @@ target_include_directories(aws-lattigo-cpp
 set_common_flags(aws-lattigo-cpp)
 
 # Link dependencies
-target_link_libraries(aws-lattigo-cpp ${LIB_FULL_PATH} lattigo_cpp_gowrapper)
+target_link_libraries(aws-lattigo-cpp ${LATTIGO_LIB_FULL_PATH} latticpp_gowrapper)
 
 install(TARGETS aws-lattigo-cpp EXPORT LatticppTargets
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -89,7 +90,7 @@ export(
     NAMESPACE latticpp::
     FILE ${LATTICPP_TARGETS_FILENAME})
 
-export(TARGETS aws-lattigo-cpp lattigo_cpp_gowrapper FILE ${LATTICPP_TARGETS_FILENAME})
+export(TARGETS aws-lattigo-cpp latticpp_gowrapper FILE ${LATTICPP_TARGETS_FILENAME})
 
 ############
 # Examples #

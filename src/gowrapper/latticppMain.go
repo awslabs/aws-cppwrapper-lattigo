@@ -4,7 +4,7 @@ import "C"
 
 import (
     _ "lattigo-cpp/ckks"
-    _ "lattigo-cpp/marshall"
+    _ "lattigo-cpp/marshal"
 )
 
 // required by cgo

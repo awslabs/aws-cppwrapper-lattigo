@@ -3,28 +3,47 @@
 
 #pragma once
 
-#include "latticpp/marshall/gohandle.h"
+#include "latticpp/marshal/gohandle.h"
 #include "cgo/evaluator.h"
+#include <vector>
 
 namespace latticpp {
 
     Evaluator newEvaluator(const Parameters &params);
 
-    void multByConst(const Evaluator &eval, const Ciphertext &ctIn, double constant, const Ciphertext &ctOut);
+    void rotate(const Evaluator &eval, const Ciphertext &ctIn, uint64_t k, const RotationKeys &rotKeys, Ciphertext &ctOut);
 
-    void addConst(const Evaluator &eval, const Ciphertext &ctIn, double constant, const Ciphertext &ctOut);
+    std::vector<Ciphertext> rotateHoisted(const Evaluator &eval, const Ciphertext &ctIn, std::vector<uint64_t> ks, const RotationKeys &rotKeys);
 
-    void rescale(const Evaluator &eval, const Ciphertext &ctIn, double threshold, const Ciphertext &ctOut);
+    void multByConst(const Evaluator &eval, const Ciphertext &ctIn, double constant, Ciphertext &ctOut);
 
-    Ciphertext mulRelinNew(const Evaluator &eval, const Ciphertext &ct0, const Ciphertext &ct1, const RelinKey &evakey);
+    void addConst(const Evaluator &eval, const Ciphertext &ctIn, double constant, Ciphertext &ctOut);
 
-    void mulRelin(const Evaluator &eval, const Ciphertext &ct0, const Ciphertext &ct1, const RelinKey &evakey, const Ciphertext &ctOut);
+    void rescale(const Evaluator &eval, const Ciphertext &ctIn, double threshold, Ciphertext &ctOut);
 
-    void add(const Evaluator &eval, const Ciphertext &ct0, const Ciphertext &ct1, const Ciphertext &ctOut);
+    void rescaleMany(const Evaluator &eval, const Ciphertext &ctIn, uint64_t numRescales, Ciphertext &ctOut);
 
-    void sub(const Evaluator &eval, const Ciphertext &ct0, const Ciphertext &ct1, const Ciphertext &ctOut);
+    Ciphertext mulRelinNew(const Evaluator &eval, const Ciphertext &ct0, const Ciphertext &ct1, const EvaluationKey &evakey);
 
-    void multByGaussianIntegerAndAdd(const Evaluator &eval, const Ciphertext &ctIn, uint64_t cReal, uint64_t cImag, const Ciphertext &ctOut);
+    void mulRelin(const Evaluator &eval, const Ciphertext &ct0, const Ciphertext &ct1, const EvaluationKey &evakey, Ciphertext &ctOut);
 
-    void dropLevel(const Evaluator &eval, const Ciphertext &ct, uint64_t levels);
+    void mul(const Evaluator &eval, const Ciphertext &ct0, const Ciphertext &ct1, Ciphertext &ctOut);
+
+    void mulPlain(const Evaluator &eval, const Ciphertext &ctIn, const Plaintext &pt, Ciphertext &ctOut);
+
+    void add(const Evaluator &eval, const Ciphertext &ct0, const Ciphertext &ct1, Ciphertext &ctOut);
+
+    void addPlain(const Evaluator &eval, const Ciphertext &ctIn, const Plaintext &pt, Ciphertext &ctOut);
+
+    void neg(const Evaluator &eval, const Ciphertext &ctIn, Ciphertext &ctOut);
+
+    void sub(const Evaluator &eval, const Ciphertext &ct0, const Ciphertext &ct1, Ciphertext &ctOut);
+
+    void subPlain(const Evaluator &eval, const Ciphertext &ctIn, const Plaintext &pt, Ciphertext &ctOut);
+
+    void multByGaussianIntegerAndAdd(const Evaluator &eval, const Ciphertext &ctIn, uint64_t cReal, uint64_t cImag, Ciphertext &ctOut);
+
+    void dropLevel(const Evaluator &eval, Ciphertext &ct, uint64_t levels);
+
+    void relinearize(const Evaluator &eval, const Ciphertext &ctIn, const EvaluationKey &evakey, Ciphertext &ctOut);
 }  // namespace latticpp

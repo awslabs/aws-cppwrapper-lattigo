@@ -4,7 +4,7 @@ import "C"
 
 import (
 	"github.com/ldsec/lattigo/v2/ckks"
-	"lattigo-cpp/marshall"
+	"lattigo-cpp/marshal"
 	"unsafe"
 )
 
@@ -12,7 +12,7 @@ import (
 type Handle3 = uint64
 
 func getStoredEncrypter(encryptorHandle Handle3) *ckks.Encryptor {
-	ref := marshall.CrossLangObjMap.Get(encryptorHandle)
+	ref := marshal.CrossLangObjMap.Get(encryptorHandle)
 	return (*ckks.Encryptor)(ref.Ptr)
 }
 
@@ -22,7 +22,7 @@ func lattigo_newEncryptorFromPk(paramHandle Handle3, pkHandle Handle3) Handle3 {
 	pk := getStoredPublicKey(pkHandle)
 	var encryptor ckks.Encryptor
 	encryptor = ckks.NewEncryptorFromPk(params, pk)
-	return marshall.CrossLangObjMap.Add(unsafe.Pointer(&encryptor))
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(&encryptor))
 }
 
 //export lattigo_encryptNew
@@ -31,5 +31,5 @@ func lattigo_encryptNew(encryptorHandle Handle3, ptHandle Handle3) Handle3 {
 	ptPtr := getStoredPlaintext(ptHandle)
 	var ct *ckks.Ciphertext
 	ct = (*encryptorPtr).EncryptNew(ptPtr)
-	return marshall.CrossLangObjMap.Add(unsafe.Pointer(ct))
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(ct))
 }

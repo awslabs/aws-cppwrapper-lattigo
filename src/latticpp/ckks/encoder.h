@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "latticpp/marshall/gohandle.h"
+#include "latticpp/marshal/gohandle.h"
 #include "cgo/encoder.h"
 #include <vector>
 
@@ -11,7 +11,7 @@ namespace latticpp {
 
     Encoder newEncoder(const Parameters &params);
 
-    Plaintext encodeNew(const Encoder &encoder, std::vector<double> &values);
+    Plaintext encodeNTTAtLvlNew(const Parameters &params, const Encoder &encoder, const std::vector<double> &values, uint64_t level, double scale);
 
     std::vector<double> decode(const Encoder &encoder, const Plaintext &pt, uint64_t logSlots);
 }  // namespace latticpp

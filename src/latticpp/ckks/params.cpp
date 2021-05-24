@@ -3,10 +3,16 @@
 
 #include "params.h"
 
+using namespace std;
+
 namespace latticpp {
 
     Parameters getParams(HEParams paramId) {
         return Parameters(lattigo_getParams(paramId));
+    }
+
+    Parameters newParametersFromLogModuli(uint64_t logN, vector<uint8_t> logQi, uint8_t numQi, vector<uint8_t> logPi, uint8_t numPi, uint8_t logScale) {
+        return Parameters(lattigo_newParametersFromLogModuli(logN, logQi.data(), numQi, logPi.data(), numPi, logScale));
     }
 
     uint64_t numSlots(const Parameters &params) {
@@ -33,8 +39,20 @@ namespace latticpp {
         return lattigo_sigma(params.getRawHandle());
     }
 
-    uint64_t getQi(const Parameters &params, uint64_t i) {
+    uint64_t qi(const Parameters &params, uint64_t i) {
         return lattigo_getQi(params.getRawHandle(), i);
+    }
+
+    uint64_t pi(const Parameters &params, uint64_t i) {
+        return lattigo_getPi(params.getRawHandle(), i);
+    }
+
+    uint64_t qiCount(const Parameters &params) {
+        return lattigo_qiCount(params.getRawHandle());
+    }
+
+    uint64_t piCount(const Parameters &params) {
+        return lattigo_piCount(params.getRawHandle());
     }
 
     uint64_t logQLvl(const Parameters &params, uint64_t lvl) {

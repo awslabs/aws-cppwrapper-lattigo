@@ -6,23 +6,27 @@
 #
 # The `go tool` command also doesn't like creating directories, so we have to create them externally
 #
-# Buidling a static library (-buildmode=c-archive) results in threading linker errors.
+# Building a static library (-buildmode=c-archive) results in threading linker errors.
 #
 # I can't figure out how to build the go headers and library in-place without creating temporary files in the source directory.
 # As a work-around, I copy the source files into the build directory, and then build them there.
 
 add_custom_command(
   OUTPUT
-    ${LIB_FULL_PATH}
+    ${LATTIGO_LIB_FULL_PATH}
     ${CGO_HEADER_DST}/ciphertext.h
     ${CGO_HEADER_DST}/decryptor.h
     ${CGO_HEADER_DST}/encoder.h
     ${CGO_HEADER_DST}/encryptor.h
     ${CGO_HEADER_DST}/evaluator.h
     ${CGO_HEADER_DST}/keygen.h
+    ${CGO_HEADER_DST}/marshaler.h
     ${CGO_HEADER_DST}/params.h
     ${CGO_HEADER_DST}/storage.h
   COMMAND cp -r ${CMAKE_CURRENT_SOURCE_DIR}/. .
+
+  COMMAND go mod download github.com/ldsec/lattigo/v2
+  COMMAND go get github.com/ldsec/lattigo/v2/utils@v2.1.1
 
   COMMAND go vet
 
@@ -32,8 +36,9 @@ add_custom_command(
   COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/encryptor.go
   COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/evaluator.go
   COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/keygen.go
+  COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/marshaler.go
   COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/params.go
-  COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/marshall/storage.go
+  COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/marshal/storage.go
 
   COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/ciphertext.h ckks/ciphertext.go
   COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/decryptor.h ckks/decryptor.go
@@ -41,9 +46,10 @@ add_custom_command(
   COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/encryptor.h ckks/encryptor.go
   COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/evaluator.h ckks/evaluator.go
   COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/keygen.h ckks/keygen.go
+  COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/marshaler.h ckks/marshaler.go
   COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/params.h ckks/params.go
-  COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/storage.h marshall/storage.go
-  COMMAND go build -buildmode=c-shared -o ${LIB_FULL_PATH}
+  COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/storage.h marshal/storage.go
+  COMMAND go build -buildmode=c-shared -o ${LATTIGO_LIB_FULL_PATH}
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
     latticppMain.go
@@ -53,18 +59,21 @@ add_custom_command(
     ckks/encryptor.go
     ckks/evaluator.go
     ckks/keygen.go
+    ckks/marshaler.go
     ckks/params.go
-    marshall/storage.go
+    marshal/storage.go
+    go.mod
 )
 
-add_library(lattigo_cpp_gowrapper STATIC
+add_library(latticpp_gowrapper STATIC
     ${CGO_HEADER_DST}/ciphertext.h
     ${CGO_HEADER_DST}/decryptor.h
     ${CGO_HEADER_DST}/encoder.h
     ${CGO_HEADER_DST}/encryptor.h
     ${CGO_HEADER_DST}/evaluator.h
     ${CGO_HEADER_DST}/keygen.h
+    ${CGO_HEADER_DST}/marshaler.h
     ${CGO_HEADER_DST}/params.h
     ${CGO_HEADER_DST}/storage.h)
-target_include_directories(lattigo_cpp_gowrapper PUBLIC ${CMAKE_BINARY_DIR})
-set_target_properties(lattigo_cpp_gowrapper PROPERTIES LINKER_LANGUAGE CXX)
+target_include_directories(latticpp_gowrapper PUBLIC ${CMAKE_BINARY_DIR})
+set_target_properties(latticpp_gowrapper PROPERTIES LINKER_LANGUAGE CXX)
