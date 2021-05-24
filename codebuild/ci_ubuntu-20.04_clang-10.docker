@@ -9,13 +9,20 @@ RUN set -ex && \
     apt-get update && \
     apt-get -y --no-install-recommends upgrade && \
     apt-get -y --no-install-recommends install \
+    software-properties-common \
     ninja-build \
     ca-certificates \
     cmake \
-    golang \
+    golang-go \
     clang && \
+    add-apt-repository ppa:longsleep/golang-backports && \
+    apt-get update && \
+    apt-get -y --no-install-recommends install golang-go && \
     apt-get clean && \
     apt-get autoclean
 
 ENV CC=clang
 ENV CXX=clang++
+
+# software-properties-common is needed for the `add-apt-repository` command
+# We need to add a new repository for Go because the version in apt is too old.

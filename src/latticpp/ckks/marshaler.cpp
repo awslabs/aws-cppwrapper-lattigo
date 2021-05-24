@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "marshaler.h"
+#include <iterator>
 #include <sstream>
+#include <vector>
 
 using namespace std;
 
@@ -37,38 +39,37 @@ namespace latticpp {
     }
 
     Ciphertext unmarshalBinaryCiphertext(istream &stream) {
-        vector<char> buffer( istreambuf_iterator<char>{stream},
-                             istreambuf_iterator<char>() );
+        // Note: the next line is a well-known hard parsing problem for C++.
+        // See https://stackoverflow.com/questions/4423361/constructing-a-vector-with-istream-iterators
+        // and https://arstechnica.com/civis/viewtopic.php?f=20&t=767929
+        // In addition to the difficult parsing problem, you also must import the <vector> and <iterator>
+        // headers. Without them, you get obscure errors.
+        vector<char> buffer(istreambuf_iterator<char>{stream}, {});
         return Ciphertext(lattigo_unmarshalBinaryCiphertext(buffer.data(), buffer.size()));
     }
 
     Parameters unmarshalBinaryParameters(istream &stream) {
-        vector<char> buffer( istreambuf_iterator<char>{stream},
-                             istreambuf_iterator<char>() );
+        vector<char> buffer(istreambuf_iterator<char>{stream}, {});
         return Parameters(lattigo_unmarshalBinaryParameters(buffer.data(), buffer.size()));
     }
 
     SecretKey unmarshalBinarySecretKey(istream &stream) {
-        vector<char> buffer( istreambuf_iterator<char>{stream},
-                             istreambuf_iterator<char>() );
+        vector<char> buffer(istreambuf_iterator<char>{stream}, {});
         return SecretKey(lattigo_unmarshalBinarySecretKey(buffer.data(), buffer.size()));
     }
 
     PublicKey unmarshalBinaryPublicKey(istream &stream) {
-        vector<char> buffer( istreambuf_iterator<char>{stream},
-                             istreambuf_iterator<char>() );
+        vector<char> buffer(istreambuf_iterator<char>{stream}, {});
         return PublicKey(lattigo_unmarshalBinaryPublicKey(buffer.data(), buffer.size()));
     }
 
     EvaluationKey unmarshalBinaryEvaluationKey(istream &stream) {
-        vector<char> buffer( istreambuf_iterator<char>{stream},
-                             istreambuf_iterator<char>() );
+        vector<char> buffer(istreambuf_iterator<char>{stream}, {});
         return EvaluationKey(lattigo_unmarshalBinaryEvaluationKey(buffer.data(), buffer.size()));
     }
 
     RotationKeys unmarshalBinaryRotationKeys(istream &stream) {
-        vector<char> buffer( istreambuf_iterator<char>{stream},
-                             istreambuf_iterator<char>() );
+        vector<char> buffer(istreambuf_iterator<char>{stream}, {});
         return RotationKeys(lattigo_unmarshalBinaryRotationKeys(buffer.data(), buffer.size()));
     }
 }  // namespace latticpp

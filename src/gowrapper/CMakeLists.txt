@@ -25,6 +25,9 @@ add_custom_command(
     ${CGO_HEADER_DST}/storage.h
   COMMAND cp -r ${CMAKE_CURRENT_SOURCE_DIR}/. .
 
+  COMMAND go mod download github.com/ldsec/lattigo/v2
+  COMMAND go get github.com/ldsec/lattigo/v2/utils@v2.1.1
+
   COMMAND go vet
 
   COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/ciphertext.go
