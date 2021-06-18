@@ -20,7 +20,7 @@ vector<double> randomVector(int dim, double maxNorm) {
     return x;
 }
 
-vector<double> printDebug(const Parameters &params, const Ciphertext &ciphertext, vector<double> &expectedPT, const Decryptor &decryptor, const Encoder encoder) {
+vector<double> printDebug(const Parameters &params, const Ciphertext &ciphertext, const vector<double> &expectedPT, const Decryptor &decryptor, const Encoder encoder) {
 
     vector<double> actualPT = decode(encoder, decryptNew(decryptor, ciphertext), logSlots(params));
 
