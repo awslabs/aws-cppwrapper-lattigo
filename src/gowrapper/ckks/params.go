@@ -1,5 +1,9 @@
 package ckks
 
+/*
+#include "stdint.h"
+typedef const uint8_t constUChar;
+*/
 import "C"
 
 import (
@@ -19,12 +23,18 @@ func getStoredParameters(paramHandle Handle6) *ckks.Parameters {
 //export lattigo_getParams
 func lattigo_getParams(paramEnum uint8) Handle6 {
 	var params *ckks.Parameters
-	params = ckks.DefaultParams[paramEnum]
+
+	if int(paramEnum) < len(ckks.DefaultParams) {
+		params = ckks.DefaultParams[paramEnum]
+	} else {
+		params = ckks.DefaultBootstrapSchemeParams[int(paramEnum)-len(ckks.DefaultParams)]
+	}
+
 	return marshal.CrossLangObjMap.Add(unsafe.Pointer(params))
 }
 
 //export lattigo_newParametersFromLogModuli
-func lattigo_newParametersFromLogModuli(logN uint64, logQi *C.uchar, numQi uint8, logPi *C.uchar, numPi uint8, logScale uint8) Handle6 {
+func lattigo_newParametersFromLogModuli(logN uint64, logQi *C.constUChar, numQi uint8, logPi *C.constUChar, numPi uint8, logScale uint8) Handle6 {
 	size := unsafe.Sizeof(uint8(0))
 
 	LogQi := make([]uint64, numQi)

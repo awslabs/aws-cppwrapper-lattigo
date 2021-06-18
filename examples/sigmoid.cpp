@@ -1,20 +1,13 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-#include "latticpp/ckks/ciphertext.h"
-#include "latticpp/ckks/decryptor.h"
-#include "latticpp/ckks/encoder.h"
-#include "latticpp/ckks/encryptor.h"
-#include "latticpp/ckks/evaluator.h"
-#include "latticpp/ckks/keygen.h"
-#include "latticpp/ckks/params.h"
-#include "latticpp/marshal/gohandle.h"
+#include "latticpp/latticpp.h"
 
 #include <cmath>
+#include <iomanip>
 #include <iostream>
 #include <map>
 #include <vector>
-#include <iomanip>
 
 using namespace std;
 using namespace latticpp;

@@ -20,4 +20,6 @@ namespace latticpp {
     EvaluationKey genRelinKey(const KeyGenerator &keygen, const SecretKey &sk);
 
     RotationKeys genRotationKeysPow2(const KeyGenerator &keygen, const SecretKey &sk);
+
+    BootstrappingKey genBootstrappingKey(const KeyGenerator &keygen, uint64_t logSlots, const BootstrappingParameters &bootParams, const SecretKey &sk);
 }  // namespace latticpp

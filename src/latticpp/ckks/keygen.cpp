@@ -21,4 +21,8 @@ namespace latticpp {
     RotationKeys genRotationKeysPow2(const KeyGenerator &keygen, const SecretKey &sk) {
         return RotationKeys(lattigo_genRotationKeysPow2(keygen.getRawHandle(), sk.getRawHandle()));
     }
+
+    BootstrappingKey genBootstrappingKey(const KeyGenerator &keygen, uint64_t logSlots, const BootstrappingParameters &bootParams, const SecretKey &sk) {
+        return BootstrappingKey(lattigo_genBootstrappingKey(keygen.getRawHandle(), logSlots, bootParams.getRawHandle(), sk.getRawHandle()));
+    }
 }  // namespace latticpp

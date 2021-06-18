@@ -13,6 +13,9 @@
 namespace latticpp {
 
     enum class GoType {
+        Bootstrapper,
+        BootstrappingParameters,
+        BootstrappingKey,
         Parameters,
         Encoder,
         KeyGenerator,
@@ -144,6 +147,9 @@ namespace latticpp {
         uint64_t handle;
     };
 
+    using Bootstrapper = GoHandle<GoType::Bootstrapper>;
+    using BootstrappingKey = GoHandle<GoType::BootstrappingKey>;
+    using BootstrappingParameters = GoHandle<GoType::BootstrappingParameters>;
     using Parameters = GoHandle<GoType::Parameters>;
     using Encoder = GoHandle<GoType::Encoder>;
     using KeyGenerator = GoHandle<GoType::KeyGenerator>;
