@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <iomanip>
+#include <random>
 #include <vector>
 
 using namespace std;
@@ -11,11 +12,13 @@ using namespace latticpp;
 // generate a random vector of the given dimension, where each value is in the range [-maxNorm, maxNorm].
 vector<double> randomVector(int dim, double maxNorm) {
     vector<double> x(dim);
+    random_device r;
+    uniform_real_distribution<double> unif(-maxNorm, maxNorm);
+    default_random_engine re(r());
 
     for (int i = 0; i < dim; i++) {
         // generate a random double between -maxNorm and maxNorm
-        double a = -maxNorm + ((static_cast<double>(random())) / (static_cast<double>(RAND_MAX))) * (2 * maxNorm);
-        x[i] = a;
+        x[i] = unif(re);
     }
     return x;
 }
@@ -27,7 +30,7 @@ vector<double> printDebug(const Parameters &params, const Ciphertext &ciphertext
     cout << "Level: " << level(ciphertext) << " (logQ = " << logQLvl(params, level(ciphertext)) << ")" << endl;
     cout << "Scale: 2^" << log2(scale(ciphertext)) << endl;
 
-    cout << "Actual Result: " << setprecision(3) << actualPT[0] << " " << actualPT[1] << " " << actualPT[2] << " " << actualPT[3] << endl;
+    cout << "Actual Result:   " << setprecision(3) << actualPT[0] << " " << actualPT[1] << " " << actualPT[2] << " " << actualPT[3] << endl;
     cout << "Expected Result: " << setprecision(3) << expectedPT[0] << " " << expectedPT[1] << " " << expectedPT[2] << " " << expectedPT[3] << endl;
 
     string precStats = precisionStats(params, expectedPT, actualPT);
@@ -38,7 +41,6 @@ vector<double> printDebug(const Parameters &params, const Ciphertext &ciphertext
 }
 
 int main() {
-
     Parameters params = getParams(BootstrapParams0);
     BootstrappingParameters btpParams = getBootstrappingParams(BootstrapParams_Set2);
 
@@ -48,7 +50,7 @@ int main() {
          << ", sigma = " << sigma(params) << endl;
 
     KeyGenerator kgen = newKeyGenerator(params);
-    struct KeyPairHandle kp = genKeyPair(kgen);
+    struct KeyPairHandle kp = genKeyPairSparse(kgen, bootstrap_h(btpParams));
 
     Encoder encoder = newEncoder(params);
     Decryptor decryptor = newDecryptor(params, kp.sk);
@@ -60,7 +62,7 @@ int main() {
     cout << "Done" << endl;
 
     uint64_t num_slots = numSlots(params);
-    vector<double> values = randomVector(num_slots, 8);
+    vector<double> values = randomVector(num_slots, 1);
 
     Plaintext plaintext = encodeNTTAtLvlNew(params, encoder, values, maxLevel(params), scale(params));
 

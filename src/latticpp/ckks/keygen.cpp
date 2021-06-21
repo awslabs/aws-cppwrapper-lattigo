@@ -14,6 +14,11 @@ namespace latticpp {
         return KeyPairHandle { SecretKey(kp.sk), PublicKey(kp.pk) };
     }
 
+    KeyPairHandle genKeyPairSparse(const KeyGenerator &keygen, uint64_t hw) {
+        Lattigo_KeyPairHandle kp = lattigo_genKeyPairSparse(keygen.getRawHandle(), hw);
+        return KeyPairHandle { SecretKey(kp.sk), PublicKey(kp.pk) };
+    }
+
     EvaluationKey genRelinKey(const KeyGenerator &keygen, const SecretKey &sk) {
         return EvaluationKey(lattigo_genRelinKey(keygen.getRawHandle(), sk.getRawHandle()));
     }

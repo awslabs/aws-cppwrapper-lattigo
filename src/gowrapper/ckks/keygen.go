@@ -73,6 +73,19 @@ func lattigo_genKeyPair(keygenHandle Handle5) C.struct_Lattigo_KeyPairHandle {
 	return kpHandle
 }
 
+//export lattigo_genKeyPairSparse
+func lattigo_genKeyPairSparse(keygenHandle Handle5, hw uint64) C.struct_Lattigo_KeyPairHandle {
+	var keygen *ckks.KeyGenerator
+	keygen = getStoredKeyGenerator(keygenHandle)
+	var sk *ckks.SecretKey
+	var pk *ckks.PublicKey
+	sk, pk = (*keygen).GenKeyPairSparse(hw)
+	var kpHandle C.struct_Lattigo_KeyPairHandle
+	kpHandle.sk = C.uint64_t(marshal.CrossLangObjMap.Add(unsafe.Pointer(sk)))
+	kpHandle.pk = C.uint64_t(marshal.CrossLangObjMap.Add(unsafe.Pointer(pk)))
+	return kpHandle
+}
+
 //export lattigo_genRelinKey
 func lattigo_genRelinKey(keygenHandle Handle5, skHandle Handle5) Handle5 {
 	var keygen *ckks.KeyGenerator
