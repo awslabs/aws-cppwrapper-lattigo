@@ -9,7 +9,7 @@
 
 namespace latticpp {
 
-    enum HEParams {
+    enum NamedCKKSParams {
         // PN12QP109 is the index in DefaultParams for logQP = 109
         PN12QP109,
         // PN13QP218 is the index in DefaultParams for logQP = 218
@@ -29,13 +29,21 @@ namespace latticpp {
         // PN15QP827pq is the index in DefaultParams for logQP = 827 (post quantum)
         PN15QP827pq,
         // PN16QP1654pq is the index in DefaultParams for logQP = 1654 (post quantum)
-        PN16QP1654pq
+        PN16QP1654pq,
+        // Bootstrapping parameters index 0
+        BootstrapParams0,
+        // Bootstrapping parameters index 1
+        BootstrapParams1,
+        // Bootstrapping parameters index 2
+        BootstrapParams2,
+        // Bootstrapping parameters index 3
+        BootstrapParams3
     };
 
-    Parameters getParams(HEParams paramId);
+    Parameters getParams(NamedCKKSParams paramId);
 
     // logN is the log of the polynomial ring degree. Alternatively, it is log(num_slots) + 1
-    Parameters newParametersFromLogModuli(uint64_t logN, std::vector<uint8_t> logQi, uint8_t numQi, std::vector<uint8_t> logPi, uint8_t numPi, uint8_t logScale);
+    Parameters newParametersFromLogModuli(uint64_t logN, const std::vector<uint8_t> &logQi, uint8_t numQi, const std::vector<uint8_t> &logPi, uint8_t numPi, uint8_t logScale);
 
     uint64_t numSlots(const Parameters &params);
 

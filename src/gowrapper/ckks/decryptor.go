@@ -11,8 +11,8 @@ import (
 // https://github.com/golang/go/issues/35715#issuecomment-791039692
 type Handle1 = uint64
 
-func getStoredDecryptor(decryptoHandle Handle8) *ckks.Decryptor {
-	ref := marshal.CrossLangObjMap.Get(decryptoHandle)
+func getStoredDecryptor(decryptorHandle Handle1) *ckks.Decryptor {
+	ref := marshal.CrossLangObjMap.Get(decryptorHandle)
 	return (*ckks.Decryptor)(ref.Ptr)
 }
 
@@ -26,9 +26,9 @@ func lattigo_newDecryptor(paramHandle Handle1, skHandle Handle1) Handle1 {
 }
 
 //export lattigo_decryptNew
-func lattigo_decryptNew(decryptoHandle Handle1, ctHandle Handle1) Handle1 {
+func lattigo_decryptNew(decryptorHandle Handle1, ctHandle Handle1) Handle1 {
 	var dec *ckks.Decryptor
-	dec = getStoredDecryptor(decryptoHandle)
+	dec = getStoredDecryptor(decryptorHandle)
 
 	var ct *ckks.Ciphertext
 	ct = getStoredCiphertext(ctHandle)

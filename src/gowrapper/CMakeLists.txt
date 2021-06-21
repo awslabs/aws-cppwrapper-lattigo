@@ -14,6 +14,8 @@
 add_custom_command(
   OUTPUT
     ${LATTIGO_LIB_FULL_PATH}
+    ${CGO_HEADER_DST}/bootstrap.h
+    ${CGO_HEADER_DST}/bootstrap_params.h
     ${CGO_HEADER_DST}/ciphertext.h
     ${CGO_HEADER_DST}/decryptor.h
     ${CGO_HEADER_DST}/encoder.h
@@ -22,6 +24,7 @@ add_custom_command(
     ${CGO_HEADER_DST}/keygen.h
     ${CGO_HEADER_DST}/marshaler.h
     ${CGO_HEADER_DST}/params.h
+    ${CGO_HEADER_DST}/precision.h
     ${CGO_HEADER_DST}/storage.h
   COMMAND cp -r ${CMAKE_CURRENT_SOURCE_DIR}/. .
 
@@ -29,7 +32,8 @@ add_custom_command(
   COMMAND go get github.com/ldsec/lattigo/v2/utils@v2.1.1
 
   COMMAND go vet
-
+  COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/bootstrap.go
+  COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/bootstrap_params.go
   COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/ciphertext.go
   COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/decryptor.go
   COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/encoder.go
@@ -38,8 +42,11 @@ add_custom_command(
   COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/keygen.go
   COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/marshaler.go
   COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/params.go
+  COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/precision.go
   COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/marshal/storage.go
 
+  COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/bootstrap.h ckks/bootstrap.go
+  COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/bootstrap_params.h ckks/bootstrap_params.go
   COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/ciphertext.h ckks/ciphertext.go
   COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/decryptor.h ckks/decryptor.go
   COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/encoder.h ckks/encoder.go
@@ -48,11 +55,14 @@ add_custom_command(
   COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/keygen.h ckks/keygen.go
   COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/marshaler.h ckks/marshaler.go
   COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/params.h ckks/params.go
+  COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/precision.h ckks/precision.go
   COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/storage.h marshal/storage.go
   COMMAND go build -buildmode=c-shared -o ${LATTIGO_LIB_FULL_PATH}
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS
     latticppMain.go
+    ckks/bootstrap.go
+    ckks/bootstrap_params.go
     ckks/ciphertext.go
     ckks/decryptor.go
     ckks/encoder.go
@@ -61,11 +71,14 @@ add_custom_command(
     ckks/keygen.go
     ckks/marshaler.go
     ckks/params.go
+    ckks/precision.go
     marshal/storage.go
     go.mod
 )
 
 add_library(latticpp_gowrapper STATIC
+    ${CGO_HEADER_DST}/bootstrap.h
+    ${CGO_HEADER_DST}/bootstrap_params.h
     ${CGO_HEADER_DST}/ciphertext.h
     ${CGO_HEADER_DST}/decryptor.h
     ${CGO_HEADER_DST}/encoder.h
@@ -74,6 +87,7 @@ add_library(latticpp_gowrapper STATIC
     ${CGO_HEADER_DST}/keygen.h
     ${CGO_HEADER_DST}/marshaler.h
     ${CGO_HEADER_DST}/params.h
+    ${CGO_HEADER_DST}/precision.h
     ${CGO_HEADER_DST}/storage.h)
 target_include_directories(latticpp_gowrapper PUBLIC ${CMAKE_BINARY_DIR})
 set_target_properties(latticpp_gowrapper PROPERTIES LINKER_LANGUAGE CXX)

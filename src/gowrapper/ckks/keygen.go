@@ -4,11 +4,13 @@ package ckks
 // but the auto-generated struct with generated names loses its semantic value. We opt
 // to define our own struct here.
 
-// #include "stdint.h"
-// struct Lattigo_KeyPairHandle {
-//   uint64_t sk;
-//   uint64_t pk;
-// };
+/*
+#include "stdint.h"
+struct Lattigo_KeyPairHandle {
+  uint64_t sk;
+  uint64_t pk;
+};
+*/
 import "C"
 
 import (
@@ -35,14 +37,19 @@ func getStoredPublicKey(pkHandle Handle5) *ckks.PublicKey {
 	return (*ckks.PublicKey)(ref.Ptr)
 }
 
-func getStoredEvalKey(evalKeyHandle Handle4) *ckks.EvaluationKey {
+func getStoredEvalKey(evalKeyHandle Handle5) *ckks.EvaluationKey {
 	ref := marshal.CrossLangObjMap.Get(evalKeyHandle)
 	return (*ckks.EvaluationKey)(ref.Ptr)
 }
 
-func getStoredRotationKeys(rotKeysHandle Handle4) *ckks.RotationKeys {
+func getStoredRotationKeys(rotKeysHandle Handle5) *ckks.RotationKeys {
 	ref := marshal.CrossLangObjMap.Get(rotKeysHandle)
 	return (*ckks.RotationKeys)(ref.Ptr)
+}
+
+func getStoredBootstrappingKey(bootKeyHandle Handle5) *ckks.BootstrappingKey {
+	ref := marshal.CrossLangObjMap.Get(bootKeyHandle)
+	return (*ckks.BootstrappingKey)(ref.Ptr)
 }
 
 //export lattigo_newKeyGenerator
@@ -60,6 +67,19 @@ func lattigo_genKeyPair(keygenHandle Handle5) C.struct_Lattigo_KeyPairHandle {
 	var sk *ckks.SecretKey
 	var pk *ckks.PublicKey
 	sk, pk = (*keygen).GenKeyPair()
+	var kpHandle C.struct_Lattigo_KeyPairHandle
+	kpHandle.sk = C.uint64_t(marshal.CrossLangObjMap.Add(unsafe.Pointer(sk)))
+	kpHandle.pk = C.uint64_t(marshal.CrossLangObjMap.Add(unsafe.Pointer(pk)))
+	return kpHandle
+}
+
+//export lattigo_genKeyPairSparse
+func lattigo_genKeyPairSparse(keygenHandle Handle5, hw uint64) C.struct_Lattigo_KeyPairHandle {
+	var keygen *ckks.KeyGenerator
+	keygen = getStoredKeyGenerator(keygenHandle)
+	var sk *ckks.SecretKey
+	var pk *ckks.PublicKey
+	sk, pk = (*keygen).GenKeyPairSparse(hw)
 	var kpHandle C.struct_Lattigo_KeyPairHandle
 	kpHandle.sk = C.uint64_t(marshal.CrossLangObjMap.Add(unsafe.Pointer(sk)))
 	kpHandle.pk = C.uint64_t(marshal.CrossLangObjMap.Add(unsafe.Pointer(pk)))
@@ -84,4 +104,20 @@ func lattigo_genRotationKeysPow2(keygenHandle Handle5, skHandle Handle5) Handle5
 	var rotKeys *ckks.RotationKeys
 	rotKeys = (*keygen).GenRotationKeysPow2(sk)
 	return marshal.CrossLangObjMap.Add(unsafe.Pointer(rotKeys))
+}
+
+//export lattigo_genBootstrappingKey
+func lattigo_genBootstrappingKey(keygenHandle Handle5, logSlots uint64, btpParamsHandle Handle5, skHandle Handle5) Handle5 {
+	var keygen *ckks.KeyGenerator
+	keygen = getStoredKeyGenerator(keygenHandle)
+
+	var sk *ckks.SecretKey
+	sk = getStoredSecretKey(skHandle)
+
+	var btpParams *ckks.BootstrappingParameters
+	btpParams = getStoredBootstrappingParameters(btpParamsHandle)
+
+	var btpKey *ckks.BootstrappingKey
+	btpKey = (*keygen).GenBootstrappingKey(logSlots, btpParams, sk)
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(btpKey))
 }

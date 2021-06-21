@@ -3,6 +3,8 @@
 
 target_sources(latticpp_obj
     PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/bootstrap.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/bootstrap_params.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ciphertext.cpp
         ${CMAKE_CURRENT_LIST_DIR}/decryptor.cpp
         ${CMAKE_CURRENT_LIST_DIR}/encoder.cpp
@@ -11,10 +13,13 @@ target_sources(latticpp_obj
         ${CMAKE_CURRENT_LIST_DIR}/keygen.cpp
         ${CMAKE_CURRENT_LIST_DIR}/marshaler.cpp
         ${CMAKE_CURRENT_LIST_DIR}/params.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/precision.cpp
 )
 
 install(
     FILES
+        ${CMAKE_CURRENT_LIST_DIR}/bootstrap.h
+        ${CMAKE_CURRENT_LIST_DIR}/bootstrap_params.h
         ${CMAKE_CURRENT_LIST_DIR}/ciphertext.h
         ${CMAKE_CURRENT_LIST_DIR}/decryptor.h
         ${CMAKE_CURRENT_LIST_DIR}/encoder.h
@@ -23,6 +28,7 @@ install(
         ${CMAKE_CURRENT_LIST_DIR}/keygen.h
         ${CMAKE_CURRENT_LIST_DIR}/marshaler.h
         ${CMAKE_CURRENT_LIST_DIR}/params.h
+        ${CMAKE_CURRENT_LIST_DIR}/precision.h
     DESTINATION
         ${LATTICPP_INCLUDES_INSTALL_DIR}/ckks
 )
