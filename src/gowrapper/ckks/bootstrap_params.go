@@ -31,3 +31,10 @@ func lattigo_bootstrap_h(bootParamHandle Handle11) uint64 {
 	bootParams = getStoredBootstrappingParameters(bootParamHandle)
 	return bootParams.H
 }
+
+//export lattigo_bootstrap_depth
+func lattigo_bootstrap_depth(bootParamHandle Handle11) uint64 {
+	var bootParams *ckks.BootstrappingParameters
+	bootParams = getStoredBootstrappingParameters(bootParamHandle)
+	return bootParams.CtSLevel[0] - bootParams.StCLevel[len(bootParams.StCLevel)-1] + 1
+}

@@ -14,4 +14,8 @@ namespace latticpp {
     uint64_t bootstrap_h(const BootstrappingParameters &bootParamHandle) {
         return lattigo_bootstrap_h(bootParamHandle.getRawHandle());
     }
+
+    int bootstrap_depth(const BootstrappingParameters &bootParamHandle) {
+        return lattigo_bootstrap_depth(bootParamHandle.getRawHandle());
+    }
 }  // namespace latticpp
