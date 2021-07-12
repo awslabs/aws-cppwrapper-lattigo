@@ -1,3 +1,5 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 #include "latticpp/latticpp.h"
 
@@ -41,8 +43,8 @@ vector<double> printDebug(const Parameters &params, const Ciphertext &ciphertext
 }
 
 int main() {
-    Parameters params = getParams(BootstrapParams0);
-    BootstrappingParameters btpParams = getBootstrappingParams(BootstrapParams_Set2);
+    Parameters params = getParams(BootstrapParams2);
+    BootstrappingParameters btpParams = getBootstrappingParams(BootstrapParams_Set7);
 
     cout << "CKKS parameters: logN = " << logN(params) << ", logSlots = " << logSlots(params)
          << ", h = " << bootstrap_h(btpParams) << ", logQP = " << logQP(params)
@@ -56,8 +58,6 @@ int main() {
     Decryptor decryptor = newDecryptor(params, kp.sk);
     Encryptor encryptor = newEncryptorFromPk(params, kp.pk);
     Evaluator evaluator = newEvaluator(params);
-
-    EvaluationKey rlk = genRelinKey(kgen, kp.sk);
 
     cout << "Generating bootstrapping keys..." << endl;
     BootstrappingKey btpKey = genBootstrappingKey(kgen, logSlots(params), btpParams, kp.sk);
@@ -75,17 +75,16 @@ int main() {
 
     Ciphertext ciphertext1 = encryptNew(encryptor, plaintext);
 
+    cout << "Level after encryption: " << level(ciphertext1) << endl;
     cout << "Scale after encryption: " << log2(scale(ciphertext1)) << endl;
-    mulRelin(evaluator, ciphertext1, ciphertext1, rlk, ciphertext1);
-    cout << "Scale after mul: " << log2(scale(ciphertext1)) << endl;
-    rescaleMany(evaluator, ciphertext1, 1, ciphertext1);
-    cout << "Scale after rescale: " << log2(scale(ciphertext1)) << endl;
 
     cout << "Precision of values vs. ciphertext" << endl;
     vector<double> valuesTest1 = printDebug(params, ciphertext1, values, decryptor, encoder);
 
+    cout << "Level before bootstrapping: " << level(ciphertext1) << endl;
     cout << "Bootstrapping..." << endl;
     Ciphertext ciphertext2 = bootstrap(btp, ciphertext1);
+    cout << "Level after bootstrapping: " << level(ciphertext2) << endl;
     cout << "Scale after bootstrap: " << log2(scale(ciphertext2)) << endl;
     cout << "Done" << endl;
 
