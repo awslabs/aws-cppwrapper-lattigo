@@ -43,8 +43,8 @@ vector<double> printDebug(const Parameters &params, const Ciphertext &ciphertext
 }
 
 int main() {
-    Parameters params = getParams(BootstrapParams2);
-    BootstrappingParameters btpParams = getBootstrappingParams(BootstrapParams_Set7);
+    Parameters params = getParams(BootstrapParams0);
+    BootstrappingParameters btpParams = getBootstrappingParams(BootstrapParams_Set2);
 
     cout << "CKKS parameters: logN = " << logN(params) << ", logSlots = " << logSlots(params)
          << ", h = " << bootstrap_h(btpParams) << ", logQP = " << logQP(params)
@@ -57,7 +57,6 @@ int main() {
     Encoder encoder = newEncoder(params);
     Decryptor decryptor = newDecryptor(params, kp.sk);
     Encryptor encryptor = newEncryptorFromPk(params, kp.pk);
-    Evaluator evaluator = newEvaluator(params);
 
     cout << "Generating bootstrapping keys..." << endl;
     BootstrappingKey btpKey = genBootstrappingKey(kgen, logSlots(params), btpParams, kp.sk);
@@ -68,10 +67,6 @@ int main() {
     vector<double> values = randomVector(num_slots, 1);
 
     Plaintext plaintext = encodeNTTAtLvlNew(params, encoder, values, maxLevel(params), scale(params));
-
-    for (int i = 0; i < values.size(); i++) {
-        values[i] *= values[i];
-    }
 
     Ciphertext ciphertext1 = encryptNew(encryptor, plaintext);
 
