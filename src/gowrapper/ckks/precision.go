@@ -13,22 +13,26 @@ import "C"
 
 import (
 	"github.com/ldsec/lattigo/v2/ckks"
+	"math"
 )
 
 // https://github.com/golang/go/issues/35715#issuecomment-791039692
 type Handle12 = uint64
 
 //export lattigo_precisionStats
-func lattigo_precisionStats(paramHandle Handle12, expectedValues *C.constDouble, actualValues *C.constDouble, length uint64) *C.char {
+func lattigo_precisionStats(paramHandle Handle12, encoderHandle Handle12, expectedValues *C.constDouble, actualValues *C.constDouble, length uint64) *C.char {
 
 	var params *ckks.Parameters
 	params = getStoredParameters(paramHandle)
+
+	var encoder *ckks.Encoder
+	encoder = getStoredEncoder(encoderHandle)
 
 	expectedComplexValues := CDoubleVecToGoComplex(expectedValues, length)
 	actualComplexValues := CDoubleVecToGoComplex(actualValues, length)
 
 	var prec ckks.PrecisionStats
-	prec = ckks.GetPrecisionStats(params, nil, nil, expectedComplexValues, actualComplexValues)
+	prec = ckks.GetPrecisionStats(*params, *encoder, nil, expectedComplexValues, actualComplexValues, int(math.Log2(float64(length))), 0)
 
 	return C.CString(prec.String())
 }

@@ -20,14 +20,14 @@ func getStoredCiphertext(ctHandle Handle8) *ckks.Ciphertext {
 func lattigo_level(ctHandle Handle8) uint64 {
 	var ctIn *ckks.Ciphertext
 	ctIn = getStoredCiphertext(ctHandle)
-	return ctIn.Level()
+	return uint64(ctIn.Level())
 }
 
 //export lattigo_ciphertextScale
 func lattigo_ciphertextScale(ctHandle Handle8) float64 {
 	var ctIn *ckks.Ciphertext
 	ctIn = getStoredCiphertext(ctHandle)
-	return ctIn.Scale()
+	return ctIn.ScalingFactor()
 }
 
 //export lattigo_copyNew
@@ -36,7 +36,7 @@ func lattigo_copyNew(ctHandle Handle8) Handle8 {
 	ctIn = getStoredCiphertext(ctHandle)
 
 	var ctClone *ckks.Ciphertext
-	ctClone = ctIn.CopyNew().Ciphertext()
+	ctClone = ctIn.CopyNew()
 	return marshal.CrossLangObjMap.Add(unsafe.Pointer(ctClone))
 }
 
@@ -46,6 +46,6 @@ func lattigo_newCiphertext(paramsHandle Handle8, degree uint64, level uint64, sc
 	params = getStoredParameters(paramsHandle)
 
 	var newCt *ckks.Ciphertext
-	newCt = ckks.NewCiphertext(params, degree, level, scale)
+	newCt = ckks.NewCiphertext(*params, int(degree), int(level), scale)
 	return marshal.CrossLangObjMap.Add(unsafe.Pointer(newCt))
 }

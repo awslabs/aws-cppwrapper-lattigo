@@ -29,7 +29,7 @@ func lattigo_newBootstrapper(paramHandle Handle10, btpParamHandle Handle10, btpK
 
 	var btp *ckks.Bootstrapper
 	var err error
-	btp, err = ckks.NewBootstrapper(params, btpParams, btpKey)
+	btp, err = ckks.NewBootstrapper(*params, btpParams, *btpKey)
 	if err != nil {
 		panic(err)
 	}

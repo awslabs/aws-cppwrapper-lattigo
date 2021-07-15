@@ -21,7 +21,7 @@ func lattigo_newEncryptorFromPk(paramHandle Handle3, pkHandle Handle3) Handle3 {
 	params := getStoredParameters(paramHandle)
 	pk := getStoredPublicKey(pkHandle)
 	var encryptor ckks.Encryptor
-	encryptor = ckks.NewEncryptorFromPk(params, pk)
+	encryptor = ckks.NewEncryptor(*params, pk)
 	return marshal.CrossLangObjMap.Add(unsafe.Pointer(&encryptor))
 }
 
