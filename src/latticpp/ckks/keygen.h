@@ -22,7 +22,7 @@ namespace latticpp {
 
     RelinearizationKey genRelinKey(const KeyGenerator &keygen, const SecretKey &sk);
 
-    RotationKeys genRotationKeysForRotations(const KeyGenerator &keygen, const SecretKey &sk, std::vector<uint64_t> shifts);
+    RotationKeys genRotationKeysForRotations(const KeyGenerator &keygen, const SecretKey &sk, std::vector<int> shifts);
 
     EvaluationKey makeEvaluationKey(const RelinearizationKey &relinKey, const RotationKeys &rotKeys);
 

@@ -60,7 +60,7 @@ int main() {
 
     cout << "Generating bootstrapping keys..." << endl;
     RelinearizationKey relinKey = genRelinKey(kgen, kp.sk);
-    RotationKeys rotKeys = genRotationKeysForRotations(kgen, kp.sk, vector<uint64_t>());
+    RotationKeys rotKeys = genRotationKeysForRotations(kgen, kp.sk, vector<int>());
     BootstrappingKey btpKey = genBootstrappingKey(kgen, params, btpParams, kp.sk, relinKey, rotKeys);
     Bootstrapper btp = newBootstrapper(params, btpParams, btpKey);
     cout << "Done" << endl;

@@ -290,7 +290,7 @@ int main() {
     // Relinearization key
     RelinearizationKey rlk = genRelinKey(kgen, kp.sk);
 
-    RotationKeys rotKeys = genRotationKeysForRotations(kgen, kp.sk, vector<uint64_t>());
+    RotationKeys rotKeys = genRotationKeysForRotations(kgen, kp.sk, vector<int>());
 
     EvaluationKey evalKey = makeEvaluationKey(rlk, rotKeys);
 

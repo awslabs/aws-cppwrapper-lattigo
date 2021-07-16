@@ -110,7 +110,7 @@ func lattigo_genRelinearizationKey(keygenHandle Handle5, skHandle Handle5) Handl
 // Positive k is for left rotation by k positions
 // Negative k is equivalent to a right rotation by k positions
 //export lattigo_genRotationKeysForRotations
-func lattigo_genRotationKeysForRotations(keygenHandle Handle5, skHandle Handle5, ks *C.uint64_t, ksLen uint64) Handle5 {
+func lattigo_genRotationKeysForRotations(keygenHandle Handle5, skHandle Handle5, ks *C.int64_t, ksLen uint64) Handle5 {
 	var keygen *rlwe.KeyGenerator
 	keygen = getStoredKeyGenerator(keygenHandle)
 
@@ -121,7 +121,7 @@ func lattigo_genRotationKeysForRotations(keygenHandle Handle5, skHandle Handle5,
 	size := unsafe.Sizeof(uint64(0))
 	basePtrIn := uintptr(unsafe.Pointer(ks))
 	for i := range rotations {
-		rotations[i] = *(*int)(unsafe.Pointer(basePtrIn + size*uintptr(i)))
+		rotations[i] = int(*(*int64)(unsafe.Pointer(basePtrIn + size*uintptr(i))))
 	}
 
 	var rotKeys *rlwe.RotationKeySet
