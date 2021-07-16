@@ -1,3 +1,6 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 package ckks
 
 import "C"
@@ -43,4 +46,20 @@ func lattigo_bootstrap_depth(bootParamHandle Handle11) uint64 {
 	// level is 10 and the post-bootstrapping *level* is 10, then the
 	// length of the residual moduli vector is 6, so 5 = 10 - 6 + 1.
 	return uint64(bootParams.MaxLevel() - len(bootParams.ResidualModuli) + 1)
+}
+
+//export lattigo_params
+func lattigo_params(bootParamHandle Handle11) Handle11 {
+	var bootParams *ckks.BootstrappingParameters
+	bootParams = getStoredBootstrappingParameters(bootParamHandle)
+
+	var params ckks.Parameters
+	var err error
+	params, err = bootParams.Params()
+
+	if err != nil {
+		panic(err)
+	}
+
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(&params))
 }

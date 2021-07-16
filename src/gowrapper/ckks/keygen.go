@@ -1,3 +1,6 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 package ckks
 
 // cgo will automatically generate a struct for functions which return multiple values,
@@ -126,6 +129,20 @@ func lattigo_genRotationKeysForRotations(keygenHandle Handle5, skHandle Handle5,
 	// not support generating a conjugation key.
 	rotKeys = (*keygen).GenRotationKeysForRotations(rotations, false, sk)
 	return marshal.CrossLangObjMap.Add(unsafe.Pointer(rotKeys))
+}
+
+//export lattigo_makeEvaluationKey
+func lattigo_makeEvaluationKey(relinKeyHandle Handle5, rotKeyHandle Handle5) Handle5 {
+	var relinKey *rlwe.RelinearizationKey
+	relinKey = getStoredRelinKey(relinKeyHandle)
+
+	var rotKeys *rlwe.RotationKeySet
+	rotKeys = getStoredRotationKeys(rotKeyHandle)
+
+	var evalKey rlwe.EvaluationKey
+	evalKey = rlwe.EvaluationKey{Rlk: relinKey, Rtks: rotKeys}
+
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(&evalKey))
 }
 
 // Generates any missing Galois keys

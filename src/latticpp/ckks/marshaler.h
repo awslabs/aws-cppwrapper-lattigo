@@ -16,7 +16,7 @@ namespace latticpp {
 
     void marshalBinaryPublicKey(PublicKey pk, std::ostream &stream);
 
-    void marshalBinaryEvaluationKey(EvaluationKey evaKey, std::ostream &stream);
+    void marshalBinaryRelinearizationKey(RelinearizationKey evaKey, std::ostream &stream);
 
     void marshalBinaryRotationKeys(RotationKeys rotKeys, std::ostream &stream);
 
@@ -28,7 +28,7 @@ namespace latticpp {
 
     PublicKey unmarshalBinaryPublicKey(std::istream &stream);
 
-    EvaluationKey unmarshalBinaryEvaluationKey(std::istream &stream);
+    RelinearizationKey unmarshalBinaryRelinearizationKey(std::istream &stream);
 
     RotationKeys unmarshalBinaryRotationKeys(std::istream &stream);
 }  // namespace latticpp

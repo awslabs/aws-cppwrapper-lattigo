@@ -16,11 +16,12 @@ namespace latticpp {
         Bootstrapper,
         BootstrappingParameters,
         BootstrappingKey,
+        EvaluationKey,
         Parameters,
         Encoder,
         KeyGenerator,
         KeyPair,
-        EvaluationKey,
+        RelinearizationKey,
         Encryptor,
         Decryptor,
         Evaluator,
@@ -154,6 +155,7 @@ namespace latticpp {
     using Encoder = GoHandle<GoType::Encoder>;
     using KeyGenerator = GoHandle<GoType::KeyGenerator>;
     using KeyPair = GoHandle<GoType::KeyPair>;
+    using RelinearizationKey = GoHandle<GoType::RelinearizationKey>;
     using EvaluationKey = GoHandle<GoType::EvaluationKey>;
     using Encryptor = GoHandle<GoType::Encryptor>;
     using Decryptor = GoHandle<GoType::Decryptor>;

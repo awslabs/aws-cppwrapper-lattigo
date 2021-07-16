@@ -1,3 +1,6 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 package ckks
 
 /*
@@ -117,7 +120,7 @@ func lattigo_rescale(evalHandle Handle4, ctInHandle Handle4, threshold float64, 
 }
 
 //export lattigo_rescaleMany
-func lattigo_rescaleMany(paramsHandle Handle4, evalHandle Handle4, ctInHandle Handle4, numRescales uint64, ctOutHandle Handle4) {
+func lattigo_rescaleMany(evalHandle Handle4, paramsHandle Handle4, ctInHandle Handle4, numRescales uint64, ctOutHandle Handle4) {
 	var params *ckks.Parameters
 	params = getStoredParameters(paramsHandle)
 
