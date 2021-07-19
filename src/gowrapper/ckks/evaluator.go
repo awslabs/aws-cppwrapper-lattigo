@@ -233,8 +233,8 @@ func lattigo_addPlain(evalHandle Handle4, ctInHandle Handle4, ptHandle Handle4, 
 	var ctIn *ckks.Ciphertext
 	ctIn = getStoredCiphertext(ctInHandle)
 
-	var pt *ckks.Ciphertext
-	pt = getStoredCiphertext(ptHandle)
+	var pt *ckks.Plaintext
+	pt = getStoredPlaintext(ptHandle)
 
 	var ctOut *ckks.Ciphertext
 	ctOut = getStoredCiphertext(ctOutHandle)
@@ -281,8 +281,8 @@ func lattigo_subPlain(evalHandle Handle4, ctInHandle Handle4, ptHandle Handle4, 
 	var ctIn *ckks.Ciphertext
 	ctIn = getStoredCiphertext(ctInHandle)
 
-	var pt *ckks.Ciphertext
-	pt = getStoredCiphertext(ptHandle)
+	var pt *ckks.Plaintext
+	pt = getStoredPlaintext(ptHandle)
 
 	var ctOut *ckks.Ciphertext
 	ctOut = getStoredCiphertext(ctOutHandle)

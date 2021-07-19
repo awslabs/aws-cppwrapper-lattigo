@@ -37,7 +37,9 @@ func lattigo_marshalBinaryCiphertext(ctHandle Handle9, callback C.streamWriter, 
 		panic(err)
 	}
 
-	C.callStreamWriter(callback, unsafe.Pointer(stream), unsafe.Pointer(&data[0]), C.uint64_t(len(data)))
+	if len(data) > 0 {
+		C.callStreamWriter(callback, unsafe.Pointer(stream), unsafe.Pointer(&data[0]), C.uint64_t(len(data)))
+	}
 }
 
 //export lattigo_marshalBinaryParameters
@@ -50,7 +52,9 @@ func lattigo_marshalBinaryParameters(paramsHandle Handle9, callback C.streamWrit
 		panic(err)
 	}
 
-	C.callStreamWriter(callback, unsafe.Pointer(stream), unsafe.Pointer(&data[0]), C.uint64_t(len(data)))
+	if len(data) > 0 {
+		C.callStreamWriter(callback, unsafe.Pointer(stream), unsafe.Pointer(&data[0]), C.uint64_t(len(data)))
+	}
 }
 
 //export lattigo_marshalBinarySecretKey
@@ -63,7 +67,9 @@ func lattigo_marshalBinarySecretKey(skHandle Handle9, callback C.streamWriter, s
 		panic(err)
 	}
 
-	C.callStreamWriter(callback, unsafe.Pointer(stream), unsafe.Pointer(&data[0]), C.uint64_t(len(data)))
+	if len(data) > 0 {
+		C.callStreamWriter(callback, unsafe.Pointer(stream), unsafe.Pointer(&data[0]), C.uint64_t(len(data)))
+	}
 }
 
 //export lattigo_marshalBinaryPublicKey
@@ -76,7 +82,9 @@ func lattigo_marshalBinaryPublicKey(pkHandle Handle9, callback C.streamWriter, s
 		panic(err)
 	}
 
-	C.callStreamWriter(callback, unsafe.Pointer(stream), unsafe.Pointer(&data[0]), C.uint64_t(len(data)))
+	if len(data) > 0 {
+		C.callStreamWriter(callback, unsafe.Pointer(stream), unsafe.Pointer(&data[0]), C.uint64_t(len(data)))
+	}
 }
 
 //export lattigo_marshalBinaryRelinearizationKey
@@ -89,7 +97,9 @@ func lattigo_marshalBinaryRelinearizationKey(relinKeyHandle Handle9, callback C.
 		panic(err)
 	}
 
-	C.callStreamWriter(callback, unsafe.Pointer(stream), unsafe.Pointer(&data[0]), C.uint64_t(len(data)))
+	if len(data) > 0 {
+		C.callStreamWriter(callback, unsafe.Pointer(stream), unsafe.Pointer(&data[0]), C.uint64_t(len(data)))
+	}
 }
 
 //export lattigo_marshalBinaryRotationKeys
@@ -102,7 +112,9 @@ func lattigo_marshalBinaryRotationKeys(rotkeyHandle Handle9, callback C.streamWr
 		panic(err)
 	}
 
-	C.callStreamWriter(callback, unsafe.Pointer(stream), unsafe.Pointer(&data[0]), C.uint64_t(len(data)))
+	if len(data) > 0 {
+		C.callStreamWriter(callback, unsafe.Pointer(stream), unsafe.Pointer(&data[0]), C.uint64_t(len(data)))
+	}
 }
 
 // We need a way to convert C-allocated memory into a Go Slice.
