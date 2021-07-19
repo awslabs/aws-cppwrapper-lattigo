@@ -47,12 +47,12 @@ int main() {
     BootstrappingParameters btpParams = getBootstrappingParams(BootstrapParams_Set2);
 
     cout << "CKKS parameters: logN = " << logN(params) << ", logSlots = " << logSlots(params)
-         << ", h = " << bootstrap_h(btpParams) << ", logQP = " << logQP(params)
+         << ", h = " << secretHammingWeight(btpParams) << ", logQP = " << logQP(params)
          << ", levels = " << qiCount(params) << ", scale = 2^" << log2(scale(params))
          << ", sigma = " << sigma(params) << endl;
 
     KeyGenerator kgen = newKeyGenerator(params);
-    struct KeyPairHandle kp = genKeyPairSparse(kgen, bootstrap_h(btpParams));
+    struct KeyPairHandle kp = genKeyPairSparse(kgen, secretHammingWeight(btpParams));
 
     Encoder encoder = newEncoder(params);
     Decryptor decryptor = newDecryptor(params, kp.sk);
