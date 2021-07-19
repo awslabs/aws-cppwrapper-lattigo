@@ -12,6 +12,8 @@ namespace latticpp {
 
     void marshalBinaryParameters(const Parameters &params, std::ostream &stream);
 
+    void marshalBinaryBootstrapParameters(const BootstrappingParameters &btp_params, std::ostream &stream);
+
     void marshalBinarySecretKey(const SecretKey &sk, std::ostream &stream);
 
     void marshalBinaryPublicKey(const PublicKey &pk, std::ostream &stream);

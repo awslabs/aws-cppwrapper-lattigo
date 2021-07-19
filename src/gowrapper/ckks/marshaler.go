@@ -57,6 +57,22 @@ func lattigo_marshalBinaryParameters(paramsHandle Handle9, callback C.streamWrit
 	}
 }
 
+//export lattigo_marshalBinaryBootstrapParameters
+func lattigo_marshalBinaryBootstrapParameters(paramsHandle Handle9, callback C.streamWriter, stream *C.void) {
+	// var params *ckks.BootstrappingParameters
+	// params = getStoredBootstrappingParameters(paramsHandle)
+
+	// data, err := params.MarshalBinary()
+	// if err != nil {
+	// 	panic(err)
+	// }
+	var data []byte
+
+	if len(data) > 0 {
+		C.callStreamWriter(callback, unsafe.Pointer(stream), unsafe.Pointer(&data[0]), C.uint64_t(len(data)))
+	}
+}
+
 //export lattigo_marshalBinarySecretKey
 func lattigo_marshalBinarySecretKey(skHandle Handle9, callback C.streamWriter, stream *C.void) {
 	var sk *rlwe.SecretKey

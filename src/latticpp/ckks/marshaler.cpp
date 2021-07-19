@@ -22,6 +22,10 @@ namespace latticpp {
         lattigo_marshalBinaryParameters(params.getRawHandle(), &writeToStream, (void*)(&stream));
     }
 
+    void marshalBinaryBootstrapParameters(const BootstrappingParameters &btp_params, std::ostream &stream) {
+        lattigo_marshalBinaryBootstrapParameters(btp_params.getRawHandle(), &writeToStream, (void*)(&stream));
+    }
+
     void marshalBinarySecretKey(const SecretKey &sk, std::ostream &stream) {
         lattigo_marshalBinarySecretKey(sk.getRawHandle(), &writeToStream, (void*)(&stream));
     }
