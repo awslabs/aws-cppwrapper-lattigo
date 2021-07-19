@@ -34,7 +34,7 @@ namespace latticpp {
         lattigo_marshalBinaryRelinearizationKey(relinKey.getRawHandle(), &writeToStream, (void*)(&stream));
     }
 
-    void marshalBinaryRotationKeys(RotationKeys &rotKeys, std::ostream &stream) {
+    void marshalBinaryRotationKeys(const RotationKeys &rotKeys, std::ostream &stream) {
         lattigo_marshalBinaryRotationKeys(rotKeys.getRawHandle(), &writeToStream, (void*)(&stream));
     }
 
