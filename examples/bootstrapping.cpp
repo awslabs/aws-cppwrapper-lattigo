@@ -1,3 +1,5 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 #include "latticpp/latticpp.h"
 
@@ -45,12 +47,12 @@ int main() {
     BootstrappingParameters btpParams = getBootstrappingParams(BootstrapParams_Set2);
 
     cout << "CKKS parameters: logN = " << logN(params) << ", logSlots = " << logSlots(params)
-         << ", h = " << bootstrap_h(btpParams) << ", logQP = " << logQP(params)
+         << ", h = " << secretHammingWeight(btpParams) << ", logQP = " << logQP(params)
          << ", levels = " << qiCount(params) << ", scale = 2^" << log2(scale(params))
          << ", sigma = " << sigma(params) << endl;
 
     KeyGenerator kgen = newKeyGenerator(params);
-    struct KeyPairHandle kp = genKeyPairSparse(kgen, bootstrap_h(btpParams));
+    struct KeyPairHandle kp = genKeyPairSparse(kgen, secretHammingWeight(btpParams));
 
     Encoder encoder = newEncoder(params);
     Decryptor decryptor = newDecryptor(params, kp.sk);
@@ -68,11 +70,17 @@ int main() {
 
     Ciphertext ciphertext1 = encryptNew(encryptor, plaintext);
 
+    cout << "Level after encryption: " << level(ciphertext1) << endl;
+    cout << "Scale after encryption: " << log2(scale(ciphertext1)) << endl;
+
     cout << "Precision of values vs. ciphertext" << endl;
     vector<double> valuesTest1 = printDebug(params, ciphertext1, values, decryptor, encoder);
 
+    cout << "Level before bootstrapping: " << level(ciphertext1) << endl;
     cout << "Bootstrapping..." << endl;
     Ciphertext ciphertext2 = bootstrap(btp, ciphertext1);
+    cout << "Level after bootstrapping: " << level(ciphertext2) << endl;
+    cout << "Scale after bootstrap: " << log2(scale(ciphertext2)) << endl;
     cout << "Done" << endl;
 
     cout << "Precision of ciphertext vs. Bootstrapp(ciphertext)" << endl;

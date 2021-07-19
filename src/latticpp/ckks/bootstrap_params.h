@@ -21,5 +21,9 @@ namespace latticpp {
 
     BootstrappingParameters getBootstrappingParams(const NamedBootstrappingParams paramId);
 
-    uint64_t bootstrap_h(const BootstrappingParameters &bootParamHandle);
+    // Get the secret key Hamming weight for which these bootstrapping parameters were created
+    uint64_t secretHammingWeight(const BootstrappingParameters &bootParams);
+
+    // The multiplicative depth of the bootstrapping circuit
+    int bootstrapDepth(const BootstrappingParameters &bootParams);
 }  // namespace latticpp

@@ -31,3 +31,17 @@ func lattigo_bootstrap_h(bootParamHandle Handle11) uint64 {
 	bootParams = getStoredBootstrappingParameters(bootParamHandle)
 	return bootParams.H
 }
+
+//export lattigo_bootstrap_depth
+func lattigo_bootstrap_depth(bootParamHandle Handle11) uint64 {
+	var bootParams *ckks.BootstrappingParameters
+	bootParams = getStoredBootstrappingParameters(bootParamHandle)
+	// bootParams.CtSLevel[0] is the highest ciphertext level (this is enforced at runtime in Lattigo)
+	// and therefore the first level of the bootstrapping circuit.
+	// By contrast, bootParams.StCLevel[len(bootParams.StCLevel)-1] is the last level of Slots-to-Coeffs
+	// step, or the *second to last* bootstrapping level.
+	// Thus, the difference plus one is the depth of the bootstrapping circuit. For example,
+	// if the first level of bootstrapping is 10 and the last StC level is 6, then a ciphertext after
+	// bootstrapping is at level 5, or 10 - 6 + 1.
+	return bootParams.CtSLevel[0] - bootParams.StCLevel[len(bootParams.StCLevel)-1] + 1
+}
