@@ -26,6 +26,10 @@ func getStoredParameters(paramHandle Handle6) *ckks.Parameters {
 
 //export lattigo_getDefaultClassicalParams
 func lattigo_getDefaultClassicalParams(paramEnum uint8) Handle6 {
+	if (paramEnum >= len(ckks.DefaultParams)) {
+		panic(errors.New("classical parameter enum index out of bounds"))
+	}
+
 	var paramsLit ckks.ParametersLiteral
 	paramsLit = ckks.DefaultParams[paramEnum]
 
@@ -41,6 +45,10 @@ func lattigo_getDefaultClassicalParams(paramEnum uint8) Handle6 {
 
 //export lattigo_getDefaultPQParams
 func lattigo_getDefaultPQParams(paramEnum uint8) Handle6 {
+	if (paramEnum >= len(ckks.DefaultPostQuantumParams)) {
+		panic(errors.New("quantum parameter enum index out of bounds"))
+	}
+
 	var paramsLit ckks.ParametersLiteral
 	paramsLit = ckks.DefaultPostQuantumParams[paramEnum]
 

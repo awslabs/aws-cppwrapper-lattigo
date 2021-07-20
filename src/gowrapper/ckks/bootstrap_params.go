@@ -21,8 +21,11 @@ func getStoredBootstrappingParameters(bootParamHandle Handle11) *ckks.Bootstrapp
 
 //export lattigo_getBootstrappingParams
 func lattigo_getBootstrappingParams(bootParamEnum uint8) Handle11 {
-	var bootParams *ckks.BootstrappingParameters
+	if (bootParamEnum >= len(ckks.DefaultBootstrapParams)) {
+		panic(errors.New("bootstrapping parameter enum index out of bounds"))
+	}
 
+	var bootParams *ckks.BootstrappingParameters
 	bootParams = ckks.DefaultBootstrapParams[bootParamEnum]
 
 	return marshal.CrossLangObjMap.Add(unsafe.Pointer(bootParams))
@@ -43,8 +46,9 @@ func lattigo_bootstrap_depth(bootParamHandle Handle11) uint64 {
 	// post-bootstrapping, which is one more than the ciphertext level
 	// after bootstrapping. Thus the difference, plus one, is the depth of
 	// the bootstrapping circuit. For example, if the highest ciphertext
-	// level is 10 and the post-bootstrapping *level* is 10, then the
-	// length of the residual moduli vector is 6, so 5 = 10 - 6 + 1.
+	// level is 10 and the post-bootstrapping *level* is 5, then the
+	// length of the residual moduli vector is 6, so the depth of the bootstrapping
+	// circuit is 10 - 6 + 1 = 5.
 	return uint64(bootParams.MaxLevel() - len(bootParams.ResidualModuli) + 1)
 }
 
