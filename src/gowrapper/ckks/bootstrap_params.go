@@ -6,6 +6,7 @@ package ckks
 import "C"
 
 import (
+	"errors"
 	"github.com/ldsec/lattigo/v2/ckks"
 	"lattigo-cpp/marshal"
 	"unsafe"
@@ -21,7 +22,7 @@ func getStoredBootstrappingParameters(bootParamHandle Handle11) *ckks.Bootstrapp
 
 //export lattigo_getBootstrappingParams
 func lattigo_getBootstrappingParams(bootParamEnum uint8) Handle11 {
-	if (bootParamEnum >= len(ckks.DefaultBootstrapParams)) {
+	if int(bootParamEnum) >= len(ckks.DefaultBootstrapParams) {
 		panic(errors.New("bootstrapping parameter enum index out of bounds"))
 	}
 

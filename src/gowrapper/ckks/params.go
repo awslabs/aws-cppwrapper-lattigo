@@ -10,6 +10,7 @@ typedef const uint8_t constUChar;
 import "C"
 
 import (
+	"errors"
 	"github.com/ldsec/lattigo/v2/ckks"
 	"github.com/ldsec/lattigo/v2/rlwe"
 	"lattigo-cpp/marshal"
@@ -26,7 +27,7 @@ func getStoredParameters(paramHandle Handle6) *ckks.Parameters {
 
 //export lattigo_getDefaultClassicalParams
 func lattigo_getDefaultClassicalParams(paramEnum uint8) Handle6 {
-	if (paramEnum >= len(ckks.DefaultParams)) {
+	if int(paramEnum) >= len(ckks.DefaultParams) {
 		panic(errors.New("classical parameter enum index out of bounds"))
 	}
 
@@ -45,7 +46,7 @@ func lattigo_getDefaultClassicalParams(paramEnum uint8) Handle6 {
 
 //export lattigo_getDefaultPQParams
 func lattigo_getDefaultPQParams(paramEnum uint8) Handle6 {
-	if (paramEnum >= len(ckks.DefaultPostQuantumParams)) {
+	if int(paramEnum) >= len(ckks.DefaultPostQuantumParams) {
 		panic(errors.New("quantum parameter enum index out of bounds"))
 	}
 
