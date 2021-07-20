@@ -1,3 +1,6 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 package ckks
 
 /*
@@ -26,7 +29,7 @@ func lattigo_newEncoder(paramHandle Handle2) Handle2 {
 	params = getStoredParameters(paramHandle)
 
 	var encoder ckks.Encoder
-	encoder = ckks.NewEncoder(params)
+	encoder = ckks.NewEncoder(*params)
 
 	return marshal.CrossLangObjMap.Add(unsafe.Pointer(&encoder))
 }
@@ -56,8 +59,8 @@ func lattigo_encodeNTTAtLvlNew(paramHandle Handle2, encoderHandle Handle2, realV
 
 	complexValues := CDoubleVecToGoComplex(realValues, uint64(math.Pow(2, float64(logLen))))
 	var plaintext *ckks.Plaintext
-	plaintext = ckks.NewPlaintext(params, level, scale)
-	(*encoder).EncodeNTT(plaintext, complexValues, logLen)
+	plaintext = ckks.NewPlaintext(*params, int(level), scale)
+	(*encoder).EncodeNTT(plaintext, complexValues, int(logLen))
 	return marshal.CrossLangObjMap.Add(unsafe.Pointer(plaintext))
 }
 
@@ -70,7 +73,7 @@ func lattigo_decode(encoderHandle Handle2, ptHandle Handle2, logSlots uint64, ou
 	pt = getStoredPlaintext(ptHandle)
 
 	var res []complex128
-	res = (*enc).Decode(pt, logSlots)
+	res = (*enc).Decode(pt, int(logSlots))
 
 	size := unsafe.Sizeof(float64(0))
 	basePtr := uintptr(unsafe.Pointer(outValues))

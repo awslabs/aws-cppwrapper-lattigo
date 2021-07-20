@@ -7,8 +7,12 @@ using namespace std;
 
 namespace latticpp {
 
-    Parameters getParams(NamedCKKSParams paramId) {
-        return Parameters(lattigo_getParams(paramId));
+    Parameters getDefaultClassicalParams(NamedClassicalParams paramId) {
+        return Parameters(lattigo_getDefaultClassicalParams(paramId));
+    }
+
+    Parameters getDefaulPQParams(NamedPQParams paramId) {
+        return Parameters(lattigo_getDefaultPQParams(paramId));
     }
 
     Parameters newParametersFromLogModuli(uint64_t logN, const vector<uint8_t> &logQi, uint8_t numQi, const vector<uint8_t> &logPi, uint8_t numPi, uint8_t logScale) {

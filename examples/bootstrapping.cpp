@@ -35,7 +35,7 @@ vector<double> printDebug(const Parameters &params, const Ciphertext &ciphertext
     cout << "Actual Result:   " << setprecision(3) << actualPT[0] << " " << actualPT[1] << " " << actualPT[2] << " " << actualPT[3] << endl;
     cout << "Expected Result: " << setprecision(3) << expectedPT[0] << " " << expectedPT[1] << " " << expectedPT[2] << " " << expectedPT[3] << endl;
 
-    string precStats = precisionStats(params, expectedPT, actualPT);
+    string precStats = precisionStats(params, encoder, expectedPT, actualPT);
 
     cout << precStats << endl;
 
@@ -43,8 +43,8 @@ vector<double> printDebug(const Parameters &params, const Ciphertext &ciphertext
 }
 
 int main() {
-    Parameters params = getParams(BootstrapParams0);
-    BootstrappingParameters btpParams = getBootstrappingParams(BootstrapParams_Set2);
+    BootstrappingParameters btpParams = getBootstrappingParams(BootstrapParams_Set5);
+    Parameters params = genParams(btpParams);
 
     cout << "CKKS parameters: logN = " << logN(params) << ", logSlots = " << logSlots(params)
          << ", h = " << secretHammingWeight(btpParams) << ", logQP = " << logQP(params)
@@ -59,7 +59,9 @@ int main() {
     Encryptor encryptor = newEncryptorFromPk(params, kp.pk);
 
     cout << "Generating bootstrapping keys..." << endl;
-    BootstrappingKey btpKey = genBootstrappingKey(kgen, logSlots(params), btpParams, kp.sk);
+    RelinearizationKey relinKey = genRelinKey(kgen, kp.sk);
+    RotationKeys rotKeys = genRotationKeysForRotations(kgen, kp.sk, vector<int>());
+    BootstrappingKey btpKey = genBootstrappingKey(kgen, params, btpParams, kp.sk, relinKey, rotKeys);
     Bootstrapper btp = newBootstrapper(params, btpParams, btpKey);
     cout << "Done" << endl;
 

@@ -5,6 +5,7 @@
 
 #include "latticpp/marshal/gohandle.h"
 #include "cgo/keygen.h"
+#include <vector>
 
 namespace latticpp {
 
@@ -19,9 +20,11 @@ namespace latticpp {
 
     KeyPairHandle genKeyPairSparse(const KeyGenerator &keygen, uint64_t hw);
 
-    EvaluationKey genRelinKey(const KeyGenerator &keygen, const SecretKey &sk);
+    RelinearizationKey genRelinKey(const KeyGenerator &keygen, const SecretKey &sk);
 
-    RotationKeys genRotationKeysPow2(const KeyGenerator &keygen, const SecretKey &sk);
+    RotationKeys genRotationKeysForRotations(const KeyGenerator &keygen, const SecretKey &sk, std::vector<int> shifts);
 
-    BootstrappingKey genBootstrappingKey(const KeyGenerator &keygen, uint64_t logSlots, const BootstrappingParameters &bootParams, const SecretKey &sk);
+    EvaluationKey makeEvaluationKey(const RelinearizationKey &relinKey, const RotationKeys &rotKeys);
+
+    BootstrappingKey genBootstrappingKey(const KeyGenerator &keygen, const Parameters &params, const BootstrappingParameters &bootParams, const SecretKey &sk, const RelinearizationKey &relinKey, const RotationKeys &rotKeys);
 }  // namespace latticpp

@@ -29,7 +29,7 @@ add_custom_command(
   COMMAND cp -r ${CMAKE_CURRENT_SOURCE_DIR}/. .
 
   COMMAND go mod download github.com/ldsec/lattigo/v2
-  COMMAND go get github.com/ldsec/lattigo/v2/utils@v2.1.1
+  COMMAND go get github.com/ldsec/lattigo/v2/utils@v2.2.0
 
   COMMAND go vet
   COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/bootstrap.go

@@ -1,3 +1,6 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 package ckks
 
 /*
@@ -15,6 +18,7 @@ import "C"
 import (
 	"errors"
 	"github.com/ldsec/lattigo/v2/ckks"
+	"github.com/ldsec/lattigo/v2/rlwe"
 	"lattigo-cpp/marshal"
 	"reflect"
 	"unsafe"
@@ -33,7 +37,9 @@ func lattigo_marshalBinaryCiphertext(ctHandle Handle9, callback C.streamWriter, 
 		panic(err)
 	}
 
-	C.callStreamWriter(callback, unsafe.Pointer(stream), unsafe.Pointer(&data[0]), C.uint64_t(len(data)))
+	if len(data) > 0 {
+		C.callStreamWriter(callback, unsafe.Pointer(stream), unsafe.Pointer(&data[0]), C.uint64_t(len(data)))
+	}
 }
 
 //export lattigo_marshalBinaryParameters
@@ -46,12 +52,14 @@ func lattigo_marshalBinaryParameters(paramsHandle Handle9, callback C.streamWrit
 		panic(err)
 	}
 
-	C.callStreamWriter(callback, unsafe.Pointer(stream), unsafe.Pointer(&data[0]), C.uint64_t(len(data)))
+	if len(data) > 0 {
+		C.callStreamWriter(callback, unsafe.Pointer(stream), unsafe.Pointer(&data[0]), C.uint64_t(len(data)))
+	}
 }
 
 //export lattigo_marshalBinarySecretKey
 func lattigo_marshalBinarySecretKey(skHandle Handle9, callback C.streamWriter, stream *C.void) {
-	var sk *ckks.SecretKey
+	var sk *rlwe.SecretKey
 	sk = getStoredSecretKey(skHandle)
 
 	data, err := sk.MarshalBinary()
@@ -59,12 +67,14 @@ func lattigo_marshalBinarySecretKey(skHandle Handle9, callback C.streamWriter, s
 		panic(err)
 	}
 
-	C.callStreamWriter(callback, unsafe.Pointer(stream), unsafe.Pointer(&data[0]), C.uint64_t(len(data)))
+	if len(data) > 0 {
+		C.callStreamWriter(callback, unsafe.Pointer(stream), unsafe.Pointer(&data[0]), C.uint64_t(len(data)))
+	}
 }
 
 //export lattigo_marshalBinaryPublicKey
 func lattigo_marshalBinaryPublicKey(pkHandle Handle9, callback C.streamWriter, stream *C.void) {
-	var pk *ckks.PublicKey
+	var pk *rlwe.PublicKey
 	pk = getStoredPublicKey(pkHandle)
 
 	data, err := pk.MarshalBinary()
@@ -72,25 +82,29 @@ func lattigo_marshalBinaryPublicKey(pkHandle Handle9, callback C.streamWriter, s
 		panic(err)
 	}
 
-	C.callStreamWriter(callback, unsafe.Pointer(stream), unsafe.Pointer(&data[0]), C.uint64_t(len(data)))
+	if len(data) > 0 {
+		C.callStreamWriter(callback, unsafe.Pointer(stream), unsafe.Pointer(&data[0]), C.uint64_t(len(data)))
+	}
 }
 
-//export lattigo_marshalBinaryEvaluationKey
-func lattigo_marshalBinaryEvaluationKey(evakeyHandle Handle9, callback C.streamWriter, stream *C.void) {
-	var evakey *ckks.EvaluationKey
-	evakey = getStoredEvalKey(evakeyHandle)
+//export lattigo_marshalBinaryRelinearizationKey
+func lattigo_marshalBinaryRelinearizationKey(relinKeyHandle Handle9, callback C.streamWriter, stream *C.void) {
+	var relinKey *rlwe.RelinearizationKey
+	relinKey = getStoredRelinKey(relinKeyHandle)
 
-	data, err := evakey.MarshalBinary()
+	data, err := relinKey.MarshalBinary()
 	if err != nil {
 		panic(err)
 	}
 
-	C.callStreamWriter(callback, unsafe.Pointer(stream), unsafe.Pointer(&data[0]), C.uint64_t(len(data)))
+	if len(data) > 0 {
+		C.callStreamWriter(callback, unsafe.Pointer(stream), unsafe.Pointer(&data[0]), C.uint64_t(len(data)))
+	}
 }
 
 //export lattigo_marshalBinaryRotationKeys
 func lattigo_marshalBinaryRotationKeys(rotkeyHandle Handle9, callback C.streamWriter, stream *C.void) {
-	var rotkeys *ckks.RotationKeys
+	var rotkeys *rlwe.RotationKeySet
 	rotkeys = getStoredRotationKeys(rotkeyHandle)
 
 	data, err := rotkeys.MarshalBinary()
@@ -98,7 +112,9 @@ func lattigo_marshalBinaryRotationKeys(rotkeyHandle Handle9, callback C.streamWr
 		panic(err)
 	}
 
-	C.callStreamWriter(callback, unsafe.Pointer(stream), unsafe.Pointer(&data[0]), C.uint64_t(len(data)))
+	if len(data) > 0 {
+		C.callStreamWriter(callback, unsafe.Pointer(stream), unsafe.Pointer(&data[0]), C.uint64_t(len(data)))
+	}
 }
 
 // We need a way to convert C-allocated memory into a Go Slice.
@@ -173,7 +189,7 @@ func lattigo_unmarshalBinaryParameters(buf *C.char, len uint64) Handle9 {
 func lattigo_unmarshalBinarySecretKey(buf *C.char, len uint64) Handle9 {
 	var serializedBytes []byte = unsafeCPtrToSlice(buf, len)
 
-	sk := new(ckks.SecretKey)
+	sk := new(rlwe.SecretKey)
 	err := sk.UnmarshalBinary(serializedBytes)
 	if err != nil {
 		panic(err)
@@ -185,7 +201,7 @@ func lattigo_unmarshalBinarySecretKey(buf *C.char, len uint64) Handle9 {
 func lattigo_unmarshalBinaryPublicKey(buf *C.char, len uint64) Handle9 {
 	var serializedBytes []byte = unsafeCPtrToSlice(buf, len)
 
-	pk := new(ckks.PublicKey)
+	pk := new(rlwe.PublicKey)
 	err := pk.UnmarshalBinary(serializedBytes)
 	if err != nil {
 		panic(err)
@@ -193,23 +209,23 @@ func lattigo_unmarshalBinaryPublicKey(buf *C.char, len uint64) Handle9 {
 	return marshal.CrossLangObjMap.Add(unsafe.Pointer(pk))
 }
 
-//export lattigo_unmarshalBinaryEvaluationKey
-func lattigo_unmarshalBinaryEvaluationKey(buf *C.char, len uint64) Handle9 {
+//export lattigo_unmarshalBinaryRelinearizationKey
+func lattigo_unmarshalBinaryRelinearizationKey(buf *C.char, len uint64) Handle9 {
 	var serializedBytes []byte = unsafeCPtrToSlice(buf, len)
 
-	evakey := new(ckks.EvaluationKey)
-	err := evakey.UnmarshalBinary(serializedBytes)
+	relinKey := new(rlwe.RelinearizationKey)
+	err := relinKey.UnmarshalBinary(serializedBytes)
 	if err != nil {
 		panic(err)
 	}
-	return marshal.CrossLangObjMap.Add(unsafe.Pointer(evakey))
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(relinKey))
 }
 
 //export lattigo_unmarshalBinaryRotationKeys
 func lattigo_unmarshalBinaryRotationKeys(buf *C.char, len uint64) Handle9 {
 	var serializedBytes []byte = unsafeCPtrToSlice(buf, len)
 
-	rotkeys := new(ckks.RotationKeys)
+	rotkeys := new(rlwe.RotationKeySet)
 	err := rotkeys.UnmarshalBinary(serializedBytes)
 	if err != nil {
 		panic(err)
@@ -221,7 +237,7 @@ func lattigo_unmarshalBinaryRotationKeys(buf *C.char, len uint64) Handle9 {
 func lattigo_getDataLenCiphertext(ctHandle Handle9, withMetaData bool) uint64 {
 	var ct *ckks.Ciphertext
 	ct = getStoredCiphertext(ctHandle)
-	return ct.GetDataLen(withMetaData)
+	return uint64(ct.GetDataLen(withMetaData))
 }
 
 //export lattigo_getDataLenParameters
@@ -239,28 +255,28 @@ func lattigo_getDataLenParameters(paramsHandle Handle9, withMetaData bool) uint6
 
 //export lattigo_getDataLenSecretKey
 func lattigo_getDataLenSecretKey(skHandle Handle9, withMetaData bool) uint64 {
-	var sk *ckks.SecretKey
+	var sk *rlwe.SecretKey
 	sk = getStoredSecretKey(skHandle)
-	return sk.GetDataLen(withMetaData)
+	return uint64(sk.GetDataLen(withMetaData))
 }
 
 //export lattigo_getDataLenPublicKey
 func lattigo_getDataLenPublicKey(pkHandle Handle9, withMetaData bool) uint64 {
-	var pk *ckks.PublicKey
+	var pk *rlwe.PublicKey
 	pk = getStoredPublicKey(pkHandle)
-	return pk.GetDataLen(withMetaData)
+	return uint64(pk.GetDataLen(withMetaData))
 }
 
-//export lattigo_getDataLenEvaluationKey
-func lattigo_getDataLenEvaluationKey(evakeyHandle Handle9, withMetaData bool) uint64 {
-	var evakey *ckks.EvaluationKey
-	evakey = getStoredEvalKey(evakeyHandle)
-	return evakey.GetDataLen(withMetaData)
+//export lattigo_getDataLenRelinearizationKey
+func lattigo_getDataLenRelinearizationKey(relinKeyHandle Handle9, withMetaData bool) uint64 {
+	var relinKey *rlwe.RelinearizationKey
+	relinKey = getStoredRelinKey(relinKeyHandle)
+	return uint64(relinKey.GetDataLen(withMetaData))
 }
 
 //export lattigo_getDataLenRotationKeys
 func lattigo_getDataLenRotationKeys(rotkeysHandle Handle9, withMetaData bool) uint64 {
-	var rotkeys *ckks.RotationKeys
+	var rotkeys *rlwe.RotationKeySet
 	rotkeys = getStoredRotationKeys(rotkeysHandle)
-	return rotkeys.GetDataLen(withMetaData)
+	return uint64(rotkeys.GetDataLen(withMetaData))
 }

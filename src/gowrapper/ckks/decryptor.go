@@ -1,3 +1,6 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 package ckks
 
 import "C"
@@ -21,7 +24,7 @@ func lattigo_newDecryptor(paramHandle Handle1, skHandle Handle1) Handle1 {
 	params := getStoredParameters(paramHandle)
 	sk := getStoredSecretKey(skHandle)
 	var decryptor ckks.Decryptor
-	decryptor = ckks.NewDecryptor(params, sk)
+	decryptor = ckks.NewDecryptor(*params, sk)
 	return marshal.CrossLangObjMap.Add(unsafe.Pointer(&decryptor))
 }
 

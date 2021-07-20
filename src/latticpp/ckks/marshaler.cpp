@@ -14,27 +14,27 @@ namespace latticpp {
         (*((ostream*)ostreamPtr)).write((const char*)data, len);
     }
 
-    void marshalBinaryCiphertext(Ciphertext ct, std::ostream &stream) {
+    void marshalBinaryCiphertext(const Ciphertext &ct, std::ostream &stream) {
         lattigo_marshalBinaryCiphertext(ct.getRawHandle(), &writeToStream, (void*)(&stream));
     }
 
-    void marshalBinaryParameters(Parameters params, std::ostream &stream) {
+    void marshalBinaryParameters(const Parameters &params, std::ostream &stream) {
         lattigo_marshalBinaryParameters(params.getRawHandle(), &writeToStream, (void*)(&stream));
     }
 
-    void marshalBinarySecretKey(SecretKey sk, std::ostream &stream) {
+    void marshalBinarySecretKey(const SecretKey &sk, std::ostream &stream) {
         lattigo_marshalBinarySecretKey(sk.getRawHandle(), &writeToStream, (void*)(&stream));
     }
 
-    void marshalBinaryPublicKey(PublicKey pk, std::ostream &stream) {
+    void marshalBinaryPublicKey(const PublicKey &pk, std::ostream &stream) {
         lattigo_marshalBinaryPublicKey(pk.getRawHandle(), &writeToStream, (void*)(&stream));
     }
 
-    void marshalBinaryEvaluationKey(EvaluationKey evaKey, std::ostream &stream) {
-        lattigo_marshalBinaryEvaluationKey(evaKey.getRawHandle(), &writeToStream, (void*)(&stream));
+    void marshalBinaryRelinearizationKey(const RelinearizationKey &relinKey, std::ostream &stream) {
+        lattigo_marshalBinaryRelinearizationKey(relinKey.getRawHandle(), &writeToStream, (void*)(&stream));
     }
 
-    void marshalBinaryRotationKeys(RotationKeys rotKeys, std::ostream &stream) {
+    void marshalBinaryRotationKeys(const RotationKeys &rotKeys, std::ostream &stream) {
         lattigo_marshalBinaryRotationKeys(rotKeys.getRawHandle(), &writeToStream, (void*)(&stream));
     }
 
@@ -63,9 +63,9 @@ namespace latticpp {
         return PublicKey(lattigo_unmarshalBinaryPublicKey(buffer.data(), buffer.size()));
     }
 
-    EvaluationKey unmarshalBinaryEvaluationKey(istream &stream) {
+    RelinearizationKey unmarshalBinaryRelinearizationKey(istream &stream) {
         vector<char> buffer(istreambuf_iterator<char>{stream}, {});
-        return EvaluationKey(lattigo_unmarshalBinaryEvaluationKey(buffer.data(), buffer.size()));
+        return RelinearizationKey(lattigo_unmarshalBinaryRelinearizationKey(buffer.data(), buffer.size()));
     }
 
     RotationKeys unmarshalBinaryRotationKeys(istream &stream) {

@@ -10,5 +10,5 @@
 
 namespace latticpp {
 
-    std::string precisionStats(const Parameters &params, const std::vector<double> &expectedValues, const std::vector<double> &actualValues);
+    std::string precisionStats(const Parameters &params, const Encoder &encoder, const std::vector<double> &expectedValues, const std::vector<double> &actualValues);
 }  // namespace latticpp

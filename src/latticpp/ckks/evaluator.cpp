@@ -7,17 +7,17 @@ using namespace std;
 
 namespace latticpp {
 
-    Evaluator newEvaluator(const Parameters &params) {
-        return Evaluator(lattigo_newEvaluator(params.getRawHandle()));
+    Evaluator newEvaluator(const Parameters &params, const EvaluationKey &evakey) {
+        return Evaluator(lattigo_newEvaluator(params.getRawHandle(), evakey.getRawHandle()));
     }
 
-    void rotate(const Evaluator &eval, const Ciphertext &ctIn, uint64_t k, const RotationKeys &rotKeys, Ciphertext &ctOut) {
-        lattigo_rotate(eval.getRawHandle(), ctIn.getRawHandle(), k, rotKeys.getRawHandle(), ctOut.getRawHandle());
+    void rotate(const Evaluator &eval, const Ciphertext &ctIn, uint64_t k, Ciphertext &ctOut) {
+        lattigo_rotate(eval.getRawHandle(), ctIn.getRawHandle(), k, ctOut.getRawHandle());
     }
 
-    vector<Ciphertext> rotateHoisted(const Evaluator &eval, const Ciphertext &ctIn, vector<uint64_t> ks, const RotationKeys &rotKeys) {
+    vector<Ciphertext> rotateHoisted(const Evaluator &eval, const Ciphertext &ctIn, vector<uint64_t> ks) {
         vector<uint64_t> outputHandles(ks.size());
-        lattigo_rotateHoisted(eval.getRawHandle(), ctIn.getRawHandle(), ks.data(), ks.size(), rotKeys.getRawHandle(), outputHandles.data());
+        lattigo_rotateHoisted(eval.getRawHandle(), ctIn.getRawHandle(), ks.data(), ks.size(), outputHandles.data());
         vector<Ciphertext> outputCts(ks.size());
         for (int i = 0; i < ks.size(); i++) {
             outputCts[i] = Ciphertext(outputHandles[i]);
@@ -37,16 +37,16 @@ namespace latticpp {
         lattigo_rescale(eval.getRawHandle(), ctIn.getRawHandle(), threshold, ctOut.getRawHandle());
     }
 
-    void rescaleMany(const Evaluator &eval, const Ciphertext &ctIn, uint64_t numRescales, Ciphertext &ctOut) {
-        lattigo_rescaleMany(eval.getRawHandle(), ctIn.getRawHandle(), numRescales, ctOut.getRawHandle());
+    void rescaleMany(const Evaluator &eval, const Parameters &params, const Ciphertext &ctIn, uint64_t numRescales, Ciphertext &ctOut) {
+        lattigo_rescaleMany(eval.getRawHandle(), params.getRawHandle(), ctIn.getRawHandle(), numRescales, ctOut.getRawHandle());
     }
 
-    Ciphertext mulRelinNew(const Evaluator &eval, const Ciphertext &ct0, const Ciphertext &ct1, const EvaluationKey &evakey) {
-        return Ciphertext(lattigo_mulRelinNew(eval.getRawHandle(), ct0.getRawHandle(), ct1.getRawHandle(), evakey.getRawHandle()));
+    Ciphertext mulRelinNew(const Evaluator &eval, const Ciphertext &ct0, const Ciphertext &ct1) {
+        return Ciphertext(lattigo_mulRelinNew(eval.getRawHandle(), ct0.getRawHandle(), ct1.getRawHandle()));
     }
 
-    void mulRelin(const Evaluator &eval, const Ciphertext &ct0, const Ciphertext &ct1, const EvaluationKey &evakey, Ciphertext &ctOut) {
-        lattigo_mulRelin(eval.getRawHandle(), ct0.getRawHandle(), ct1.getRawHandle(), evakey.getRawHandle(), ctOut.getRawHandle());
+    void mulRelin(const Evaluator &eval, const Ciphertext &ct0, const Ciphertext &ct1, Ciphertext &ctOut) {
+        lattigo_mulRelin(eval.getRawHandle(), ct0.getRawHandle(), ct1.getRawHandle(), ctOut.getRawHandle());
     }
 
     void mul(const Evaluator &eval, const Ciphertext &ct0, const Ciphertext &ct1, Ciphertext &ctOut) {
@@ -85,7 +85,7 @@ namespace latticpp {
         lattigo_dropLevel(eval.getRawHandle(), ct.getRawHandle(), levels);
     }
 
-    void relinearize(const Evaluator &eval, const Ciphertext &ctIn, const EvaluationKey &evakey, Ciphertext &ctOut) {
-        lattigo_relinearize(eval.getRawHandle(), ctIn.getRawHandle(), evakey.getRawHandle(), ctOut.getRawHandle());
+    void relinearize(const Evaluator &eval, const Ciphertext &ctIn, Ciphertext &ctOut) {
+        lattigo_relinearize(eval.getRawHandle(), ctIn.getRawHandle(), ctOut.getRawHandle());
     }
 }  // namespace latticpp
