@@ -16,6 +16,8 @@ __attribute__((unused)) static void callStreamWriter(streamWriter f, void* strea
 import "C"
 
 import (
+	"bytes"
+	"encoding/gob"
 	"errors"
 	"github.com/ldsec/lattigo/v2/ckks"
 	"github.com/ldsec/lattigo/v2/rlwe"
@@ -59,14 +61,17 @@ func lattigo_marshalBinaryParameters(paramsHandle Handle9, callback C.streamWrit
 
 //export lattigo_marshalBinaryBootstrapParameters
 func lattigo_marshalBinaryBootstrapParameters(paramsHandle Handle9, callback C.streamWriter, stream *C.void) {
-	// var params *ckks.BootstrappingParameters
-	// params = getStoredBootstrappingParameters(paramsHandle)
+	var params *ckks.BootstrappingParameters
+	params = getStoredBootstrappingParameters(paramsHandle)
 
-	// data, err := params.MarshalBinary()
-	// if err != nil {
-	// 	panic(err)
-	// }
-	var data []byte
+	// https://kpbird.medium.com/golang-serialize-struct-using-gob-part-2-f6134dd4f22c
+	var buf bytes.Buffer
+	var encoder *gob.Encoder = gob.NewEncoder(&buf)
+	if err := encoder.Encode(*params); err != nil {
+		panic(err)
+	}
+
+	var data []byte = buf.Bytes()
 
 	if len(data) > 0 {
 		C.callStreamWriter(callback, unsafe.Pointer(stream), unsafe.Pointer(&data[0]), C.uint64_t(len(data)))
@@ -199,6 +204,21 @@ func lattigo_unmarshalBinaryParameters(buf *C.char, len uint64) Handle9 {
 		panic(err)
 	}
 	return marshal.CrossLangObjMap.Add(unsafe.Pointer(params))
+}
+
+//export lattigo_unmarshalBinaryBootstrapParameters
+func lattigo_unmarshalBinaryBootstrapParameters(cbuf *C.char, len uint64) Handle9 {
+	var serializedBytes []byte = unsafeCPtrToSlice(cbuf, len)
+
+	var bbuf *bytes.Buffer = bytes.NewBuffer(serializedBytes)
+	var decoder *gob.Decoder = gob.NewDecoder(bbuf)
+
+	var btp_params ckks.BootstrappingParameters
+	if err := decoder.Decode(&btp_params); err != nil {
+		panic(err)
+	}
+
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(&btp_params))
 }
 
 //export lattigo_unmarshalBinarySecretKey

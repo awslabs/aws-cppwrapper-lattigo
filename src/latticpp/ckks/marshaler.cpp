@@ -57,6 +57,11 @@ namespace latticpp {
         return Parameters(lattigo_unmarshalBinaryParameters(buffer.data(), buffer.size()));
     }
 
+    BootstrappingParameters unmarshalBinaryBootstrapParameters(std::istream &stream) {
+        vector<char> buffer(istreambuf_iterator<char>{stream}, {});
+        return BootstrappingParameters(lattigo_unmarshalBinaryBootstrapParameters(buffer.data(), buffer.size()));
+    }
+
     SecretKey unmarshalBinarySecretKey(istream &stream) {
         vector<char> buffer(istreambuf_iterator<char>{stream}, {});
         return SecretKey(lattigo_unmarshalBinarySecretKey(buffer.data(), buffer.size()));

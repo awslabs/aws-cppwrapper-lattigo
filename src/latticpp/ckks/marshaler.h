@@ -26,6 +26,8 @@ namespace latticpp {
 
     Parameters unmarshalBinaryParameters(std::istream &stream);
 
+    BootstrappingParameters unmarshalBinaryBootstrapParameters(std::istream &stream);
+
     SecretKey unmarshalBinarySecretKey(std::istream &stream);
 
     PublicKey unmarshalBinaryPublicKey(std::istream &stream);
