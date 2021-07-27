@@ -207,3 +207,18 @@ func lattigo_genBootstrappingKey(keygenHandle Handle5, paramHandle Handle5, btpP
 
 	return marshal.CrossLangObjMap.Add(unsafe.Pointer(&btpKey))
 }
+
+//export lattigo_makeBootstrappingKey
+func lattigo_makeBootstrappingKey(relinKeyHandle Handle5, rotKeyHandle Handle5) Handle5 {
+	// get existing keys
+	var relinKey *rlwe.RelinearizationKey
+	relinKey = getStoredRelinKey(relinKeyHandle)
+
+	var rotKeys *rlwe.RotationKeySet
+	rotKeys = getStoredRotationKeys(rotKeyHandle)
+
+	var btpKey ckks.BootstrappingKey
+	btpKey = ckks.BootstrappingKey{Rlk: relinKey, Rtks: rotKeys}
+
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(&btpKey))
+}
