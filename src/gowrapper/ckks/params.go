@@ -6,6 +6,7 @@ package ckks
 /*
 #include "stdint.h"
 typedef const uint8_t constUChar;
+typedef const uint64_t constULong;
 */
 import "C"
 
@@ -60,6 +61,37 @@ func lattigo_getDefaultPQParams(paramEnum uint8) Handle6 {
 		panic(err)
 	}
 
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(&params))
+}
+
+//export lattigo_newParameters
+func lattigo_newParameters(logN uint64, qi *C.constULong, numQi uint8, pi *C.constULong, numPi uint8, logScale uint8) Handle6 {
+	size := unsafe.Sizeof(uint64(0))
+
+	Qi := make([]uint64, numQi)
+	qiPtr := uintptr(unsafe.Pointer(qi))
+	for i := range Qi {
+		Qi[i] = *(*uint64)(unsafe.Pointer(qiPtr + size*uintptr(i)))
+	}
+
+	Pi := make([]uint64, numPi)
+	piPtr := uintptr(unsafe.Pointer(pi))
+	for i := range Pi {
+		Pi[i] = *(*uint64)(unsafe.Pointer(piPtr + size*uintptr(i)))
+	}
+
+	var rlweParams rlwe.Parameters
+	var err error
+	rlweParams, err = rlwe.NewParameters(int(logN), Qi, Pi, rlwe.DefaultSigma)
+	if err != nil {
+		panic(err)
+	}
+
+	var params ckks.Parameters
+	params, err = ckks.NewParameters(rlweParams, int(logN-1), float64(uint64(1)<<uint64(logScale)))
+	if err != nil {
+		panic(err)
+	}
 	return marshal.CrossLangObjMap.Add(unsafe.Pointer(&params))
 }
 

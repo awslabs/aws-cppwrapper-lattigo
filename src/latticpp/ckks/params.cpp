@@ -15,8 +15,15 @@ namespace latticpp {
         return Parameters(lattigo_getDefaultPQParams(paramId));
     }
 
-    Parameters newParametersFromLogModuli(uint64_t logN, const vector<uint8_t> &logQi, uint8_t numQi, const vector<uint8_t> &logPi, uint8_t numPi, uint8_t logScale) {
-        return Parameters(lattigo_newParametersFromLogModuli(logN, logQi.data(), numQi, logPi.data(), numPi, logScale));
+
+
+    Parameters newParameters(uint64_t logN, const vector<uint64_t> &qi, const vector<uint64_t> &pi, uint8_t logScale) {
+        return Parameters(lattigo_newParameters(logN, qi.data(), qi.size(), pi.data(), pi.size(), logScale));
+    }
+
+
+    Parameters newParametersFromLogModuli(uint64_t logN, const vector<uint8_t> &logQi, const vector<uint8_t> &logPi, uint8_t logScale) {
+        return Parameters(lattigo_newParametersFromLogModuli(logN, logQi.data(), logQi.size(), logPi.data(), logPi.size(), logScale));
     }
 
     uint64_t numSlots(const Parameters &params) {
