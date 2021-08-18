@@ -63,7 +63,7 @@ function(download_external_project project_dir)
     endif()
 endfunction()
 
-# Download AWS HIT.
+# Download latticpp.
 download_external_project(third-party/aws-latticpp)
 # Add 'third-party/aws-latticpp/src', which defines 'aws-latticpp' target.
 add_subdirectory(third-party/aws-latticpp/src)
@@ -73,7 +73,7 @@ add_executable(my_homom_app main.cpp)
 target_link_libraries(my_homom_app aws-latticpp)
 ```
 
-### 3. HIT header files are now available in `main.cpp` of your project.
+### 3. latticpp header files are now available in `main.cpp` of your project.
 
 ```c++
 #include "latticpp/latticpp.h"
