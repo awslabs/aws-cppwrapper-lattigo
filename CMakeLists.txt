@@ -3,7 +3,7 @@
 
 cmake_minimum_required(VERSION 3.12)
 
-project(aws-lattigo-cpp VERSION 0.0.1 LANGUAGES CXX)
+project(aws-lattigo-cpp VERSION 1.0.0 LANGUAGES CXX)
 
 #################
 # CMAKE OPTIONS #
