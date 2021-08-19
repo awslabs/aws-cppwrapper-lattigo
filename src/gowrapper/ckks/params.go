@@ -77,6 +77,7 @@ func lattigo_newParameters(logN uint64, qi *C.constULong, numQi uint8, pi *C.con
 	Pi := make([]uint64, numPi)
 	piPtr := uintptr(unsafe.Pointer(pi))
 	for i := range Pi {
+		// https://stackoverflow.com/a/32701024/925978
 		Pi[i] = *(*uint64)(unsafe.Pointer(piPtr + size*uintptr(i)))
 	}
 
