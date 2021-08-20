@@ -9,9 +9,12 @@ package ckks
 import "C"
 
 import (
+	"errors"
 	"github.com/ldsec/lattigo/v2/ckks"
 	"github.com/ldsec/lattigo/v2/rlwe"
 	"lattigo-cpp/marshal"
+	"math"
+	"strconv"
 	"unsafe"
 )
 
@@ -132,6 +135,10 @@ func lattigo_rescaleMany(evalHandle Handle4, paramsHandle Handle4, ctInHandle Ha
 
 	for i := 0; i < int(numRescales); i++ {
 		targetScale /= (float64(params.RingQ().Modulus[ctIn.Level()-i]))
+	}
+
+	if targetScale <= 0 {
+		panic(errors.New("Target scale is too small: " + strconv.FormatFloat(targetScale, 'E', -1, 64) + "\t" + strconv.FormatFloat(ctIn.Scale, 'E', -1, 64) + "\t" + strconv.FormatFloat(math.Log2(ctIn.Scale), 'E', -1, 64) + "\t" + strconv.FormatUint(numRescales, 10)))
 	}
 
 	lattigo_rescale(evalHandle, ctInHandle, targetScale, ctOutHandle)
