@@ -140,7 +140,6 @@ func lattigo_rescaleMany(evalHandle Handle4, paramsHandle Handle4, ctInHandle Ha
 	if targetScale <= 0 {
 		panic(errors.New("Target scale is too small: " + strconv.FormatFloat(targetScale, 'E', -1, 64) + "\t" + strconv.FormatFloat(ctIn.Scale, 'E', -1, 64) + "\t" + strconv.FormatFloat(math.Log2(ctIn.Scale), 'E', -1, 64) + "\t" + strconv.FormatUint(numRescales, 10)))
 	}
-
 	lattigo_rescale(evalHandle, ctInHandle, targetScale, ctOutHandle)
 }
 

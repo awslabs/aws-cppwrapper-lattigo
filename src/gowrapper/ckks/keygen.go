@@ -57,11 +57,6 @@ func getStoredRotationKeys(rotKeysHandle Handle5) *rlwe.RotationKeySet {
 	return (*rlwe.RotationKeySet)(ref.Ptr)
 }
 
-func getStoredBootstrappingKey(bootKeyHandle Handle5) *ckks.BootstrappingKey {
-	ref := marshal.CrossLangObjMap.Get(bootKeyHandle)
-	return (*ckks.BootstrappingKey)(ref.Ptr)
-}
-
 //export lattigo_newKeyGenerator
 func lattigo_newKeyGenerator(paramHandle Handle5) Handle5 {
 	paramPtr := getStoredParameters(paramHandle)

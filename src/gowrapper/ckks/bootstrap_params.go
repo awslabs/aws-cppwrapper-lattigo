@@ -8,6 +8,7 @@ import "C"
 import (
 	"errors"
 	"github.com/ldsec/lattigo/v2/ckks"
+	"github.com/ldsec/lattigo/v2/ckks/bootstrapping"
 	"lattigo-cpp/marshal"
 	"unsafe"
 )
@@ -15,33 +16,33 @@ import (
 // https://github.com/golang/go/issues/35715#issuecomment-791039692
 type Handle11 = uint64
 
-func getStoredBootstrappingParameters(bootParamHandle Handle11) *ckks.BootstrappingParameters {
+func getStoredBootstrappingParameters(bootParamHandle Handle11) *bootstrapping.Parameters {
 	ref := marshal.CrossLangObjMap.Get(bootParamHandle)
-	return (*ckks.BootstrappingParameters)(ref.Ptr)
+	return (*bootstrapping.Parameters)(ref.Ptr)
 }
 
 //export lattigo_getBootstrappingParams
 func lattigo_getBootstrappingParams(bootParamEnum uint8) Handle11 {
-	if int(bootParamEnum) >= len(ckks.DefaultBootstrapParams) {
+	if int(bootParamEnum) >= len(bootstrapping.DefaultParameters) {
 		panic(errors.New("bootstrapping parameter enum index out of bounds"))
 	}
 
-	var bootParams *ckks.BootstrappingParameters
-	bootParams = ckks.DefaultBootstrapParams[bootParamEnum]
+	var bootParams *bootstrapping.Parameters
+	bootParams = &bootstrapping.DefaultParameters[bootParamEnum]
 
 	return marshal.CrossLangObjMap.Add(unsafe.Pointer(bootParams))
 }
 
 //export lattigo_bootstrap_h
 func lattigo_bootstrap_h(bootParamHandle Handle11) uint64 {
-	var bootParams *ckks.BootstrappingParameters
+	var bootParams *bootstrapping.Parameters
 	bootParams = getStoredBootstrappingParameters(bootParamHandle)
 	return uint64(bootParams.H)
 }
 
 //export lattigo_bootstrap_depth
 func lattigo_bootstrap_depth(bootParamHandle Handle11) uint64 {
-	var bootParams *ckks.BootstrappingParameters
+	var bootParams *bootstrapping.Parameters
 	bootParams = getStoredBootstrappingParameters(bootParamHandle)
 	// len(bootParams.ResidualModuli) is the number of moduli available
 	// post-bootstrapping, which is one more than the ciphertext level
@@ -55,7 +56,7 @@ func lattigo_bootstrap_depth(bootParamHandle Handle11) uint64 {
 
 //export lattigo_params
 func lattigo_params(bootParamHandle Handle11) Handle11 {
-	var bootParams *ckks.BootstrappingParameters
+	var bootParams *bootstrapping.Parameters
 	bootParams = getStoredBootstrappingParameters(bootParamHandle)
 
 	var params ckks.Parameters
