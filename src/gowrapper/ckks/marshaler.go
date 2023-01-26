@@ -19,11 +19,12 @@ import (
 	"bytes"
 	"encoding/gob"
 	"errors"
-	"github.com/ldsec/lattigo/v2/ckks"
-	"github.com/ldsec/lattigo/v2/rlwe"
 	"lattigo-cpp/marshal"
 	"reflect"
 	"unsafe"
+
+	"github.com/ldsec/lattigo/v2/ckks"
+	"github.com/ldsec/lattigo/v2/rlwe"
 )
 
 // https://github.com/golang/go/issues/35715#issuecomment-791039692

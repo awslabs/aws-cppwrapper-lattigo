@@ -3,9 +3,9 @@ package main
 import "C"
 
 import (
-    _ "lattigo-cpp/ckks"
-    _ "lattigo-cpp/marshal"
+	_ "lattigo-cpp/ckks"
+	_ "lattigo-cpp/marshal"
 )
 
 // required by cgo
-func main() { }
+func main() {}

@@ -6,14 +6,15 @@ package ckks
 import "C"
 
 import (
-    "github.com/ldsec/lattigo/v2/ckks"
-    "lattigo-cpp/marshal"
+	"lattigo-cpp/marshal"
+
+	"github.com/ldsec/lattigo/v2/ckks"
 )
 
 // https://github.com/golang/go/issues/35715#issuecomment-791039692
 type Handle7 = uint64
 
 func getStoredPlaintext(ptHandle Handle7) *ckks.Plaintext {
-    ref := marshal.CrossLangObjMap.Get(ptHandle)
-    return (*ckks.Plaintext)(ref.Ptr)
+	ref := marshal.CrossLangObjMap.Get(ptHandle)
+	return (*ckks.Plaintext)(ref.Ptr)
 }
