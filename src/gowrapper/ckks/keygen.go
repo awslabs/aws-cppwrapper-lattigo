@@ -18,10 +18,11 @@ import "C"
 
 import (
 	"errors"
-	"github.com/ldsec/lattigo/v2/ckks"
-	"github.com/ldsec/lattigo/v2/rlwe"
 	"lattigo-cpp/marshal"
 	"unsafe"
+
+	"github.com/ldsec/lattigo/v2/ckks"
+	"github.com/ldsec/lattigo/v2/rlwe"
 )
 
 // https://github.com/golang/go/issues/35715#issuecomment-791039692
@@ -98,6 +99,7 @@ func lattigo_genKeyPairSparse(keygenHandle Handle5, hw uint64) C.struct_Lattigo_
 
 // only generates relinearization keys for ciphertexts up to degree 2
 // (i.e., you must relinearize after each ct/ct multiplication)
+//
 //export lattigo_genRelinearizationKey
 func lattigo_genRelinearizationKey(keygenHandle Handle5, skHandle Handle5) Handle5 {
 	var keygen *rlwe.KeyGenerator
@@ -109,6 +111,7 @@ func lattigo_genRelinearizationKey(keygenHandle Handle5, skHandle Handle5) Handl
 
 // Positive k is for left rotation by k positions
 // Negative k is equivalent to a right rotation by k positions
+//
 //export lattigo_genRotationKeysForRotations
 func lattigo_genRotationKeysForRotations(keygenHandle Handle5, skHandle Handle5, ks *C.int64_t, ksLen uint64) Handle5 {
 	var keygen *rlwe.KeyGenerator
@@ -146,6 +149,7 @@ func lattigo_makeEvaluationKey(relinKeyHandle Handle5, rotKeyHandle Handle5) Han
 }
 
 // Generates any missing Galois keys
+//
 //export lattigo_genBootstrappingKey
 func lattigo_genBootstrappingKey(keygenHandle Handle5, paramHandle Handle5, btpParamsHandle Handle5, skHandle Handle5, relinKeyHandle Handle5, rotKeyHandle Handle5) Handle5 {
 	var keygen *rlwe.KeyGenerator
