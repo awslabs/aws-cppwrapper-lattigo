@@ -60,7 +60,7 @@ func lattigo_encodeNTTAtLvlNew(paramHandle Handle2, encoderHandle Handle2, realV
 	complexValues := CDoubleVecToGoComplex(realValues, uint64(math.Pow(2, float64(logLen))))
 	var plaintext *ckks.Plaintext
 	plaintext = ckks.NewPlaintext(*params, int(level), scale)
-	(*encoder).EncodeNTT(plaintext, complexValues, int(logLen))
+	(*encoder).Encode(complexValues, plaintext, int(logLen))
 	return marshal.CrossLangObjMap.Add(unsafe.Pointer(plaintext))
 }
 

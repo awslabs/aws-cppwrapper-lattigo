@@ -19,11 +19,11 @@ namespace latticpp {
 
     BootstrappingParameters getBootstrappingParams(const NamedBootstrappingParams paramId);
 
-    Parameters genParams(const BootstrappingParameters &bootParams);
+    Parameters getCKKSParamsForBootstrapping(const NamedBootstrappingParams paramId);
 
     // Get the secret key Hamming weight for which these bootstrapping parameters were created
     uint64_t secretHammingWeight(const BootstrappingParameters &bootParams);
 
     // The multiplicative depth of the bootstrapping circuit
     int bootstrapDepth(const BootstrappingParameters &bootParams);
-}  // namespace latticpp
+} // namespace latticpp

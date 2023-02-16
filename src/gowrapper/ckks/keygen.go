@@ -19,6 +19,7 @@ import "C"
 import (
 	"errors"
 	"github.com/ldsec/lattigo/v2/ckks"
+	"github.com/ldsec/lattigo/v2/ckks/bootstrapping"
 	"github.com/ldsec/lattigo/v2/rlwe"
 	"lattigo-cpp/marshal"
 	"unsafe"
@@ -149,7 +150,7 @@ func lattigo_genBootstrappingKey(keygenHandle Handle5, paramHandle Handle5, btpP
 	var params *ckks.Parameters
 	params = getStoredParameters(paramHandle)
 
-	var btpParams *ckks.BootstrappingParameters
+	var btpParams *bootstrapping.Parameters
 	btpParams = getStoredBootstrappingParameters(btpParamsHandle)
 
 	var sk *rlwe.SecretKey

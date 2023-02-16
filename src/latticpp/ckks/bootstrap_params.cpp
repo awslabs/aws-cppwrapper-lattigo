@@ -11,8 +11,8 @@ namespace latticpp {
         return BootstrappingParameters(lattigo_getBootstrappingParams(paramId));
     }
 
-    Parameters genParams(const BootstrappingParameters &bootParams) {
-        return Parameters(lattigo_params(bootParams.getRawHandle()));
+    Parameters getCKKSParamsForBootstrapping(const NamedBootstrappingParams paramId) {
+        return Parameters(lattigo_paramsForBootstrapping(paramId));
     }
 
     uint64_t secretHammingWeight(const BootstrappingParameters &bootParams) {

@@ -41,27 +41,34 @@ func lattigo_bootstrap_h(bootParamHandle Handle11) uint64 {
 }
 
 //export lattigo_bootstrap_depth
-func lattigo_bootstrap_depth(bootParamHandle Handle11) uint64 {
+func lattigo_bootstrap_depth(ckksParamHandle Handle11, bootParamHandle Handle11) uint64 {
+	var ckksParams *ckks.Parameters
+	ckksParams = getStoredParameters(ckksParamHandle)
+
 	var bootParams *bootstrapping.Parameters
 	bootParams = getStoredBootstrappingParameters(bootParamHandle)
-	// len(bootParams.ResidualModuli) is the number of moduli available
-	// post-bootstrapping, which is one more than the ciphertext level
-	// after bootstrapping. Thus the difference, plus one, is the depth of
-	// the bootstrapping circuit. For example, if the highest ciphertext
-	// level is 10 and the post-bootstrapping *level* is 5, then the
-	// length of the residual moduli vector is 6, so the depth of the bootstrapping
-	// circuit is 10 - 6 + 1 = 5.
-	return uint64(bootParams.MaxLevel() - len(bootParams.ResidualModuli) + 1)
+	// SlotsToCoeffsParameters.LevelStart is the starting level of the last step of bootstrapping,
+	// and len(SlotsToCoeffsParameters.ScalingFactor) is the number of levels consumed by this step.
+	// Thus the post-bootstrapping level is `SlotsToCoeffsParameters.LevelStart - len(SlotsToCoeffsParameters.ScalingFactor)`.
+	// The difference between ckksParams.MaxLevel() and the post-bootstrapping level is therefore the number of levels
+	// consumed by bootstrapping.
+	// For example, if the highest ciphertext level is 10 and the SlotsToCoeffsParams.LevelStart is 7 and the length
+	// of the ScalingFactor array is 2, then the post-bootstrapping *level* is 5, so the depth of the bootstrapping
+	// circuit is 10 - 7 + 2 = 5.
+	return uint64(ckksParams.MaxLevel() - bootParams.SlotsToCoeffsParameters.LevelStart + len(bootParams.SlotsToCoeffsParameters.ScalingFactor))
 }
 
-//export lattigo_params
-func lattigo_params(bootParamHandle Handle11) Handle11 {
-	var bootParams *bootstrapping.Parameters
-	bootParams = getStoredBootstrappingParameters(bootParamHandle)
+//export lattigo_getCKKSParamsForBootstrapping
+func lattigo_getCKKSParamsForBootstrapping(bootParamEnum uint8) Handle11 {
+	if int(bootParamEnum) >= len(bootstrapping.DefaultCKKSParameters) {
+		panic(errors.New("bootstrapping parameter enum index out of bounds"))
+	}
+	var paramsLit ckks.ParametersLiteral
+	paramsLit = bootstrapping.DefaultCKKSParameters[bootParamEnum]
 
 	var params ckks.Parameters
 	var err error
-	params, err = bootParams.Params()
+	params, err = ckks.NewParametersFromLiteral(paramsLit)
 
 	if err != nil {
 		panic(err)
