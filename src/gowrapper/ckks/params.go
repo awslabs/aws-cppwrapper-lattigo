@@ -146,6 +146,25 @@ func lattigo_logN(paramHandle Handle6) uint64 {
 	return uint64(params.LogN())
 }
 
+//export lattigo_ringQ
+func lattigo_ringQ(paramHandle Handle6) uint64 {
+	params := getStoredParameters(paramHandle)
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(params.RingQ()))
+}
+
+//export lattigo_ringP
+func lattigo_ringP(paramHandle Handle6) Handle6 {
+	var params *ckks.Parameters
+	params = getStoredParameters(paramHandle)
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(params.RingP()))
+}
+
+//export lattigo_ringQP
+func lattigo_ringQP(paramHandle Handle6) Handle6 {
+	params := getStoredParameters(paramHandle)
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(params.RingQP()))
+}
+
 //export lattigo_logQP
 func lattigo_logQP(paramHandle Handle6) uint64 {
 	var params *ckks.Parameters
@@ -172,6 +191,12 @@ func lattigo_sigma(paramHandle Handle6) float64 {
 	var params *ckks.Parameters
 	params = getStoredParameters(paramHandle)
 	return params.Sigma()
+}
+
+//export lattigo_beta
+func lattigo_beta(paramHandle Handle6) int {
+	params := getStoredParameters(paramHandle)
+	return params.Beta()
 }
 
 //export lattigo_getQi
@@ -214,4 +239,22 @@ func lattigo_logSlots(paramHandle Handle6) uint64 {
 	var params *ckks.Parameters
 	params = getStoredParameters(paramHandle)
 	return uint64(params.LogSlots())
+}
+
+//export lattigo_galoisElementForRowRotation
+func lattigo_galoisElementForRowRotation(paramHandle Handle6) uint64 {
+	params := getStoredParameters(paramHandle)
+	return params.GaloisElementForRowRotation()
+}
+
+//export lattigo_galoisElementsForRowInnerSum
+func lattigo_galoisElementsForRowInnerSum(paramHandle Handle6, outValues *C.uint64_t) {
+	params := getStoredParameters(paramHandle)
+	res := params.GaloisElementsForRowInnerSum()
+
+	size := unsafe.Sizeof(uint64(0))
+	basePtr := uintptr(unsafe.Pointer(outValues))
+	for i := range res {
+		*(*uint64)(unsafe.Pointer(basePtr + size*uintptr(i))) = res[i]
+	}
 }

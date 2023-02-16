@@ -49,6 +49,12 @@ namespace latticpp {
 
     uint64_t logN(const Parameters &params);
 
+    Ring ringQ(const Parameters &params);
+
+    Ring ringP(const Parameters &params);
+
+    Ring ringQP(const Parameters &params);
+
     uint64_t logQP(const Parameters &params);
 
     uint64_t maxLevel(const Parameters &params);
@@ -56,6 +62,8 @@ namespace latticpp {
     double scale(const Parameters &params);
 
     double sigma(const Parameters &params);
+
+    int beta(const Parameters &params);
 
     uint64_t qi(const Parameters &params, uint64_t i);
 
@@ -68,4 +76,9 @@ namespace latticpp {
     uint64_t logQLvl(const Parameters &params, uint64_t lvl);
 
     uint64_t logSlots(const Parameters &params);
+
+    uint64_t galoisElementForRowRotation(const Parameters &params);
+
+    std::vector<uint64_t>
+    galoisElementsForRowInnerSum(const Parameters &params);
 }  // namespace latticpp

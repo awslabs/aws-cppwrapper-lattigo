@@ -58,6 +58,11 @@ func getStoredRotationKeys(rotKeysHandle Handle5) *rlwe.RotationKeySet {
 	return (*rlwe.RotationKeySet)(ref.Ptr)
 }
 
+func getStoredSwitchingKey(switchingKeyHandle Handle5) *rlwe.SwitchingKey {
+	ref := marshal.CrossLangObjMap.Get(switchingKeyHandle)
+	return (*rlwe.SwitchingKey)(ref.Ptr)
+}
+
 func getStoredBootstrappingKey(bootKeyHandle Handle5) *ckks.BootstrappingKey {
 	ref := marshal.CrossLangObjMap.Get(bootKeyHandle)
 	return (*ckks.BootstrappingKey)(ref.Ptr)
@@ -69,6 +74,51 @@ func lattigo_newKeyGenerator(paramHandle Handle5) Handle5 {
 	var keyGenerator rlwe.KeyGenerator
 	keyGenerator = ckks.NewKeyGenerator(*paramPtr)
 	return marshal.CrossLangObjMap.Add(unsafe.Pointer(&keyGenerator))
+}
+
+//export lattigo_newSecretKey
+func lattigo_newSecretKey(paramHandle Handle5) Handle5 {
+	paramPtr := getStoredParameters(paramHandle)
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(ckks.NewSecretKey(*paramPtr)))
+}
+
+//export lattigo_newPublicKey
+func lattigo_newPublicKey(paramHandle Handle5) Handle5 {
+	paramPtr := getStoredParameters(paramHandle)
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(ckks.NewPublicKey(*paramPtr)))
+}
+
+//export lattigo_newRelinearizationKey
+func lattigo_newRelinearizationKey(paramHandle Handle5) Handle5 {
+	paramPtr := getStoredParameters(paramHandle)
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(ckks.NewRelinearizationKey(*paramPtr)))
+}
+
+//export lattigo_newRotationKeys
+func lattigo_newRotationKeys(paramHandle Handle5, galoisElements *C.uint64_t, galoisElementsLen uint64) Handle5 {
+	paramPtr := getStoredParameters(paramHandle)
+
+	galoisElementsTmp := make([]uint64, galoisElementsLen)
+	size := unsafe.Sizeof(uint64(0))
+	basePtrIn := uintptr(unsafe.Pointer(galoisElements))
+	for i := range galoisElementsTmp {
+		galoisElementsTmp[i] = *(*uint64)(unsafe.Pointer(basePtrIn + size*uintptr(i)))
+	}
+
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(ckks.NewRotationKeySet(*paramPtr, galoisElementsTmp)))
+}
+
+//export lattigo_genSecretKey
+func lattigo_genSecretKey(keygenHandle Handle5) Handle5 {
+	keygen := getStoredKeyGenerator(keygenHandle)
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer((*keygen).GenSecretKey()))
+}
+
+//export lattigo_genPublicKey
+func lattigo_genPublicKey(keygenHandle Handle5, skHandle Handle5) Handle5 {
+	keygen := getStoredKeyGenerator(keygenHandle)
+	sk := getStoredSecretKey(skHandle)
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer((*keygen).GenPublicKey(sk)))
 }
 
 //export lattigo_genKeyPair
@@ -148,6 +198,23 @@ func lattigo_makeEvaluationKey(relinKeyHandle Handle5, rotKeyHandle Handle5) Han
 	return marshal.CrossLangObjMap.Add(unsafe.Pointer(&evalKey))
 }
 
+//export lattigo_makeEmptyEvaluationKey
+func lattigo_makeEmptyEvaluationKey() Handle5 {
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(&rlwe.EvaluationKey{}))
+}
+
+//export lattigo_setRelinKeyForEvaluationKey
+func lattigo_setRelinKeyForEvaluationKey(evalKeyHandle Handle5, relinKeyHandle Handle5) {
+	evalKey := getStoredEvaluationKey(evalKeyHandle)
+	evalKey.Rlk = getStoredRelinKey(relinKeyHandle)
+}
+
+//export lattigo_setRotKeysForEvaluationKey
+func lattigo_setRotKeysForEvaluationKey(evalKeyHandle Handle5, rotKeysHandle Handle5) {
+	evalKey := getStoredEvaluationKey(evalKeyHandle)
+	evalKey.Rtks = getStoredRotationKeys(rotKeysHandle)
+}
+
 // Generates any missing Galois keys
 //
 //export lattigo_genBootstrappingKey
@@ -225,4 +292,16 @@ func lattigo_makeBootstrappingKey(relinKeyHandle Handle5, rotKeyHandle Handle5) 
 	btpKey = ckks.BootstrappingKey{Rlk: relinKey, Rtks: rotKeys}
 
 	return marshal.CrossLangObjMap.Add(unsafe.Pointer(&btpKey))
+}
+
+//export lattigo_getSecretKeyValue
+func lattigo_getSecretKeyValue(skHandle Handle5) Handle5 {
+	sk := getStoredSecretKey(skHandle)
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(sk.Value))
+}
+
+//export lattigo_getSwitchingKey
+func lattigo_getSwitchingKey(rotKeyHandle Handle5, galoisElement uint64) Handle5 {
+	rotKeys := getStoredRotationKeys(rotKeyHandle)
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(rotKeys.Keys[galoisElement]))
 }

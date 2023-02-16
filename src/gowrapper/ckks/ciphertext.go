@@ -34,6 +34,12 @@ func lattigo_ciphertextScale(ctHandle Handle8) float64 {
 	return ctIn.ScalingFactor()
 }
 
+//export lattigo_ciphertextDegree
+func lattigo_ciphertextDegree(ctHandle Handle8) int {
+	ct := getStoredCiphertext(ctHandle)
+	return ct.Degree()
+}
+
 //export lattigo_copyNew
 func lattigo_copyNew(ctHandle Handle8) Handle8 {
 	var ctIn *ckks.Ciphertext
