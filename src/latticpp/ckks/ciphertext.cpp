@@ -14,7 +14,7 @@ namespace latticpp {
     }
 
     uint64_t degree(const Ciphertext &ct) {
-      return int(lattigo_ciphertextDegree(ct.getRawHandle()));
+      return lattigo_ciphertextDegree(ct.getRawHandle());
     }
 
     Ciphertext copyNew(const Ciphertext &ct) {
