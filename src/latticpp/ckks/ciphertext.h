@@ -12,6 +12,8 @@ namespace latticpp {
 
     double scale(const Ciphertext &ct);
 
+    uint64_t degree(const Ciphertext &ct);
+
     Ciphertext copyNew(const Ciphertext &ct);
 
     Ciphertext newCiphertext(const Parameters &params, uint64_t degree, uint64_t level, double scale);

@@ -11,6 +11,34 @@ namespace latticpp {
         return KeyGenerator(lattigo_newKeyGenerator(params.getRawHandle()));
     }
 
+    SecretKey newSecretKey(const Parameters &params) {
+      return SecretKey(lattigo_newSecretKey(params.getRawHandle()));
+    }
+
+    PublicKey newPublicKey(const Parameters &params) {
+      return PublicKey(lattigo_newPublicKey(params.getRawHandle()));
+    }
+
+    RelinearizationKey newRelinearizationKey(const Parameters &params) {
+      return RelinearizationKey(
+          lattigo_newRelinearizationKey(params.getRawHandle()));
+    }
+
+    RotationKeys newRotationKeys(const Parameters &params,
+                                 vector<uint64_t> galoisElements) {
+      return RotationKeys(lattigo_newRotationKeys(
+          params.getRawHandle(), galoisElements.data(), galoisElements.size()));
+    }
+
+    SecretKey genSecretKey(const KeyGenerator &keygen) {
+      return SecretKey(lattigo_genSecretKey(keygen.getRawHandle()));
+    }
+
+    PublicKey genPublicKey(const KeyGenerator &keygen, const SecretKey &sk) {
+      return PublicKey(
+          lattigo_genPublicKey(keygen.getRawHandle(), sk.getRawHandle()));
+    }
+
     KeyPairHandle genKeyPair(const KeyGenerator &keygen) {
         Lattigo_KeyPairHandle kp = lattigo_genKeyPair(keygen.getRawHandle());
         return KeyPairHandle { SecretKey(kp.sk), PublicKey(kp.pk) };
@@ -38,11 +66,37 @@ namespace latticpp {
         return EvaluationKey(lattigo_makeEvaluationKey(relinKey.getRawHandle(), rotKeys.getRawHandle()));
     }
 
+    EvaluationKey makeEmptyEvaluationKey() {
+      return EvaluationKey(lattigo_makeEmptyEvaluationKey());
+    }
+
+    void setRelinKeyForEvaluationKey(const EvaluationKey &evalKey,
+                                     const RelinearizationKey &relinKey) {
+      lattigo_setRelinKeyForEvaluationKey(evalKey.getRawHandle(),
+                                          relinKey.getRawHandle());
+    }
+
+    void setRotKeysForEvaluationKey(const EvaluationKey &evalKey,
+                                    const RotationKeys &rotKeys) {
+      lattigo_setRotKeysForEvaluationKey(evalKey.getRawHandle(),
+                                         rotKeys.getRawHandle());
+    }
+
     BootstrappingKey genBootstrappingKey(const KeyGenerator &keygen, const Parameters &params, const BootstrappingParameters &bootParams, const SecretKey &sk, const RelinearizationKey &relinKey, const RotationKeys &rotKeys) {
         return BootstrappingKey(lattigo_genBootstrappingKey(keygen.getRawHandle(), params.getRawHandle(), bootParams.getRawHandle(), sk.getRawHandle(), relinKey.getRawHandle(), rotKeys.getRawHandle()));
     }
 
     BootstrappingKey makeBootstrappingKey(const RelinearizationKey &relinKey, const RotationKeys &rotKeys) {
         return BootstrappingKey(lattigo_makeBootstrappingKey(relinKey.getRawHandle(), rotKeys.getRawHandle()));
+    }
+
+    Poly getValue(const SecretKey &sk) {
+      return Poly(lattigo_getSecretKeyValue(sk.getRawHandle()));
+    }
+
+    SwitchingKey getSwitchingKey(RotationKeys &rotKeys,
+                                 uint64_t galoisElement) {
+      return SwitchingKey(
+          lattigo_getSwitchingKey(rotKeys.getRawHandle(), galoisElement));
     }
 }  // namespace latticpp

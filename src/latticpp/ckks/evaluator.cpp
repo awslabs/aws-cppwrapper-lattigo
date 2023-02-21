@@ -11,6 +11,12 @@ namespace latticpp {
         return Evaluator(lattigo_newEvaluator(params.getRawHandle(), evakey.getRawHandle()));
     }
 
+    Evaluator evaluatorWithKey(const Evaluator &eval,
+                               const EvaluationKey &evalKey) {
+      return Evaluator(lattigo_evaluatorWithKey(eval.getRawHandle(),
+                                                evalKey.getRawHandle()));
+    }
+
     void rotate(const Evaluator &eval, const Ciphertext &ctIn, uint64_t k, Ciphertext &ctOut) {
         lattigo_rotate(eval.getRawHandle(), ctIn.getRawHandle(), k, ctOut.getRawHandle());
     }

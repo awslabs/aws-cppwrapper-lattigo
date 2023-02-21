@@ -40,6 +40,14 @@ func lattigo_newEvaluator(paramsHandle Handle4, evalkeyHandle Handle4) Handle4 {
 	return marshal.CrossLangObjMap.Add(unsafe.Pointer(&evaluator))
 }
 
+//export lattigo_evaluatorWithKey
+func lattigo_evaluatorWithKey(evalHandle, evalKeyHandle Handle4) Handle4 {
+	eval := getStoredEvaluator(evalHandle)
+	evalKey := getStoredEvaluationKey(evalKeyHandle)
+	evalWithKey := (*eval).WithKey(*evalKey)
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(&evalWithKey))
+}
+
 //export lattigo_rotate
 func lattigo_rotate(evalHandle Handle4, ctInHandle Handle4, k uint64, ctOutHandle Handle4) {
 	var eval *ckks.Evaluator

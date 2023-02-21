@@ -16,3 +16,11 @@ add_custom_target(
   COMMAND bin/${CMAKE_BUILD_TYPE}/bootstrapexample
   WORKING_DIRECTORY ${LATTICPP_ROOT_DIR}
   DEPENDS bootstrapexample)
+
+add_executable(multikeyexample ${CMAKE_CURRENT_SOURCE_DIR}/multikey.cpp)
+target_link_libraries(multikeyexample aws-lattigo-cpp)
+add_custom_target(
+  run_multikeyexample
+  COMMAND bin/${CMAKE_BUILD_TYPE}/multikeyexample
+  WORKING_DIRECTORY ${LATTICPP_ROOT_DIR}
+  DEPENDS multikeyexample)

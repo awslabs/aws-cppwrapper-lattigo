@@ -6,6 +6,7 @@ target_sources(latticpp_obj
         ${CMAKE_CURRENT_LIST_DIR}/bootstrap.cpp
         ${CMAKE_CURRENT_LIST_DIR}/bootstrap_params.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ciphertext.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/dckks.cpp
         ${CMAKE_CURRENT_LIST_DIR}/decryptor.cpp
         ${CMAKE_CURRENT_LIST_DIR}/encoder.cpp
         ${CMAKE_CURRENT_LIST_DIR}/encryptor.cpp
@@ -21,6 +22,7 @@ install(
         ${CMAKE_CURRENT_LIST_DIR}/bootstrap.h
         ${CMAKE_CURRENT_LIST_DIR}/bootstrap_params.h
         ${CMAKE_CURRENT_LIST_DIR}/ciphertext.h
+        ${CMAKE_CURRENT_LIST_DIR}/dckks.cpp
         ${CMAKE_CURRENT_LIST_DIR}/decryptor.h
         ${CMAKE_CURRENT_LIST_DIR}/encoder.h
         ${CMAKE_CURRENT_LIST_DIR}/encryptor.h

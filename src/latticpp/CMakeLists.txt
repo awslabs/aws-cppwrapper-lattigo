@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 add_subdirectory(ckks)
+add_subdirectory(utils)
+add_subdirectory(ring)
 
 install(
     FILES

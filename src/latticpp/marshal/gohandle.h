@@ -29,7 +29,20 @@ namespace latticpp {
         PublicKey,
         Plaintext,
         Ciphertext,
-        RotationKeys
+        RotationKeys,
+        SwitchingKey,
+        CKGProtocol,
+        CKGShare,
+        RKGProtocol,
+        RKGShare,
+        CKSProtocol,
+        CKSShare,
+        RTGProtocol,
+        RTGShare,
+        Ring,
+        Poly,
+        PRNG,
+        UniformSampler
     };
 
     template<GoType t>
@@ -165,6 +178,19 @@ namespace latticpp {
     using Plaintext = GoHandle<GoType::Plaintext>;
     using Ciphertext = GoHandle<GoType::Ciphertext>;
     using RotationKeys = GoHandle<GoType::RotationKeys>;
+    using SwitchingKey = GoHandle<GoType::SwitchingKey>;
+    using CKGProtocol = GoHandle<GoType::CKGProtocol>;
+    using CKGShare = GoHandle<GoType::CKGShare>;
+    using RKGProtocol = GoHandle<GoType::RKGProtocol>;
+    using RKGShare = GoHandle<GoType::RKGShare>;
+    using CKSProtocol = GoHandle<GoType::CKSProtocol>;
+    using CKSShare = GoHandle<GoType::CKSShare>;
+    using RTGProtocol = GoHandle<GoType::RTGProtocol>;
+    using RTGShare = GoHandle<GoType::RTGShare>;
+    using Ring = GoHandle<GoType::Ring>;
+    using Poly = GoHandle<GoType::Poly>;
+    using UniformSampler = GoHandle<GoType::UniformSampler>;
+    using PRNG = GoHandle<GoType::PRNG>;
 
 }  // namespace latticpp
 #endif

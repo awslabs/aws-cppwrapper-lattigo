@@ -11,6 +11,9 @@ namespace latticpp {
 
     Evaluator newEvaluator(const Parameters &params, const EvaluationKey &evakey);
 
+    Evaluator evaluatorWithKey(const Evaluator &eval,
+                               const EvaluationKey &evalKey);
+
     void rotate(const Evaluator &eval, const Ciphertext &ctIn, uint64_t k, Ciphertext &ctOut);
 
     std::vector<Ciphertext> rotateHoisted(const Evaluator &eval, const Ciphertext &ctIn, std::vector<uint64_t> ks);
