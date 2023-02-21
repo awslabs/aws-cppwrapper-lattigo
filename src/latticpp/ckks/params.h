@@ -63,7 +63,7 @@ namespace latticpp {
 
     double sigma(const Parameters &params);
 
-    int beta(const Parameters &params);
+    uint64_t beta(const Parameters &params);
 
     uint64_t qi(const Parameters &params, uint64_t i);
 

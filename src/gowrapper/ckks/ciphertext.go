@@ -35,9 +35,9 @@ func lattigo_ciphertextScale(ctHandle Handle8) float64 {
 }
 
 //export lattigo_ciphertextDegree
-func lattigo_ciphertextDegree(ctHandle Handle8) int {
+func lattigo_ciphertextDegree(ctHandle Handle8) uint64 {
 	ct := getStoredCiphertext(ctHandle)
-	return ct.Degree()
+	return uint64(ct.Degree())
 }
 
 //export lattigo_copyNew

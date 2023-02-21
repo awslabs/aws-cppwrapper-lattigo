@@ -45,7 +45,7 @@ namespace latticpp {
 
     CKSProtocol newCKSProtocol(const Parameters &params, double sigmaSmudging);
 
-    CKSShare cksAllocateShare(const CKSProtocol &protocol, int level);
+    CKSShare cksAllocateShare(const CKSProtocol &protocol, uint64_t level);
 
     void cksGenShare(const CKSProtocol &protocol, const SecretKey &skInput,
                     const SecretKey &skOutput, const Ciphertext &ct,

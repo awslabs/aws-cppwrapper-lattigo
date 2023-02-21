@@ -38,15 +38,15 @@ namespace latticpp {
     }
 
     Ring ringQ(const Parameters &params) {
-      return lattigo_ringQ(params.getRawHandle());
+      return Ring(lattigo_ringQ(params.getRawHandle()));
     }
 
     Ring ringP(const Parameters &params) {
-      return lattigo_ringP(params.getRawHandle());
+      return Ring(lattigo_ringP(params.getRawHandle()));
     }
 
     Ring ringQP(const Parameters &params) {
-      return lattigo_ringQP(params.getRawHandle());
+      return Ring(lattigo_ringQP(params.getRawHandle()));
     }
 
     uint64_t logQP(const Parameters &params) {
@@ -65,7 +65,7 @@ namespace latticpp {
         return lattigo_sigma(params.getRawHandle());
     }
 
-    int beta(const Parameters &params) {
+    uint64_t beta(const Parameters &params) {
       return lattigo_beta(params.getRawHandle());
     }
 

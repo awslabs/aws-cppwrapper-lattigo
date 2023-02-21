@@ -185,9 +185,9 @@ func lattigo_newCKSProtocol(paramHandle Handle13, sigmaSmudging float64) Handle1
 }
 
 //export lattigo_cksAllocateShare
-func lattigo_cksAllocateShare(protocolHandle Handle13, level int) Handle13 {
+func lattigo_cksAllocateShare(protocolHandle Handle13, level uint64) Handle13 {
 	cks := getStoredCKSProtocol(protocolHandle)
-	return marshal.CrossLangObjMap.Add(unsafe.Pointer(cks.AllocateShare(level)))
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(cks.AllocateShare(int(level))))
 }
 
 //export lattigo_cksGenShare

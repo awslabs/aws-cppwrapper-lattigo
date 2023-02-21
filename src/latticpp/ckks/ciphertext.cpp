@@ -13,8 +13,8 @@ namespace latticpp {
         return lattigo_ciphertextScale(ct.getRawHandle());
     }
 
-    int degree(const Ciphertext &ct) {
-      return lattigo_ciphertextDegree(ct.getRawHandle());
+    uint64_t degree(const Ciphertext &ct) {
+      return int(lattigo_ciphertextDegree(ct.getRawHandle()));
     }
 
     Ciphertext copyNew(const Ciphertext &ct) {

@@ -12,7 +12,7 @@ namespace latticpp {
 
     double scale(const Ciphertext &ct);
 
-    int degree(const Ciphertext &ct);
+    uint64_t degree(const Ciphertext &ct);
 
     Ciphertext copyNew(const Ciphertext &ct);
 

@@ -329,7 +329,7 @@ void testRotKeyGenCols(const TestContext &testContext) {
   Ciphertext receiver = newCiphertext(params, degree(ciphertext),
                                       level(ciphertext), scale(ciphertext));
 
-  std::vector<uint64_t> galEls = galoisElementsForRowInnerSum(params);
+  vector<uint64_t> galEls = galoisElementsForRowInnerSum(params);
   RotationKeys rotKeySet = newRotationKeys(params, galEls);
 
   PartyRTG &p0 = rtgParties.at(0);
@@ -355,7 +355,7 @@ void testRotKeyGenCols(const TestContext &testContext) {
     rotate(evaluator, ciphertext, k, receiver);
 
     vector<double> expected(values);
-    std::rotate(expected.begin(), expected.begin() + k, expected.end());
+    rotate(expected.begin(), expected.begin() + k, expected.end());
 
     verifyTestVectors(testContext, decryptorSk0, expected, receiver);
   }

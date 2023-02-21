@@ -9,6 +9,6 @@ namespace latticpp {
     PRNG newPRNG() { return PRNG(lattigo_newPRNG()); }
 
     PRNG newKeyedPRNG(vector<char> &key) {
-    return PRNG(lattigo_newKeyedPRNG(key.data(), key.size()));
+        return PRNG(lattigo_newKeyedPRNG(key.data(), key.size()));
     }
 } // namespace latticpp

@@ -147,7 +147,7 @@ func lattigo_logN(paramHandle Handle6) uint64 {
 }
 
 //export lattigo_ringQ
-func lattigo_ringQ(paramHandle Handle6) uint64 {
+func lattigo_ringQ(paramHandle Handle6) Handle6 {
 	params := getStoredParameters(paramHandle)
 	return marshal.CrossLangObjMap.Add(unsafe.Pointer(params.RingQ()))
 }
@@ -194,9 +194,9 @@ func lattigo_sigma(paramHandle Handle6) float64 {
 }
 
 //export lattigo_beta
-func lattigo_beta(paramHandle Handle6) int {
+func lattigo_beta(paramHandle Handle6) uint64 {
 	params := getStoredParameters(paramHandle)
-	return params.Beta()
+	return uint64(params.Beta())
 }
 
 //export lattigo_getQi

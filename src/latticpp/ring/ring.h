@@ -8,7 +8,7 @@
 
 namespace latticpp {
 
-    Ring newRing(int n, std::vector<uint64_t> moduli);
+    Ring newRing(uint64_t n, std::vector<uint64_t> moduli);
 
     Poly newPoly(const Ring &ring);
 

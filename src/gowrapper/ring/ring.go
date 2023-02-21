@@ -34,7 +34,7 @@ func getStoredUniformSampler(samplerHandle Handle14) *ring.UniformSampler {
 }
 
 //export lattigo_newRing
-func lattigo_newRing(n int, moduli *C.uint64_t, moduliLen uint64) Handle14 {
+func lattigo_newRing(n uint64, moduli *C.uint64_t, moduliLen uint64) Handle14 {
 	moduliTmp := make([]uint64, moduliLen)
 	size := unsafe.Sizeof(uint64(0))
 	basePtrIn := uintptr(unsafe.Pointer(&moduli))
@@ -42,7 +42,7 @@ func lattigo_newRing(n int, moduli *C.uint64_t, moduliLen uint64) Handle14 {
 		moduliTmp[i] = *(*uint64)(unsafe.Pointer(basePtrIn + size*uintptr(i)))
 	}
 
-	r, err := ring.NewRing(n, moduliTmp)
+	r, err := ring.NewRing(int(n), moduliTmp)
 
 	if err != nil {
 		panic(err)
