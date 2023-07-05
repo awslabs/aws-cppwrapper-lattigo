@@ -7,8 +7,8 @@ using namespace std;
 
 namespace latticpp {
 
-    Evaluator newEvaluator(const Parameters &params, const EvaluationKey &evakey) {
-        return Evaluator(lattigo_newEvaluator(params.getRawHandle(), evakey.getRawHandle()));
+    Evaluator newEvaluator(const Parameters &params, const EvaluationKey &evalKey) {
+        return Evaluator(lattigo_newEvaluator(params.getRawHandle(), evalKey.getRawHandle()));
     }
 
     Evaluator evaluatorWithKey(const Evaluator &eval,
@@ -39,12 +39,8 @@ namespace latticpp {
         lattigo_addConst(eval.getRawHandle(), ctIn.getRawHandle(), constant, ctOut.getRawHandle());
     }
 
-    void rescale(const Evaluator &eval, const Ciphertext &ctIn, double threshold, Ciphertext &ctOut) {
-        lattigo_rescale(eval.getRawHandle(), ctIn.getRawHandle(), threshold, ctOut.getRawHandle());
-    }
-
-    void rescaleMany(const Evaluator &eval, const Parameters &params, const Ciphertext &ctIn, uint64_t numRescales, Ciphertext &ctOut) {
-        lattigo_rescaleMany(eval.getRawHandle(), params.getRawHandle(), ctIn.getRawHandle(), numRescales, ctOut.getRawHandle());
+    void rescale(const Evaluator &eval, const Ciphertext &ctIn, double scale, Ciphertext &ctOut) {
+        lattigo_rescale(eval.getRawHandle(), ctIn.getRawHandle(), scale, ctOut.getRawHandle());
     }
 
     Ciphertext mulRelinNew(const Evaluator &eval, const Ciphertext &ct0, const Ciphertext &ct1) {
@@ -94,4 +90,8 @@ namespace latticpp {
     void relinearize(const Evaluator &eval, const Ciphertext &ctIn, Ciphertext &ctOut) {
         lattigo_relinearize(eval.getRawHandle(), ctIn.getRawHandle(), ctOut.getRawHandle());
     }
-}  // namespace latticpp
+
+    void switchKeys(const Evaluator &eval, const Ciphertext &ctxIn, const SwitchingKey &swk, const Ciphertext &ctxOut) {
+        lattigo_switchKeys(eval.getRawHandle(), ctxIn.getRawHandle(), swk.getRawHandle(), ctxOut.getRawHandle());
+    }
+} // namespace latticpp

@@ -10,20 +10,15 @@ namespace latticpp {
 
     // These correspond to the default bootstrapping parameters provided in Lattigo
     enum NamedBootstrappingParams {
-        BootstrapParams_Set1,
-        BootstrapParams_Set2,
-        BootstrapParams_Set3,
-        BootstrapParams_Set4,
-        BootstrapParams_Set5
+        N16QP1767H32768H32,
+        N16QP1788H32768H32,
+        N16QP1793H32768H32,
+        N15QP880H16384H32
     };
 
     BootstrappingParameters getBootstrappingParams(const NamedBootstrappingParams paramId);
 
-    Parameters genParams(const BootstrappingParameters &bootParams);
+    Parameters genParams(const NamedBootstrappingParams paramId);
 
-    // Get the secret key Hamming weight for which these bootstrapping parameters were created
-    uint64_t secretHammingWeight(const BootstrappingParameters &bootParams);
-
-    // The multiplicative depth of the bootstrapping circuit
-    int bootstrapDepth(const BootstrappingParameters &bootParams);
+    uint64_t ephemeralSecretWeight(const BootstrappingParameters &bootParams);
 }  // namespace latticpp

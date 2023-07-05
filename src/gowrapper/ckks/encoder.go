@@ -10,10 +10,12 @@ import "C"
 
 import (
 	"lattigo-cpp/marshal"
+
 	"math"
 	"unsafe"
 
-	"github.com/ldsec/lattigo/v2/ckks"
+	"github.com/tuneinsight/lattigo/v4/ckks"
+	"github.com/tuneinsight/lattigo/v4/rlwe"
 )
 
 // https://github.com/golang/go/issues/35715#issuecomment-791039692
@@ -51,27 +53,38 @@ func CDoubleVecToGoComplex(realValues *C.constDouble, length uint64) []complex12
 // Take the encoder handle and an array of _real_ numbers of length 2^logLen (checked in C++-land)
 // Converts these doubles to complex numbers where the imaginary component is 0, then encode with Lattigo
 //
-//export lattigo_encodeNTTAtLvlNew
-func lattigo_encodeNTTAtLvlNew(paramHandle Handle2, encoderHandle Handle2, realValues *C.constDouble, logLen uint64, level uint64, scale float64) Handle2 {
-	var params *ckks.Parameters
-	params = getStoredParameters(paramHandle)
-
+//export lattigo_encode
+func lattigo_encode(encoderHandle Handle2, realValues *C.constDouble, logLen uint64, ptHandle Handle2) Handle2 {
 	var encoder *ckks.Encoder
 	encoder = getStoredEncoder(encoderHandle)
 
 	complexValues := CDoubleVecToGoComplex(realValues, uint64(math.Pow(2, float64(logLen))))
-	var plaintext *ckks.Plaintext
-	plaintext = ckks.NewPlaintext(*params, int(level), scale)
-	(*encoder).EncodeNTT(plaintext, complexValues, int(logLen))
+
+	var plaintext *rlwe.Plaintext
+	plaintext = getStoredPlaintext(ptHandle)
+
+	(*encoder).Encode(complexValues, plaintext, int(logLen))
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(plaintext))
+}
+
+//export lattigo_encodeNew
+func lattigo_encodeNew(encoderHandle Handle2, realValues *C.constDouble, level uint64, scale float64, logLen uint64) Handle2 {
+	var encoder *ckks.Encoder
+	encoder = getStoredEncoder(encoderHandle)
+
+	complexValues := CDoubleVecToGoComplex(realValues, uint64(math.Pow(2, float64(logLen))))
+
+	var plaintext *rlwe.Plaintext
+	plaintext = (*encoder).EncodeNew(complexValues, int(level), rlwe.NewScale(scale), int(logLen))
 	return marshal.CrossLangObjMap.Add(unsafe.Pointer(plaintext))
 }
 
 //export lattigo_decode
-func lattigo_decode(encoderHandle Handle2, ptHandle Handle2, logSlots uint64, outValues *C.double) {
+func lattigo_decode(encoderHandle, ptHandle Handle2, logSlots uint64, outValues *C.double) {
 	var enc *ckks.Encoder
 	enc = getStoredEncoder(encoderHandle)
 
-	var pt *ckks.Plaintext
+	var pt *rlwe.Plaintext
 	pt = getStoredPlaintext(ptHandle)
 
 	var res []complex128

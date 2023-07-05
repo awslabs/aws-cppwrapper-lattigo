@@ -25,7 +25,7 @@ vector<double> randomVector(int dim, double maxNorm) {
     return x;
 }
 
-vector<double> printDebug(const Parameters &params, const Ciphertext &ciphertext, const vector<double> &expectedPT, const Decryptor &decryptor, const Encoder encoder) {
+vector<double> printDebug(const Parameters &params, const Ciphertext &ciphertext, const vector<double> &expectedPT, const Decryptor &decryptor, const Encoder &encoder) {
 
     vector<double> actualPT = decode(encoder, decryptNew(decryptor, ciphertext), logSlots(params));
 
@@ -43,20 +43,20 @@ vector<double> printDebug(const Parameters &params, const Ciphertext &ciphertext
 }
 
 int main() {
-    BootstrappingParameters btpParams = getBootstrappingParams(BootstrapParams_Set5);
-    Parameters params = genParams(btpParams);
+    BootstrappingParameters btpParams = getBootstrappingParams(N15QP880H16384H32);
+    Parameters params = genParams(N15QP880H16384H32);
 
     cout << "CKKS parameters: logN = " << logN(params) << ", logSlots = " << logSlots(params)
-         << ", h = " << secretHammingWeight(btpParams) << ", logQP = " << logQP(params)
+         << ", h = " << ephemeralSecretWeight(btpParams) << ", logQP = " << logQP(params)
          << ", levels = " << qiCount(params) << ", scale = 2^" << log2(scale(params))
          << ", sigma = " << sigma(params) << endl;
 
     KeyGenerator kgen = newKeyGenerator(params);
-    struct KeyPairHandle kp = genKeyPairSparse(kgen, secretHammingWeight(btpParams));
+    struct KeyPairHandle kp = genKeyPairSparse(kgen, ephemeralSecretWeight(btpParams));
 
     Encoder encoder = newEncoder(params);
     Decryptor decryptor = newDecryptor(params, kp.sk);
-    Encryptor encryptor = newEncryptorFromPk(params, kp.pk);
+    Encryptor encryptor = newEncryptor(params, kp.pk);
 
     cout << "Generating bootstrapping keys..." << endl;
     RelinearizationKey relinKey = genRelinKey(kgen, kp.sk);
@@ -68,7 +68,7 @@ int main() {
     uint64_t num_slots = numSlots(params);
     vector<double> values = randomVector(num_slots, 1);
 
-    Plaintext plaintext = encodeNTTAtLvlNew(params, encoder, values, maxLevel(params), scale(params));
+    Plaintext plaintext = encodeNew(encoder, values, maxLevel(params), scale(params));
 
     Ciphertext ciphertext1 = encryptNew(encryptor, plaintext);
 

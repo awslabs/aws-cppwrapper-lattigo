@@ -8,7 +8,7 @@ import (
 	"lattigo-cpp/marshal"
 	"unsafe"
 
-	"github.com/ldsec/lattigo/v2/utils"
+	"github.com/tuneinsight/lattigo/v4/utils"
 )
 
 // https://github.com/golang/go/issues/35715#issuecomment-791039692

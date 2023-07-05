@@ -11,7 +11,7 @@ namespace latticpp {
         return Parameters(lattigo_getDefaultClassicalParams(paramId));
     }
 
-    Parameters getDefaulPQParams(NamedPQParams paramId) {
+    Parameters getDefaultPQParams(NamedPQParams paramId) {
         return Parameters(lattigo_getDefaultPQParams(paramId));
     }
 
@@ -45,8 +45,8 @@ namespace latticpp {
       return Ring(lattigo_ringP(params.getRawHandle()));
     }
 
-    Ring ringQP(const Parameters &params) {
-      return Ring(lattigo_ringQP(params.getRawHandle()));
+    RingQP ringQP(const Parameters &params) {
+      return RingQP(lattigo_ringQP(params.getRawHandle()));
     }
 
     uint64_t logQP(const Parameters &params) {
@@ -63,10 +63,6 @@ namespace latticpp {
 
     double sigma(const Parameters &params) {
         return lattigo_sigma(params.getRawHandle());
-    }
-
-    uint64_t beta(const Parameters &params) {
-      return lattigo_beta(params.getRawHandle());
     }
 
     uint64_t qi(const Parameters &params, uint64_t i) {
@@ -102,4 +98,17 @@ namespace latticpp {
       lattigo_galoisElementsForRowInnerSum(params.getRawHandle(), res.data());
       return res;
     }
+
+    uint64_t inverseGaloisElement(const Parameters &params, uint64_t galEl) {
+      return lattigo_inverseGaloisElement(params.getRawHandle(), galEl);
+    }
+
+    uint64_t rotationFromGaloisElement(const Parameters &params, uint64_t galEl) {
+        return lattigo_rotationFromGaloisElement(params.getRawHandle(), galEl);
+    }
+
+    uint64_t noiseBound(const Parameters &params) {
+      return lattigo_noiseBound(params.getRawHandle());
+    }
+
 }  // namespace latticpp

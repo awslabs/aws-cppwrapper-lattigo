@@ -14,7 +14,7 @@ namespace latticpp {
         return Encoder(lattigo_newEncoder(params.getRawHandle()));
     }
 
-    Plaintext encodeNTTAtLvlNew(const Parameters &params, const Encoder &encoder, const vector<double> &values, uint64_t level, double scale) {
+    void encode(const Encoder &encoder, const vector<double> &values, Plaintext &outPt) {
         int len = values.size();
         int logLen = log2(len);
 
@@ -22,7 +22,18 @@ namespace latticpp {
             throw invalid_argument("Invalid input length for encodeNew");
         }
 
-        return Plaintext(lattigo_encodeNTTAtLvlNew(params.getRawHandle(), encoder.getRawHandle(), values.data(), logLen, level, scale));
+        lattigo_encode(encoder.getRawHandle(), values.data(), logLen, outPt.getRawHandle());
+    }
+
+    Plaintext encodeNew(const Encoder &encoder, const std::vector<double> &values, uint64_t level, double scale) {
+        int len = values.size();
+        int logLen = log2(len);
+
+        if (len != pow(2, logLen)) {
+            throw invalid_argument("Invalid input length for encodeNew");
+        }
+
+        return Plaintext(lattigo_encodeNew(encoder.getRawHandle(), values.data(), level, scale, logLen));
     }
 
     vector<double> decode(const Encoder &encoder, const Plaintext &pt, uint64_t logSlots) {
@@ -30,4 +41,5 @@ namespace latticpp {
         lattigo_decode(encoder.getRawHandle(), pt.getRawHandle(), logSlots, coeffs.data());
         return coeffs;
     }
+
 }  // namespace latticpp

@@ -15,8 +15,9 @@ import (
 	"lattigo-cpp/marshal"
 	"unsafe"
 
-	"github.com/ldsec/lattigo/v2/ckks"
-	"github.com/ldsec/lattigo/v2/rlwe"
+	"github.com/tuneinsight/lattigo/v4/ckks"
+	"github.com/tuneinsight/lattigo/v4/ring"
+	"github.com/tuneinsight/lattigo/v4/rlwe"
 )
 
 // https://github.com/golang/go/issues/35715#issuecomment-791039692
@@ -84,13 +85,14 @@ func lattigo_newParameters(logN uint64, qi *C.constULong, numQi uint8, pi *C.con
 
 	var rlweParams rlwe.Parameters
 	var err error
-	rlweParams, err = rlwe.NewParameters(int(logN), Qi, Pi, rlwe.DefaultSigma)
+	scale := rlwe.NewScale(float64(uint64(1) << uint64(logScale)))
+	rlweParams, err = rlwe.NewParameters(int(logN), Qi, Pi, 0, 192, rlwe.DefaultSigma, ring.Standard, scale, ckks.DefaultNTTFlag)
 	if err != nil {
 		panic(err)
 	}
 
 	var params ckks.Parameters
-	params, err = ckks.NewParameters(rlweParams, int(logN-1), float64(uint64(1)<<uint64(logScale)))
+	params, err = ckks.NewParameters(rlweParams, int(logN-1))
 	if err != nil {
 		panic(err)
 	}
@@ -115,12 +117,12 @@ func lattigo_newParametersFromLogModuli(logN uint64, logQi *C.constUChar, numQi 
 
 	var paramsLit ckks.ParametersLiteral
 	paramsLit = ckks.ParametersLiteral{
-		LogN:     int(logN),
-		LogQ:     LogQi,
-		LogP:     LogPi,
-		Sigma:    rlwe.DefaultSigma,
-		LogSlots: int(logN) - 1,
-		Scale:    float64(uint64(1) << uint64(logScale)),
+		LogN:         int(logN),
+		LogQ:         LogQi,
+		LogP:         LogPi,
+		Sigma:        rlwe.DefaultSigma,
+		LogSlots:     int(logN) - 1,
+		DefaultScale: float64(uint64(1) << uint64(logScale)),
 	}
 
 	var params ckks.Parameters
@@ -150,6 +152,12 @@ func lattigo_logN(paramHandle Handle6) uint64 {
 func lattigo_ringQ(paramHandle Handle6) Handle6 {
 	params := getStoredParameters(paramHandle)
 	return marshal.CrossLangObjMap.Add(unsafe.Pointer(params.RingQ()))
+}
+
+//export lattigo_noiseBound
+func lattigo_noiseBound(paramHandle Handle6) uint64 {
+	params := getStoredParameters(paramHandle)
+	return uint64(params.NoiseBound())
 }
 
 //export lattigo_ringP
@@ -183,7 +191,8 @@ func lattigo_maxLevel(paramHandle Handle6) uint64 {
 func lattigo_paramsScale(paramHandle Handle6) float64 {
 	var params *ckks.Parameters
 	params = getStoredParameters(paramHandle)
-	return params.Scale()
+	scale := params.DefaultScale()
+	return scale.Float64()
 }
 
 //export lattigo_sigma
@@ -191,12 +200,6 @@ func lattigo_sigma(paramHandle Handle6) float64 {
 	var params *ckks.Parameters
 	params = getStoredParameters(paramHandle)
 	return params.Sigma()
-}
-
-//export lattigo_beta
-func lattigo_beta(paramHandle Handle6) uint64 {
-	params := getStoredParameters(paramHandle)
-	return uint64(params.Beta())
 }
 
 //export lattigo_getQi
@@ -257,4 +260,16 @@ func lattigo_galoisElementsForRowInnerSum(paramHandle Handle6, outValues *C.uint
 	for i := range res {
 		*(*uint64)(unsafe.Pointer(basePtr + size*uintptr(i))) = res[i]
 	}
+}
+
+//export lattigo_inverseGaloisElement
+func lattigo_inverseGaloisElement(paramHandle Handle6, galEl uint64) uint64 {
+	params := getStoredParameters(paramHandle)
+	return params.InverseGaloisElement(galEl)
+}
+
+//export lattigo_rotationFromGaloisElement
+func lattigo_rotationFromGaloisElement(paramHandle Handle6, galEl uint64) uint64 {
+	params := getStoredParameters(paramHandle)
+	return params.RotationFromGaloisElement(galEl)
 }

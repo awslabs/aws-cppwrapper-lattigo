@@ -14,6 +14,7 @@ target_sources(latticpp_obj
         ${CMAKE_CURRENT_LIST_DIR}/keygen.cpp
         ${CMAKE_CURRENT_LIST_DIR}/marshaler.cpp
         ${CMAKE_CURRENT_LIST_DIR}/params.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/plaintext.cpp
         ${CMAKE_CURRENT_LIST_DIR}/precision.cpp
 )
 

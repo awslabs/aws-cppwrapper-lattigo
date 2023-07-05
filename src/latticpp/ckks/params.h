@@ -53,7 +53,7 @@ namespace latticpp {
 
     Ring ringP(const Parameters &params);
 
-    Ring ringQP(const Parameters &params);
+    RingQP ringQP(const Parameters &params);
 
     uint64_t logQP(const Parameters &params);
 
@@ -62,8 +62,6 @@ namespace latticpp {
     double scale(const Parameters &params);
 
     double sigma(const Parameters &params);
-
-    uint64_t beta(const Parameters &params);
 
     uint64_t qi(const Parameters &params, uint64_t i);
 
@@ -79,6 +77,11 @@ namespace latticpp {
 
     uint64_t galoisElementForRowRotation(const Parameters &params);
 
-    std::vector<uint64_t>
-    galoisElementsForRowInnerSum(const Parameters &params);
+    std::vector<uint64_t> galoisElementsForRowInnerSum(const Parameters &params);
+    
+    uint64_t inverseGaloisElement(const Parameters &params, uint64_t galEl);
+
+    uint64_t rotationFromGaloisElement(const Parameters &params, uint64_t galEl);
+    
+    uint64_t noiseBound(const Parameters &params);
 }  // namespace latticpp

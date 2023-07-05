@@ -9,20 +9,19 @@ import "C"
 
 import (
 	"lattigo-cpp/marshal"
-	"lattigo-cpp/ring"
+	"lattigo-cpp/utils"
 	"unsafe"
 
-	"github.com/ldsec/lattigo/v2/dckks"
-	"github.com/ldsec/lattigo/v2/drlwe"
-	lattigoring "github.com/ldsec/lattigo/v2/ring"
+	"github.com/tuneinsight/lattigo/v4/dckks"
+	"github.com/tuneinsight/lattigo/v4/drlwe"
 )
 
 // https://github.com/golang/go/issues/35715#issuecomment-791039692
 type Handle13 = uint64
 
-func getStoredCKGProtocol(protocolHandle Handle13) *dckks.CKGProtocol {
+func getStoredCKGProtocol(protocolHandle Handle13) *drlwe.CKGProtocol {
 	ref := marshal.CrossLangObjMap.Get(protocolHandle)
-	return (*dckks.CKGProtocol)(ref.Ptr)
+	return (*drlwe.CKGProtocol)(ref.Ptr)
 }
 
 func getStoredCKGShare(shareHandle Handle13) *drlwe.CKGShare {
@@ -30,9 +29,14 @@ func getStoredCKGShare(shareHandle Handle13) *drlwe.CKGShare {
 	return (*drlwe.CKGShare)(ref.Ptr)
 }
 
-func getStoredRKGProtocol(protocolHandle Handle13) *dckks.RKGProtocol {
+func getStoredCKGCRP(shareHandle Handle13) *drlwe.CKGCRP {
+	ref := marshal.CrossLangObjMap.Get(shareHandle)
+	return (*drlwe.CKGCRP)(ref.Ptr)
+}
+
+func getStoredRKGProtocol(protocolHandle Handle13) *drlwe.RKGProtocol {
 	ref := marshal.CrossLangObjMap.Get(protocolHandle)
-	return (*dckks.RKGProtocol)(ref.Ptr)
+	return (*drlwe.RKGProtocol)(ref.Ptr)
 }
 
 func getStoredRKGShare(shareHandle Handle13) *drlwe.RKGShare {
@@ -40,9 +44,14 @@ func getStoredRKGShare(shareHandle Handle13) *drlwe.RKGShare {
 	return (*drlwe.RKGShare)(ref.Ptr)
 }
 
-func getStoredCKSProtocol(protocolHandle Handle13) *dckks.CKSProtocol {
+func getStoredRKGCRP(shareHandle Handle13) *drlwe.RKGCRP {
+	ref := marshal.CrossLangObjMap.Get(shareHandle)
+	return (*drlwe.RKGCRP)(ref.Ptr)
+}
+
+func getStoredCKSProtocol(protocolHandle Handle13) *drlwe.CKSProtocol {
 	ref := marshal.CrossLangObjMap.Get(protocolHandle)
-	return (*dckks.CKSProtocol)(ref.Ptr)
+	return (*drlwe.CKSProtocol)(ref.Ptr)
 }
 
 func getStoredCKSShare(shareHandle Handle13) *drlwe.CKSShare {
@@ -50,9 +59,9 @@ func getStoredCKSShare(shareHandle Handle13) *drlwe.CKSShare {
 	return (*drlwe.CKSShare)(ref.Ptr)
 }
 
-func getStoredRTGProtocol(protocolHandle Handle13) *dckks.RTGProtocol {
+func getStoredRTGProtocol(protocolHandle Handle13) *drlwe.RTGProtocol {
 	ref := marshal.CrossLangObjMap.Get(protocolHandle)
-	return (*dckks.RTGProtocol)(ref.Ptr)
+	return (*drlwe.RTGProtocol)(ref.Ptr)
 }
 
 func getStoredRTGShare(shareHandle Handle13) *drlwe.RTGShare {
@@ -60,14 +69,9 @@ func getStoredRTGShare(shareHandle Handle13) *drlwe.RTGShare {
 	return (*drlwe.RTGShare)(ref.Ptr)
 }
 
-func getStoredCrps(crpsHandles *C.uint64_t, crpsHandlesLen uint64) []*lattigoring.Poly {
-	size := unsafe.Sizeof(Handle13(0))
-	basePtrIn := uintptr(unsafe.Pointer(crpsHandles))
-	crps := make([]*lattigoring.Poly, crpsHandlesLen)
-	for i := range crps {
-		crps[i] = ring.GetStoredPoly(*(*Handle13)(unsafe.Pointer(basePtrIn + size*uintptr(i))))
-	}
-	return crps
+func getStoredRTGCRP(shareHandle Handle13) *drlwe.RTGCRP {
+	ref := marshal.CrossLangObjMap.Get(shareHandle)
+	return (*drlwe.RTGCRP)(ref.Ptr)
 }
 
 //export lattigo_newCKGProtocol
@@ -77,19 +81,27 @@ func lattigo_newCKGProtocol(paramHandle Handle13) Handle13 {
 	return marshal.CrossLangObjMap.Add(unsafe.Pointer(protocol))
 }
 
-//export lattigo_ckgAllocateShares
-func lattigo_ckgAllocateShares(protocolHandle Handle13) Handle13 {
+//export lattigo_ckgAllocateShare
+func lattigo_ckgAllocateShare(protocolHandle Handle13) Handle13 {
 	ckg := getStoredCKGProtocol(protocolHandle)
-	return marshal.CrossLangObjMap.Add(unsafe.Pointer(ckg.AllocateShares()))
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(ckg.AllocateShare()))
+}
+
+//export lattigo_ckgSampleCRP
+func lattigo_ckgSampleCRP(protocolHandle, prngHandle Handle13) Handle13 {
+	ckg := getStoredCKGProtocol(protocolHandle)
+	prng := utils.GetStoredKeyedPRNG(prngHandle)
+	crp := ckg.SampleCRP(prng)
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(&crp))
 }
 
 //export lattigo_ckgGenShare
 func lattigo_ckgGenShare(protocolHandle, skHandle, crpHandle, shareOutHandle Handle13) {
 	ckg := getStoredCKGProtocol(protocolHandle)
 	sk := getStoredSecretKey(skHandle)
-	crp := ring.GetStoredPoly(crpHandle)
+	crp := getStoredCKGCRP(crpHandle)
 	shareOut := getStoredCKGShare(shareOutHandle)
-	ckg.GenShare(sk, crp, shareOut)
+	ckg.GenShare(sk, *crp, shareOut)
 }
 
 //export lattigo_ckgAggregateShares
@@ -105,9 +117,9 @@ func lattigo_ckgAggregateShares(protocolHandle, share1Handle, share2Handle, shar
 func lattigo_ckgGenPublicKey(protocolHandle, roundShareHandle, crpHandle, pkHandle Handle13) {
 	ckg := getStoredCKGProtocol(protocolHandle)
 	roundShare := getStoredCKGShare(roundShareHandle)
-	crp := ring.GetStoredPoly(crpHandle)
+	crp := getStoredCKGCRP(crpHandle)
 	pk := getStoredPublicKey(pkHandle)
-	ckg.GenPublicKey(roundShare, crp, pk)
+	ckg.GenPublicKey(roundShare, *crp, pk)
 }
 
 //export lattigo_newRKGProtocol
@@ -122,41 +134,48 @@ func lattigo_newRKGShare() Handle13 {
 	return marshal.CrossLangObjMap.Add(unsafe.Pointer(new(drlwe.RKGShare)))
 }
 
-//export lattigo_rkgAllocateShares
-func lattigo_rkgAllocateShares(protocolHandle, ephSkHandle, share1Handle, share2Handle Handle13) {
+//export lattigo_rkgAllocateShare
+func lattigo_rkgAllocateShare(protocolHandle, ephSkHandle, share1Handle, share2Handle Handle13) {
 	ckg := getStoredRKGProtocol(protocolHandle)
 	ephSk := getStoredSecretKey(ephSkHandle)
 	share1 := getStoredRKGShare(share1Handle)
 	share2 := getStoredRKGShare(share2Handle)
 
-	ephSkTmp, share1Tmp, share2Tmp := ckg.AllocateShares()
+	ephSkTmp, share1Tmp, share2Tmp := ckg.AllocateShare()
 
 	*ephSk = *ephSkTmp
 	*share1 = *share1Tmp
 	*share2 = *share2Tmp
 }
 
+//export lattigo_rkgSampleCRP
+func lattigo_rkgSampleCRP(protocolHandle, prngHandle Handle13) Handle13 {
+	rkg := getStoredRKGProtocol(protocolHandle)
+	prng := utils.GetStoredKeyedPRNG(prngHandle)
+	crp := rkg.SampleCRP(prng)
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(&crp))
+}
+
 //export lattigo_rkgGenShareRoundOne
-func lattigo_rkgGenShareRoundOne(protocolHandle, skHandle Handle13, crpsHandles *C.uint64_t, crpsHandlesLen uint64, ephSkOutHandle, shareOutHandle Handle13) {
+func lattigo_rkgGenShareRoundOne(protocolHandle, skHandle, crpHandle, ephSkOutHandle, shareOutHandle Handle13) {
 	protocol := getStoredRKGProtocol(protocolHandle)
 	sk := getStoredSecretKey(skHandle)
-	crps := getStoredCrps(crpsHandles, crpsHandlesLen)
+	crp := getStoredRKGCRP(crpHandle)
 	ephSkOut := getStoredSecretKey(ephSkOutHandle)
 	shareOut := getStoredRKGShare(shareOutHandle)
 
-	protocol.GenShareRoundOne(sk, crps, ephSkOut, shareOut)
+	protocol.GenShareRoundOne(sk, *crp, ephSkOut, shareOut)
 }
 
 //export lattigo_rkgGenShareRoundTwo
-func lattigo_rkgGenShareRoundTwo(protocolHandle, ephSkHandle, skHandle, round1Handle Handle13, crpsHandles *C.uint64_t, crpsHandlesLen uint64, shareOutHandle Handle13) {
+func lattigo_rkgGenShareRoundTwo(protocolHandle, ephSkHandle, skHandle, round1Handle, shareOutHandle Handle13) {
 	protocol := getStoredRKGProtocol(protocolHandle)
 	ephSk := getStoredSecretKey(ephSkHandle)
 	sk := getStoredSecretKey(skHandle)
 	round1 := getStoredRKGShare(round1Handle)
-	crps := getStoredCrps(crpsHandles, crpsHandlesLen)
 	shareOut := getStoredRKGShare(shareOutHandle)
 
-	protocol.GenShareRoundTwo(ephSk, sk, round1, crps, shareOut)
+	protocol.GenShareRoundTwo(ephSk, sk, round1, shareOut)
 }
 
 //export lattigo_rkgAggregateShares
@@ -197,7 +216,7 @@ func lattigo_cksGenShare(protocolHandle, skInputHandle, skOutputHandle, ctHandle
 	skOutput := getStoredSecretKey(skOutputHandle)
 	ct := getStoredCiphertext(ctHandle)
 	shareOut := getStoredCKSShare(shareOutHandle)
-	protocol.GenShare(skInput, skOutput, ct.Ciphertext, shareOut)
+	protocol.GenShare(skInput, skOutput, ct, shareOut)
 }
 
 //export lattigo_cksAggregateShares
@@ -210,50 +229,58 @@ func lattigo_cksAggregateShares(protocolHandle, share1Handle, share2Handle, shar
 }
 
 //export lattigo_cksKeySwitch
-func lattigo_cksKeySwitch(protocolHandle, combinedHandle, ctHandle, ctOutHandle Handle13) {
+func lattigo_cksKeySwitch(protocolHandle, ctHandle, combinedHandle, ctOutHandle Handle13) {
 	protocol := getStoredCKSProtocol(protocolHandle)
-	combined := getStoredCKSShare(combinedHandle)
 	ct := getStoredCiphertext(ctHandle)
+	combined := getStoredCKSShare(combinedHandle)
 	ctOut := getStoredCiphertext(ctOutHandle)
-	protocol.KeySwitchCKKS(combined, ct, ctOut)
+	protocol.KeySwitch(ct, combined, ctOut)
 }
 
-//export lattigo_newRotKGProtocol
-func lattigo_newRotKGProtocol(paramHandle Handle13) Handle13 {
+//export lattigo_newRTGProtocol
+func lattigo_newRTGProtocol(paramHandle Handle13) Handle13 {
 	param := getStoredParameters(paramHandle)
-	protocol := dckks.NewRotKGProtocol(*param)
+	protocol := dckks.NewRTGProtocol(*param)
 	return marshal.CrossLangObjMap.Add(unsafe.Pointer(protocol))
 }
 
-//export lattigo_rtgAllocateShares
-func lattigo_rtgAllocateShares(protocolHandle Handle13) Handle13 {
+//export lattigo_rtgAllocateShare
+func lattigo_rtgAllocateShare(protocolHandle Handle13) Handle13 {
 	protocol := getStoredRTGProtocol(protocolHandle)
-	return marshal.CrossLangObjMap.Add(unsafe.Pointer(protocol.AllocateShares()))
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(protocol.AllocateShare()))
+}
+
+//export lattigo_rtgSampleCRP
+func lattigo_rtgSampleCRP(protocolHandle, prngHandle Handle13) Handle13 {
+	rtg := getStoredRTGProtocol(protocolHandle)
+	prng := utils.GetStoredKeyedPRNG(prngHandle)
+	crp := rtg.SampleCRP(prng)
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(&crp))
 }
 
 //export lattigo_rtgGenShare
-func lattigo_rtgGenShare(protocolHandle, skHandle Handle13, galEl uint64, crpsHandles *C.uint64_t, crpsHandlesLen uint64, shareOutHandle Handle13) {
+func lattigo_rtgGenShare(protocolHandle, skHandle Handle13, galEl uint64, crpHandle, shareOutHandle Handle13) {
 	protocol := getStoredRTGProtocol(protocolHandle)
 	sk := getStoredSecretKey(skHandle)
-	crps := getStoredCrps(crpsHandles, crpsHandlesLen)
+	crp := getStoredRTGCRP(crpHandle)
 	shareOut := getStoredRTGShare(shareOutHandle)
-	protocol.GenShare(sk, galEl, crps, shareOut)
+	protocol.GenShare(sk, galEl, *crp, shareOut)
 }
 
-//export lattigo_rtgAggregate
-func lattigo_rtgAggregate(protocolHandle, share1Handle, share2Handle, shareOutHandle Handle13) {
+//export lattigo_rtgAggregateShares
+func lattigo_rtgAggregateShares(protocolHandle, share1Handle, share2Handle, shareOutHandle Handle13) {
 	protocol := getStoredRTGProtocol(protocolHandle)
 	share1 := getStoredRTGShare(share1Handle)
 	share2 := getStoredRTGShare(share2Handle)
 	shareOut := getStoredRTGShare(shareOutHandle)
-	protocol.Aggregate(share1, share2, shareOut)
+	protocol.AggregateShares(share1, share2, shareOut)
 }
 
 //export lattigo_rtgGenRotationKey
-func lattigo_rtgGenRotationKey(protocolHandle, shareHandle Handle13, crpsHandles *C.uint64_t, crpsHandlesLen uint64, rotKeyHandle Handle13) {
+func lattigo_rtgGenRotationKey(protocolHandle, shareHandle Handle13, crpHandle, rotKeyHandle Handle13) {
 	protocol := getStoredRTGProtocol(protocolHandle)
 	share := getStoredRTGShare(shareHandle)
-	crps := getStoredCrps(crpsHandles, crpsHandlesLen)
+	crp := getStoredRTGCRP(crpHandle)
 	rotKey := getStoredSwitchingKey(rotKeyHandle)
-	protocol.GenRotationKey(share, crps, rotKey)
+	protocol.GenRotationKey(share, *crp, rotKey)
 }

@@ -10,31 +10,35 @@ namespace latticpp {
 
     CKGProtocol newCKGProtocol(const Parameters &params);
 
-    CKGShare ckgAllocateShares(const CKGProtocol &protocol);
+    CKGShare ckgAllocateShare(const CKGProtocol &protocol);
+
+    CKGCRP ckgSampleCRP(const CKGProtocol &protocol, const PRNG &prng);
 
     void ckgGenShare(const CKGProtocol &protocol, const SecretKey &sk,
-                    const Poly &crp, CKGShare &shareOut);
+                    const CKGCRP &crp, CKGShare &shareOut);
 
     void ckgAggregateShares(const CKGProtocol &protocol, const CKGShare &share1,
                             const CKGShare &share2, CKGShare &shareOut);
 
     void ckgGenPublicKey(const CKGProtocol &protocol, const CKGShare &roundShare,
-                        const Poly &crp, PublicKey &pk);
+                        const CKGCRP &crp, PublicKey &pk);
 
     RKGProtocol newRKGProtocol(const Parameters &params);
 
     RKGShare newRKGShare();
 
-    void rkgAllocateShares(const RKGProtocol &protocol, SecretKey &ephSk,
+    void rkgAllocateShare(const RKGProtocol &protocol, SecretKey &ephSk,
                         RKGShare &share1, RKGShare &share2);
 
+    RKGCRP rkgSampleCRP(const RKGProtocol &protocol, const PRNG &prng);
+
     void rkgGenShareRoundOne(const RKGProtocol &protocol, const SecretKey &sk,
-                            const std::vector<Poly> &crps, SecretKey &ephSkOut,
+                            const RKGCRP &crp, SecretKey &ephSkOut,
                             RKGShare &shareOut);
 
     void rkgGenShareRoundTwo(const RKGProtocol &protocol, const SecretKey &ephSk,
                             const SecretKey &sk, const RKGShare &round1,
-                            const std::vector<Poly> &crps, RKGShare &shareOut);
+                            RKGShare &shareOut);
 
     void rkgAggregateShares(const RKGProtocol &protocol, const RKGShare &share1,
                             const RKGShare &share2, RKGShare &shareOut);
@@ -54,20 +58,22 @@ namespace latticpp {
     void cksAggregateShares(const CKSProtocol &protocol, const CKSShare &share1,
                             const CKSShare &share2, CKSShare &shareOut);
 
-    void cksKeySwitch(const CKSProtocol &protocol, const CKSShare &combined,
-                    const Ciphertext &ct, Ciphertext &ctOut);
+    void cksKeySwitch(const CKSProtocol &protocol, const Ciphertext &ct,
+                    const CKSShare &combined, Ciphertext &ctOut);
 
     RTGProtocol newRTGProtocol(const Parameters &params);
 
-    RTGShare rtgAllocateShares(const RTGProtocol &protocol);
+    RTGShare rtgAllocateShare(const RTGProtocol &protocol);
+
+    RTGCRP rtgSampleCRP(const RTGProtocol &protocol, const PRNG &prng);
 
     void rtgGenShare(const RTGProtocol &protocol, const SecretKey &sk,
-                    uint64_t galEl, const std::vector<Poly> &crps,
+                    uint64_t galEl, const RTGCRP &crp,
                     RTGShare &shareOut);
 
-    void rtgAggregate(const RTGProtocol &protocol, const RTGShare &share1,
+    void rtgAggregateShares(const RTGProtocol &protocol, const RTGShare &share1,
                     const RTGShare &share2, RTGShare &shareOut);
 
     void rtgGenRotationKey(const RTGProtocol &protocol, const RTGShare &share,
-                        const std::vector<Poly> &crps, SwitchingKey &rotKey);
+                        const RTGCRP &crp, SwitchingKey &rotKey);
 } // namespace latticpp
