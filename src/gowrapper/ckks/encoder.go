@@ -54,7 +54,7 @@ func CDoubleVecToGoComplex(realValues *C.constDouble, length uint64) []complex12
 // Converts these doubles to complex numbers where the imaginary component is 0, then encode with Lattigo
 //
 //export lattigo_encode
-func lattigo_encode(encoderHandle Handle2, realValues *C.constDouble, logLen uint64, ptHandle Handle2) Handle2 {
+func lattigo_encode(encoderHandle Handle2, realValues *C.constDouble, logLen uint64, ptHandle Handle2) {
 	var encoder *ckks.Encoder
 	encoder = getStoredEncoder(encoderHandle)
 
@@ -64,7 +64,6 @@ func lattigo_encode(encoderHandle Handle2, realValues *C.constDouble, logLen uin
 	plaintext = getStoredPlaintext(ptHandle)
 
 	(*encoder).Encode(complexValues, plaintext, int(logLen))
-	return marshal.CrossLangObjMap.Add(unsafe.Pointer(plaintext))
 }
 
 //export lattigo_encodeNew

@@ -67,7 +67,7 @@ func lattigo_getDefaultPQParams(paramEnum uint8) Handle6 {
 }
 
 //export lattigo_newParameters
-func lattigo_newParameters(logN uint64, qi *C.constULong, numQi uint8, pi *C.constULong, numPi uint8, logScale uint8) Handle6 {
+func lattigo_newParameters(logN uint64, qi *C.constULong, numQi uint8, pi *C.constULong, numPi uint8, pow2Base, h uint64, logScale uint8) Handle6 {
 	size := unsafe.Sizeof(uint64(0))
 
 	Qi := make([]uint64, numQi)
@@ -86,7 +86,7 @@ func lattigo_newParameters(logN uint64, qi *C.constULong, numQi uint8, pi *C.con
 	var rlweParams rlwe.Parameters
 	var err error
 	scale := rlwe.NewScale(float64(uint64(1) << uint64(logScale)))
-	rlweParams, err = rlwe.NewParameters(int(logN), Qi, Pi, 0, 192, rlwe.DefaultSigma, ring.Standard, scale, ckks.DefaultNTTFlag)
+	rlweParams, err = rlwe.NewParameters(int(logN), Qi, Pi, int(pow2Base), int(h), rlwe.DefaultSigma, ring.Standard, scale, ckks.DefaultNTTFlag)
 	if err != nil {
 		panic(err)
 	}

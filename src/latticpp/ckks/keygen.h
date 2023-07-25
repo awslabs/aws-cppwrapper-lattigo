@@ -16,28 +16,28 @@ namespace latticpp {
 
     KeyGenerator newKeyGenerator(const Parameters &params);
 
-    SwitchingKey getRotationKey(const RotationKeys &rtks, uint64_t galEl);
+    SwitchingKey getSwitchingKey(const RotationKeys &rtks, uint64_t galEl);
 
-    void setRotationKey(const RotationKeys &rotKeys, const SwitchingKey &rotKey, uint64_t galEl);
+    void setSwitchingKey(const RotationKeys &rotKeys, const SwitchingKey &swk, uint64_t galEl);
 
-    uint64_t rotationKeyExist(const RotationKeys &rotationKeys, uint64_t galEl);
+    uint64_t switchingKeyExist(const RotationKeys &rotationKeys, uint64_t galEl);
 
     std::vector<uint64_t> getGaloisElementsOfRotationKeys(const RotationKeys &rotationKeys);
 
     SwitchingKey copyNew(const SwitchingKey &rotKey);
 
-    uint64_t numOfDecomp(const SwitchingKey &rtk);
+    uint64_t numOfDecomp(const SwitchingKey &swk);
 
     uint64_t galoisElementForColumnRotationBy(const Parameters &params,
                                               uint64_t rotationStep);
 
-    uint64_t rotationKeyIsCorrect(const SwitchingKey &rtk, uint64_t galEl,
+    uint64_t switchingKeyIsCorrect(const SwitchingKey &swk, uint64_t galEl,
                                   const SecretKey &sk, const Parameters &params,
                                   uint64_t log2Bound);
 
-    CiphertextQP getCiphertextQP(const SwitchingKey& rtk, uint64_t i, uint64_t j);
+    CiphertextQP getCiphertextQP(const SwitchingKey& swk, uint64_t i, uint64_t j);
 
-    void setCiphertextQP(const SwitchingKey& rtk, const CiphertextQP& ctQP, uint64_t i, uint64_t j);
+    void setCiphertextQP(const SwitchingKey& swk, const CiphertextQP& ctQP, uint64_t i, uint64_t j);
 
     SecretKey newSecretKey(const Parameters &params);
 

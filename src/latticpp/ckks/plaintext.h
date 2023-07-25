@@ -10,7 +10,7 @@ namespace latticpp {
 
     Plaintext newPlaintext(const Parameters &params, uint64_t level);
 
-    Plaintext newPlaintext(const Parameters &params, const Poly &poly, uint64_t level);
+    Plaintext newPlaintextFromPoly(const Parameters &params, const Poly &poly, uint64_t level);
 
     double scale(const Plaintext &ct);
 
