@@ -6,4 +6,5 @@ cmake -Bbuild -GNinja . -DLATTICPP_BUILD_EXAMPLES=ON
 # build all targets
 ninja -Cbuild
 ninja -Cbuild run_bootstrapexample
-ninja -Cbuild run_sigmoidexample
+ninja -Cbuild run_eulerexample
+ninja -Cbuild run_multikeyexample

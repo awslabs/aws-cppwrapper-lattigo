@@ -16,15 +16,14 @@ __attribute__((unused)) static void callStreamWriter(streamWriter f, void* strea
 import "C"
 
 import (
-	"bytes"
-	"encoding/gob"
 	"errors"
 	"lattigo-cpp/marshal"
 	"reflect"
 	"unsafe"
 
-	"github.com/ldsec/lattigo/v2/ckks"
-	"github.com/ldsec/lattigo/v2/rlwe"
+	"github.com/tuneinsight/lattigo/v4/ckks"
+	"github.com/tuneinsight/lattigo/v4/ckks/bootstrapping"
+	"github.com/tuneinsight/lattigo/v4/rlwe"
 )
 
 // https://github.com/golang/go/issues/35715#issuecomment-791039692
@@ -32,7 +31,7 @@ type Handle9 = uint64
 
 //export lattigo_marshalBinaryCiphertext
 func lattigo_marshalBinaryCiphertext(ctHandle Handle9, callback C.streamWriter, stream *C.void) {
-	var ct *ckks.Ciphertext
+	var ct *rlwe.Ciphertext
 	ct = getStoredCiphertext(ctHandle)
 
 	data, err := ct.MarshalBinary()
@@ -62,17 +61,13 @@ func lattigo_marshalBinaryParameters(paramsHandle Handle9, callback C.streamWrit
 
 //export lattigo_marshalBinaryBootstrapParameters
 func lattigo_marshalBinaryBootstrapParameters(paramsHandle Handle9, callback C.streamWriter, stream *C.void) {
-	var params *ckks.BootstrappingParameters
+	var params *bootstrapping.Parameters
 	params = getStoredBootstrappingParameters(paramsHandle)
 
-	// https://kpbird.medium.com/golang-serialize-struct-using-gob-part-2-f6134dd4f22c
-	var buf bytes.Buffer
-	var encoder *gob.Encoder = gob.NewEncoder(&buf)
-	if err := encoder.Encode(*params); err != nil {
+	data, err := params.MarshalBinary()
+	if err != nil {
 		panic(err)
 	}
-
-	var data []byte = buf.Bytes()
 
 	if len(data) > 0 {
 		C.callStreamWriter(callback, unsafe.Pointer(stream), unsafe.Pointer(&data[0]), C.uint64_t(len(data)))
@@ -187,7 +182,7 @@ func unsafeCPtrToSlice(buf *C.char, len uint64) []byte {
 func lattigo_unmarshalBinaryCiphertext(buf *C.char, len uint64) Handle9 {
 	var serializedBytes []byte = unsafeCPtrToSlice(buf, len)
 
-	ct := new(ckks.Ciphertext)
+	ct := new(rlwe.Ciphertext)
 	err := ct.UnmarshalBinary(serializedBytes)
 	if err != nil {
 		panic(err)
@@ -208,18 +203,16 @@ func lattigo_unmarshalBinaryParameters(buf *C.char, len uint64) Handle9 {
 }
 
 //export lattigo_unmarshalBinaryBootstrapParameters
-func lattigo_unmarshalBinaryBootstrapParameters(cbuf *C.char, len uint64) Handle9 {
-	var serializedBytes []byte = unsafeCPtrToSlice(cbuf, len)
+func lattigo_unmarshalBinaryBootstrapParameters(buf *C.char, len uint64) Handle9 {
+	var serializedBytes []byte = unsafeCPtrToSlice(buf, len)
 
-	var bbuf *bytes.Buffer = bytes.NewBuffer(serializedBytes)
-	var decoder *gob.Decoder = gob.NewDecoder(bbuf)
-
-	var btp_params ckks.BootstrappingParameters
-	if err := decoder.Decode(&btp_params); err != nil {
+	params := new(bootstrapping.Parameters)
+	err := params.UnmarshalBinary(serializedBytes)
+	if err != nil {
 		panic(err)
 	}
 
-	return marshal.CrossLangObjMap.Add(unsafe.Pointer(&btp_params))
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(params))
 }
 
 //export lattigo_unmarshalBinarySecretKey
@@ -270,19 +263,17 @@ func lattigo_unmarshalBinaryRotationKeys(buf *C.char, len uint64) Handle9 {
 	return marshal.CrossLangObjMap.Add(unsafe.Pointer(rotkeys))
 }
 
-//export lattigo_getDataLenCiphertext
-func lattigo_getDataLenCiphertext(ctHandle Handle9, withMetaData bool) uint64 {
-	var ct *ckks.Ciphertext
+//export lattigo_marshalBinarySizeCiphertext
+func lattigo_marshalBinarySizeCiphertext(ctHandle Handle9) uint64 {
+	var ct *rlwe.Ciphertext
 	ct = getStoredCiphertext(ctHandle)
-	return uint64(ct.GetDataLen(withMetaData))
+	return uint64(ct.MarshalBinarySize())
 }
 
-//export lattigo_getDataLenParameters
-func lattigo_getDataLenParameters(paramsHandle Handle9, withMetaData bool) uint64 {
+//export lattigo_marshalBinarySizeParameters
+func lattigo_marshalBinarySizeParameters(paramsHandle Handle9) uint64 {
 	var params *ckks.Parameters
 	params = getStoredParameters(paramsHandle)
-	// see https://github.com/ldsec/lattigo/issues/115
-	// return params.GetDataLen(withMetaData)
 	paramBytes, err := params.MarshalBinary()
 	if err != nil {
 		panic(err)
@@ -290,30 +281,30 @@ func lattigo_getDataLenParameters(paramsHandle Handle9, withMetaData bool) uint6
 	return uint64(len(paramBytes))
 }
 
-//export lattigo_getDataLenSecretKey
-func lattigo_getDataLenSecretKey(skHandle Handle9, withMetaData bool) uint64 {
+//export lattigo_marshalBinarySizeSecretKey
+func lattigo_marshalBinarySizeSecretKey(skHandle Handle9) uint64 {
 	var sk *rlwe.SecretKey
 	sk = getStoredSecretKey(skHandle)
-	return uint64(sk.GetDataLen(withMetaData))
+	return uint64(sk.MarshalBinarySize())
 }
 
-//export lattigo_getDataLenPublicKey
-func lattigo_getDataLenPublicKey(pkHandle Handle9, withMetaData bool) uint64 {
+//export lattigo_marshalBinarySizePublicKey
+func lattigo_marshalBinarySizePublicKey(pkHandle Handle9) uint64 {
 	var pk *rlwe.PublicKey
 	pk = getStoredPublicKey(pkHandle)
-	return uint64(pk.GetDataLen(withMetaData))
+	return uint64(pk.MarshalBinarySize())
 }
 
-//export lattigo_getDataLenRelinearizationKey
-func lattigo_getDataLenRelinearizationKey(relinKeyHandle Handle9, withMetaData bool) uint64 {
+//export lattigo_marshalBinarySizeRelinearizationKey
+func lattigo_marshalBinarySizeRelinearizationKey(relinKeyHandle Handle9) uint64 {
 	var relinKey *rlwe.RelinearizationKey
 	relinKey = getStoredRelinKey(relinKeyHandle)
-	return uint64(relinKey.GetDataLen(withMetaData))
+	return uint64(relinKey.MarshalBinarySize())
 }
 
-//export lattigo_getDataLenRotationKeys
-func lattigo_getDataLenRotationKeys(rotkeysHandle Handle9, withMetaData bool) uint64 {
+//export lattigo_marshalBinarySizeRotationKeys
+func lattigo_marshalBinarySizeRotationKeys(rotkeysHandle Handle9) uint64 {
 	var rotkeys *rlwe.RotationKeySet
 	rotkeys = getStoredRotationKeys(rotkeysHandle)
-	return uint64(rotkeys.GetDataLen(withMetaData))
+	return uint64(rotkeys.MarshalBinarySize())
 }

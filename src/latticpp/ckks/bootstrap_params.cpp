@@ -11,15 +11,11 @@ namespace latticpp {
         return BootstrappingParameters(lattigo_getBootstrappingParams(paramId));
     }
 
-    Parameters genParams(const BootstrappingParameters &bootParams) {
-        return Parameters(lattigo_params(bootParams.getRawHandle()));
+    Parameters genParams(const NamedBootstrappingParams paramId) {
+        return Parameters(lattigo_params(paramId));
     }
 
-    uint64_t secretHammingWeight(const BootstrappingParameters &bootParams) {
-        return lattigo_bootstrap_h(bootParams.getRawHandle());
-    }
-
-    int bootstrapDepth(const BootstrappingParameters &bootParams) {
-        return lattigo_bootstrap_depth(bootParams.getRawHandle());
+    uint64_t ephemeralSecretWeight(const BootstrappingParameters &bootParams) {
+        return lattigo_ephemeralSecretWeight(bootParams.getRawHandle());
     }
 }  // namespace latticpp

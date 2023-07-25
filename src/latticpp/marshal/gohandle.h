@@ -20,7 +20,6 @@ namespace latticpp {
         Parameters,
         Encoder,
         KeyGenerator,
-        KeyPair,
         RelinearizationKey,
         Encryptor,
         Decryptor,
@@ -29,20 +28,28 @@ namespace latticpp {
         PublicKey,
         Plaintext,
         Ciphertext,
+        CiphertextQP,
         RotationKeys,
         SwitchingKey,
         CKGProtocol,
+        CKGCRP,
         CKGShare,
         RKGProtocol,
         RKGShare,
+        RKGCRP,
         CKSProtocol,
         CKSShare,
         RTGProtocol,
         RTGShare,
+        RTGCRP,
         Ring,
         Poly,
         PRNG,
-        UniformSampler
+        UniformSampler,
+        MetaData,
+        RingQP,
+        PolyQP,
+        BasisExtender
     };
 
     template<GoType t>
@@ -167,7 +174,6 @@ namespace latticpp {
     using Parameters = GoHandle<GoType::Parameters>;
     using Encoder = GoHandle<GoType::Encoder>;
     using KeyGenerator = GoHandle<GoType::KeyGenerator>;
-    using KeyPair = GoHandle<GoType::KeyPair>;
     using RelinearizationKey = GoHandle<GoType::RelinearizationKey>;
     using EvaluationKey = GoHandle<GoType::EvaluationKey>;
     using Encryptor = GoHandle<GoType::Encryptor>;
@@ -177,20 +183,29 @@ namespace latticpp {
     using PublicKey = GoHandle<GoType::PublicKey>;
     using Plaintext = GoHandle<GoType::Plaintext>;
     using Ciphertext = GoHandle<GoType::Ciphertext>;
+    using CiphertextQP = GoHandle<GoType::CiphertextQP>;
     using RotationKeys = GoHandle<GoType::RotationKeys>;
     using SwitchingKey = GoHandle<GoType::SwitchingKey>;
     using CKGProtocol = GoHandle<GoType::CKGProtocol>;
+    using CKGCRP = GoHandle<GoType::CKGCRP>;
     using CKGShare = GoHandle<GoType::CKGShare>;
     using RKGProtocol = GoHandle<GoType::RKGProtocol>;
+    using RKGCRP = GoHandle<GoType::RKGCRP>;
     using RKGShare = GoHandle<GoType::RKGShare>;
     using CKSProtocol = GoHandle<GoType::CKSProtocol>;
     using CKSShare = GoHandle<GoType::CKSShare>;
     using RTGProtocol = GoHandle<GoType::RTGProtocol>;
+    using RTGCRP = GoHandle<GoType::RTGCRP>;
     using RTGShare = GoHandle<GoType::RTGShare>;
     using Ring = GoHandle<GoType::Ring>;
+    using RingQP = GoHandle<GoType::RingQP>;
     using Poly = GoHandle<GoType::Poly>;
+    using PolyQP = GoHandle<GoType::PolyQP>;
     using UniformSampler = GoHandle<GoType::UniformSampler>;
     using PRNG = GoHandle<GoType::PRNG>;
+    using MetaData = GoHandle<GoType::MetaData>;
+    using BasisExtender = GoHandle<GoType::BasisExtender>;
+
 
 }  // namespace latticpp
 #endif

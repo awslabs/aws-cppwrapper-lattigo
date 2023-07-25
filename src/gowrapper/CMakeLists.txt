@@ -24,6 +24,7 @@ add_custom_command(
     ${CGO_HEADER_DST}/keygen.h
     ${CGO_HEADER_DST}/marshaler.h
     ${CGO_HEADER_DST}/params.h
+    ${CGO_HEADER_DST}/plaintext.h
     ${CGO_HEADER_DST}/precision.h
     ${CGO_HEADER_DST}/dckks.h
     ${CGO_HEADER_DST}/ring.h
@@ -31,8 +32,8 @@ add_custom_command(
     ${CGO_HEADER_DST}/storage.h
   COMMAND cp -r ${CMAKE_CURRENT_SOURCE_DIR}/. .
 
-  COMMAND go mod download github.com/ldsec/lattigo/v2
-  COMMAND go get github.com/ldsec/lattigo/v2/utils@v2.2.0
+  COMMAND go mod download github.com/tuneinsight/lattigo/v4
+  COMMAND go get github.com/tuneinsight/lattigo/v4/utils@v4.1.0
 
   COMMAND go vet
   COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/bootstrap.go
@@ -45,6 +46,7 @@ add_custom_command(
   COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/keygen.go
   COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/marshaler.go
   COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/params.go
+  COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/plaintext.go
   COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/precision.go
   COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ckks/dckks.go
   COMMAND go fmt ${CMAKE_CURRENT_SOURCE_DIR}/ring/ring.go
@@ -61,6 +63,7 @@ add_custom_command(
   COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/keygen.h ckks/keygen.go
   COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/marshaler.h ckks/marshaler.go
   COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/params.h ckks/params.go
+  COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/plaintext.h ckks/plaintext.go
   COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/precision.h ckks/precision.go
   COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/dckks.h ckks/dckks.go
   COMMAND go tool cgo -exportheader ${CGO_HEADER_DST}/ring.h ring/ring.go
@@ -80,6 +83,7 @@ add_custom_command(
     ckks/keygen.go
     ckks/marshaler.go
     ckks/params.go
+    ckks/plaintext.go
     ckks/precision.go
     ckks/dckks.go
     ring/ring.go
@@ -99,6 +103,7 @@ add_library(latticpp_gowrapper STATIC
     ${CGO_HEADER_DST}/keygen.h
     ${CGO_HEADER_DST}/marshaler.h
     ${CGO_HEADER_DST}/params.h
+    ${CGO_HEADER_DST}/plaintext.h
     ${CGO_HEADER_DST}/precision.h
     ${CGO_HEADER_DST}/dckks.h
     ${CGO_HEADER_DST}/ring.h

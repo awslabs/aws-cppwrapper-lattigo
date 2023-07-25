@@ -1,13 +1,13 @@
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
-add_executable(sigmoidexample ${CMAKE_CURRENT_SOURCE_DIR}/sigmoid.cpp)
-target_link_libraries(sigmoidexample aws-lattigo-cpp)
+add_executable(eulerexample ${CMAKE_CURRENT_SOURCE_DIR}/euler.cpp)
+target_link_libraries(eulerexample aws-lattigo-cpp)
 add_custom_target(
-  run_sigmoidexample
-  COMMAND bin/${CMAKE_BUILD_TYPE}/sigmoidexample
+  run_eulerexample
+  COMMAND bin/${CMAKE_BUILD_TYPE}/eulerexample
   WORKING_DIRECTORY ${LATTICPP_ROOT_DIR}
-  DEPENDS sigmoidexample)
+  DEPENDS eulerexample)
 
 add_executable(bootstrapexample ${CMAKE_CURRENT_SOURCE_DIR}/bootstrapping.cpp)
 target_link_libraries(bootstrapexample aws-lattigo-cpp)

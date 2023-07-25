@@ -40,7 +40,7 @@ namespace latticpp {
     Parameters getDefaultPQParams(NamedPQParams paramId);
 
     // logN is the log of the polynomial ring degree. Alternatively, it is log(num_slots) + 1
-    Parameters newParameters(uint64_t logN, const std::vector<uint64_t> &qi, const std::vector<uint64_t> &pi, uint8_t logScale);
+    Parameters newParameters(uint64_t logN, const std::vector<uint64_t> &qi, const std::vector<uint64_t> &pi, uint64_t pow2Base, uint64_t h, uint8_t logScale);
 
     // logN is the log of the polynomial ring degree. Alternatively, it is log(num_slots) + 1
     Parameters newParametersFromLogModuli(uint64_t logN, const std::vector<uint8_t> &logQi, const std::vector<uint8_t> &logPi, uint8_t logScale);
@@ -53,7 +53,7 @@ namespace latticpp {
 
     Ring ringP(const Parameters &params);
 
-    Ring ringQP(const Parameters &params);
+    RingQP ringQP(const Parameters &params);
 
     uint64_t logQP(const Parameters &params);
 
@@ -62,8 +62,6 @@ namespace latticpp {
     double scale(const Parameters &params);
 
     double sigma(const Parameters &params);
-
-    uint64_t beta(const Parameters &params);
 
     uint64_t qi(const Parameters &params, uint64_t i);
 
@@ -79,6 +77,11 @@ namespace latticpp {
 
     uint64_t galoisElementForRowRotation(const Parameters &params);
 
-    std::vector<uint64_t>
-    galoisElementsForRowInnerSum(const Parameters &params);
+    std::vector<uint64_t> galoisElementsForRowInnerSum(const Parameters &params);
+    
+    uint64_t inverseGaloisElement(const Parameters &params, uint64_t galEl);
+
+    uint64_t rotationFromGaloisElement(const Parameters &params, uint64_t galEl);
+    
+    uint64_t noiseBound(const Parameters &params);
 }  // namespace latticpp

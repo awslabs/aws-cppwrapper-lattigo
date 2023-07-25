@@ -9,15 +9,17 @@ import (
 	"lattigo-cpp/marshal"
 	"unsafe"
 
-	"github.com/ldsec/lattigo/v2/ckks"
+	"github.com/tuneinsight/lattigo/v4/ckks"
+	"github.com/tuneinsight/lattigo/v4/ckks/bootstrapping"
+	"github.com/tuneinsight/lattigo/v4/rlwe"
 )
 
 // https://github.com/golang/go/issues/35715#issuecomment-791039692
 type Handle10 = uint64
 
-func getStoredBootstrapper(btpHandle Handle10) *ckks.Bootstrapper {
+func getStoredBootstrapper(btpHandle Handle10) *bootstrapping.Bootstrapper {
 	ref := marshal.CrossLangObjMap.Get(btpHandle)
-	return (*ckks.Bootstrapper)(ref.Ptr)
+	return (*bootstrapping.Bootstrapper)(ref.Ptr)
 }
 
 //export lattigo_newBootstrapper
@@ -25,15 +27,15 @@ func lattigo_newBootstrapper(paramHandle Handle10, btpParamHandle Handle10, btpK
 	var params *ckks.Parameters
 	params = getStoredParameters(paramHandle)
 
-	var btpParams *ckks.BootstrappingParameters
+	var btpParams *bootstrapping.Parameters
 	btpParams = getStoredBootstrappingParameters(btpParamHandle)
 
-	var btpKey *ckks.BootstrappingKey
+	var btpKey *bootstrapping.EvaluationKeys
 	btpKey = getStoredBootstrappingKey(btpKeyHandle)
 
-	var btp *ckks.Bootstrapper
+	var btp *bootstrapping.Bootstrapper
 	var err error
-	btp, err = ckks.NewBootstrapper(*params, btpParams, *btpKey)
+	btp, err = bootstrapping.NewBootstrapper(*params, *btpParams, *btpKey)
 	if err != nil {
 		panic(err)
 	}
@@ -42,13 +44,13 @@ func lattigo_newBootstrapper(paramHandle Handle10, btpParamHandle Handle10, btpK
 
 //export lattigo_bootstrap
 func lattigo_bootstrap(btpHandle Handle10, ctHandle Handle10) Handle10 {
-	var btp *ckks.Bootstrapper
+	var btp *bootstrapping.Bootstrapper
 	btp = getStoredBootstrapper(btpHandle)
 
-	var ctIn *ckks.Ciphertext
+	var ctIn *rlwe.Ciphertext
 	ctIn = getStoredCiphertext(ctHandle)
 
-	var ctOut *ckks.Ciphertext
-	ctOut = btp.Bootstrapp(ctIn)
+	var ctOut *rlwe.Ciphertext
+	ctOut = btp.Bootstrap(ctIn)
 	return marshal.CrossLangObjMap.Add(unsafe.Pointer(ctOut))
 }

@@ -9,10 +9,9 @@
 
 namespace latticpp {
 
-    Evaluator newEvaluator(const Parameters &params, const EvaluationKey &evakey);
+    Evaluator newEvaluator(const Parameters &params, const EvaluationKey &evalKey);
 
-    Evaluator evaluatorWithKey(const Evaluator &eval,
-                               const EvaluationKey &evalKey);
+    Evaluator evaluatorWithKey(const Evaluator &eval, const EvaluationKey &evalKey);
 
     void rotate(const Evaluator &eval, const Ciphertext &ctIn, uint64_t k, Ciphertext &ctOut);
 
@@ -22,9 +21,7 @@ namespace latticpp {
 
     void addConst(const Evaluator &eval, const Ciphertext &ctIn, double constant, Ciphertext &ctOut);
 
-    void rescale(const Evaluator &eval, const Ciphertext &ctIn, double threshold, Ciphertext &ctOut);
-
-    void rescaleMany(const Evaluator &eval, const Parameters &params, const Ciphertext &ctIn, uint64_t numRescales, Ciphertext &ctOut);
+    void rescale(const Evaluator &eval, const Ciphertext &ctIn, double scale, Ciphertext &ctOut);
 
     Ciphertext mulRelinNew(const Evaluator &eval, const Ciphertext &ct0, const Ciphertext &ct1);
 
@@ -49,4 +46,6 @@ namespace latticpp {
     void dropLevel(const Evaluator &eval, Ciphertext &ct, uint64_t levels);
 
     void relinearize(const Evaluator &eval, const Ciphertext &ctIn, Ciphertext &ctOut);
+
+    void switchKeys(const Evaluator &eval, const Ciphertext &ctxIn, const SwitchingKey &swk, const Ciphertext &ctxOut);
 }  // namespace latticpp
