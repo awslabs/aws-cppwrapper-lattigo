@@ -277,10 +277,10 @@ func lattigo_rtgAggregateShares(protocolHandle, share1Handle, share2Handle, shar
 }
 
 //export lattigo_rtgGenRotationKey
-func lattigo_rtgGenRotationKey(protocolHandle, shareHandle Handle13, crpHandle, rotKeyHandle Handle13) {
+func lattigo_rtgGenRotationKey(protocolHandle, shareHandle Handle13, crpHandle, switchingKeyHandle Handle13) {
 	protocol := getStoredRTGProtocol(protocolHandle)
 	share := getStoredRTGShare(shareHandle)
 	crp := getStoredRTGCRP(crpHandle)
-	rotKey := getStoredSwitchingKey(rotKeyHandle)
+	rotKey := getStoredSwitchingKey(switchingKeyHandle)
 	protocol.GenRotationKey(share, *crp, rotKey)
 }

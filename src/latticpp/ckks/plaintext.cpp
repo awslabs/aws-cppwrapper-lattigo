@@ -9,7 +9,7 @@ namespace latticpp {
         return Plaintext(lattigo_newPlaintext(params.getRawHandle(), level));
     }
 
-    Plaintext newPlaintext(const Parameters &params, const Poly &poly, uint64_t level){
+    Plaintext newPlaintextFromPoly(const Parameters &params, const Poly &poly, uint64_t level){
         return Plaintext(lattigo_newPlaintextFromPoly(params.getRawHandle(), poly.getRawHandle(), level));
     }
 

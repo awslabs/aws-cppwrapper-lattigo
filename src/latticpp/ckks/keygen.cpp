@@ -11,30 +11,30 @@ namespace latticpp {
         return KeyGenerator(lattigo_newKeyGenerator(params.getRawHandle()));
     }
 
-    SwitchingKey getRotationKey(const RotationKeys &rotationKeys, uint64_t galEl) {
-      return SwitchingKey(lattigo_getRotationKey(rotationKeys.getRawHandle(), galEl));
+    SwitchingKey getSwitchingKey(const RotationKeys &rotationKeys, uint64_t galEl) {
+      return SwitchingKey(lattigo_getSwitchingKey(rotationKeys.getRawHandle(), galEl));
     }
 
-    void setRotationKey(const RotationKeys &rotKeys, const SwitchingKey &rotKey, uint64_t galEl) {
-      lattigo_setRotationKey(rotKeys.getRawHandle(), rotKey.getRawHandle(), galEl);
+    void setSwitchingKey(const RotationKeys &rotKeys, const SwitchingKey &swk, uint64_t galEl) {
+      lattigo_setSwitchingKey(rotKeys.getRawHandle(), swk.getRawHandle(), galEl);
     }
 
-    uint64_t rotationKeyExist(const RotationKeys &rotationKeys, uint64_t galEl) {
-      return lattigo_rotationKeyExist(rotationKeys.getRawHandle(), galEl);
+    uint64_t switchingKeyExist(const RotationKeys &rotationKeys, uint64_t galEl) {
+      return lattigo_switchingKeyExist(rotationKeys.getRawHandle(), galEl);
     }
 
     vector<uint64_t> getGaloisElementsOfRotationKeys(const RotationKeys &rotationKeys) {
-      vector<uint64_t> res(lattigo_getNumRotationKeys(rotationKeys.getRawHandle()));
+      vector<uint64_t> res(lattigo_getNumSwitchingKeys(rotationKeys.getRawHandle()));
       lattigo_getGaloisElementsOfRotationKeys(rotationKeys.getRawHandle(), res.data());
       return res;
     }
 
-    SwitchingKey copyNew(const SwitchingKey &rotKey) {
-      return SwitchingKey(lattigo_copyNewRotationKey(rotKey.getRawHandle()));
+    SwitchingKey copyNew(const SwitchingKey &swk) {
+      return SwitchingKey(lattigo_copyNewSwitchingKey(swk.getRawHandle()));
     }
 
-    uint64_t numOfDecomp(const SwitchingKey &rtk) {
-      return lattigo_numOfDecomp(rtk.getRawHandle());
+    uint64_t numOfDecomp(const SwitchingKey &swk) {
+      return lattigo_numOfDecomp(swk.getRawHandle());
     }
 
     uint64_t galoisElementForColumnRotationBy(const Parameters &params, uint64_t rotationStep) {
@@ -42,8 +42,8 @@ namespace latticpp {
                                                       rotationStep);
     }
 
-    uint64_t rotationKeyIsCorrect(const SwitchingKey &rtk, uint64_t galEl, const SecretKey &sk, const Parameters &params, uint64_t log2Bound) {
-      return lattigo_rotationKeyIsCorrect(rtk.getRawHandle(), galEl,
+    uint64_t switchingKeyIsCorrect(const SwitchingKey &swk, uint64_t galEl, const SecretKey &sk, const Parameters &params, uint64_t log2Bound) {
+      return lattigo_switchingKeyIsCorrect(swk.getRawHandle(), galEl,
                                           sk.getRawHandle(), params.getRawHandle(),
                                           log2Bound);
     }
@@ -107,12 +107,12 @@ namespace latticpp {
         return RotationKeys(lattigo_genRotationKeysForRotations(keygen.getRawHandle(), sk.getRawHandle(), fixed_width_shifts.data(), shifts.size()));
     }
 
-    CiphertextQP getCiphertextQP(const SwitchingKey &rtk, uint64_t i, uint64_t j) {
-      return CiphertextQP(lattigo_getCiphertextQP(rtk.getRawHandle(), i, j));
+    CiphertextQP getCiphertextQP(const SwitchingKey &swk, uint64_t i, uint64_t j) {
+      return CiphertextQP(lattigo_getCiphertextQP(swk.getRawHandle(), i, j));
     }
 
-    void setCiphertextQP(SwitchingKey &rtk, const CiphertextQP &ctQP, uint64_t i, uint64_t j) {
-      lattigo_setCiphertextQP(rtk.getRawHandle(), ctQP.getRawHandle(), i, j);
+    void setCiphertextQP(SwitchingKey &swk, const CiphertextQP &ctQP, uint64_t i, uint64_t j) {
+      lattigo_setCiphertextQP(swk.getRawHandle(), ctQP.getRawHandle(), i, j);
     }
 
     EvaluationKey makeEvaluationKey(const RelinearizationKey &relinKey) {

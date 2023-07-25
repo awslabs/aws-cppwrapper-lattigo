@@ -53,7 +53,7 @@ func lattigo_plaintextSetScale(ptHandle Handle7, scale float64) {
 }
 
 //export lattigo_getPlaintextPoly
-func lattigo_getPlaintextPoly(plaintextHandler Handle7) Handle7 {
-	plaintext := getStoredPlaintext(plaintextHandler)
+func lattigo_getPlaintextPoly(ptHandle Handle7) Handle7 {
+	plaintext := getStoredPlaintext(ptHandle)
 	return marshal.CrossLangObjMap.Add(unsafe.Pointer(plaintext.Value))
 }

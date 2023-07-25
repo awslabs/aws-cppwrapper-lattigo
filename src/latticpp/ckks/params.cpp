@@ -15,11 +15,11 @@ namespace latticpp {
         return Parameters(lattigo_getDefaultPQParams(paramId));
     }
 
-    Parameters newParameters(uint64_t logN, const vector<uint64_t> &qi, const vector<uint64_t> &pi, uint8_t logScale) {
+    Parameters newParameters(uint64_t logN, const vector<uint64_t> &qi, const vector<uint64_t> &pi, uint64_t pow2Base, uint64_t h, uint8_t logScale) {
         if (qi.size() > 255 || pi.size() > 255) {
             throw invalid_argument("newParameters requires <=255 primes of each type.");
         }
-        return Parameters(lattigo_newParameters(logN, qi.data(), qi.size(), pi.data(), pi.size(), logScale));
+        return Parameters(lattigo_newParameters(logN, qi.data(), qi.size(), pi.data(), pi.size(), pow2Base, h, logScale));
     }
 
     Parameters newParametersFromLogModuli(uint64_t logN, const vector<uint8_t> &logQi, const vector<uint8_t> &logPi, uint8_t logScale) {

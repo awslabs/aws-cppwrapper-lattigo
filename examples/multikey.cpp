@@ -328,7 +328,7 @@ void testRotKeyGenCols(const TestContext &testContext) {
       }
     }
 
-    SwitchingKey rotKey = getRotationKey(rotKeySet, galEl);
+    SwitchingKey rotKey = getSwitchingKey(rotKeySet, galEl);
     rtgGenRotationKey(p0.rtgProtocol, p0.share, crp, rotKey);
   }
 
