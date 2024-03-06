@@ -17,12 +17,12 @@ struct Lattigo_KeyPairHandle {
 import "C"
 
 import (
-	"lattigo-cpp/marshal"
-	"unsafe"
-
+	"fmt"
 	"github.com/tuneinsight/lattigo/v4/ckks"
 	"github.com/tuneinsight/lattigo/v4/ckks/bootstrapping"
 	"github.com/tuneinsight/lattigo/v4/rlwe"
+	"lattigo-cpp/marshal"
+	"unsafe"
 )
 
 // https://github.com/golang/go/issues/35715#issuecomment-791039692
@@ -177,7 +177,7 @@ func lattigo_genRelinearizationKey(keygenHandle Handle5, skHandle Handle5) Handl
 // Negative k is equivalent to a right rotation by k positions
 //
 //export lattigo_genRotationKeysForRotations
-func lattigo_genRotationKeysForRotations(keygenHandle Handle5, skHandle Handle5, ks *C.int64_t, ksLen uint64) Handle5 {
+func lattigo_genRotationKeysForRotations(keygenHandle Handle5, skHandle Handle5, ks *C.int64_t, ksLen uint64, includeConjugate uint8) Handle5 {
 	var keygen *rlwe.KeyGenerator
 	keygen = getStoredKeyGenerator(keygenHandle)
 
@@ -190,11 +190,11 @@ func lattigo_genRotationKeysForRotations(keygenHandle Handle5, skHandle Handle5,
 	for i := range rotations {
 		rotations[i] = int(*(*int64)(unsafe.Pointer(basePtrIn + size*uintptr(i))))
 	}
-
+	includeConjugateVal := (includeConjugate == 1)
 	var rotKeys *rlwe.RotationKeySet
 	// The second argument determines if conjugation keys are generated or not. This wrapper API does
 	// not support generating a conjugation key.
-	rotKeys = (*keygen).GenRotationKeysForRotations(rotations, false, sk)
+	rotKeys = (*keygen).GenRotationKeysForRotations(rotations, includeConjugateVal, sk)
 	return marshal.CrossLangObjMap.Add(unsafe.Pointer(rotKeys))
 }
 
@@ -350,6 +350,51 @@ func lattigo_genBootstrappingKey(keygenHandle Handle5, paramHandle Handle5, btpP
 	btpKey = bootstrapping.GenEvaluationKeys(*btpParams, *params, sk)
 
 	return marshal.CrossLangObjMap.Add(unsafe.Pointer(&btpKey))
+}
+
+//export lattigo_genSwkDenseToSparse
+func lattigo_genSwkDenseToSparse(paramHandle Handle5, btpParamsHandle Handle5, skHandle Handle5) Handle5 {
+	btpParams := getStoredBootstrappingParameters(btpParamsHandle)
+	params := getStoredParameters(paramHandle)
+	sk := getStoredSecretKey(skHandle)
+	swkDtS, _ := btpParams.GenEncapsulationSwitchingKeys(*params, sk)
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(&swkDtS))
+}
+
+//export lattigo_genSwkSparseToDense
+func lattigo_genSwkSparseToDense(paramHandle Handle5, btpParamsHandle Handle5, skHandle Handle5) Handle5 {
+	btpParams := getStoredBootstrappingParameters(btpParamsHandle)
+	params := getStoredParameters(paramHandle)
+	sk := getStoredSecretKey(skHandle)
+	_, swkStD := btpParams.GenEncapsulationSwitchingKeys(*params, sk)
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(&swkStD))
+}
+
+//export lattigo_genBootstrappingKey2
+func lattigo_genBootstrappingKey2(keygenHandle Handle5, paramHandle Handle5, btpParamsHandle Handle5, skHandle Handle5, relinKeyHandle Handle5, rotKeyHandle Handle5) Handle5 {
+	fmt.Println("lattigo_genBootstrappingKey2")
+	var params *ckks.Parameters
+	params = getStoredParameters(paramHandle)
+
+	var btpParams *bootstrapping.Parameters
+	btpParams = getStoredBootstrappingParameters(btpParamsHandle)
+
+	var sk *rlwe.SecretKey
+	sk = getStoredSecretKey(skHandle)
+	rotkeys := getStoredRotationKeys(rotKeyHandle)
+	rlk := getStoredRelinKey(relinKeyHandle)
+	swkDtS, swkStD := btpParams.GenEncapsulationSwitchingKeys(*params, sk)
+
+	var btpKey bootstrapping.EvaluationKeys
+	btpKey = bootstrapping.EvaluationKeys{
+		EvaluationKey: rlwe.EvaluationKey{
+			Rlk:  rlk,
+			Rtks: rotkeys},
+		SwkDtS: swkDtS,
+		SwkStD: swkStD,
+	}
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(&btpKey))
+
 }
 
 //export lattigo_newSwitchingKey
