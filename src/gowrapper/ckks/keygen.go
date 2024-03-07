@@ -13,11 +13,14 @@ struct Lattigo_KeyPairHandle {
   uint64_t sk;
   uint64_t pk;
 };
+struct Lattigo_BootstrapSwkPairHandle {
+  uint64_t swkStD;
+  uint64_t swkDtS;
+};
 */
 import "C"
 
 import (
-	"fmt"
 	"github.com/tuneinsight/lattigo/v4/ckks"
 	"github.com/tuneinsight/lattigo/v4/ckks/bootstrapping"
 	"github.com/tuneinsight/lattigo/v4/rlwe"
@@ -352,38 +355,28 @@ func lattigo_genBootstrappingKey(keygenHandle Handle5, paramHandle Handle5, btpP
 	return marshal.CrossLangObjMap.Add(unsafe.Pointer(&btpKey))
 }
 
-//export lattigo_genSwkDenseToSparse
-func lattigo_genSwkDenseToSparse(paramHandle Handle5, btpParamsHandle Handle5, skHandle Handle5) Handle5 {
-	btpParams := getStoredBootstrappingParameters(btpParamsHandle)
-	params := getStoredParameters(paramHandle)
-	sk := getStoredSecretKey(skHandle)
-	swkDtS, _ := btpParams.GenEncapsulationSwitchingKeys(*params, sk)
-	return marshal.CrossLangObjMap.Add(unsafe.Pointer(&swkDtS))
-}
-
-//export lattigo_genSwkSparseToDense
-func lattigo_genSwkSparseToDense(paramHandle Handle5, btpParamsHandle Handle5, skHandle Handle5) Handle5 {
-	btpParams := getStoredBootstrappingParameters(btpParamsHandle)
-	params := getStoredParameters(paramHandle)
-	sk := getStoredSecretKey(skHandle)
-	_, swkStD := btpParams.GenEncapsulationSwitchingKeys(*params, sk)
-	return marshal.CrossLangObjMap.Add(unsafe.Pointer(&swkStD))
-}
-
-//export lattigo_genBootstrappingKey2
-func lattigo_genBootstrappingKey2(keygenHandle Handle5, paramHandle Handle5, btpParamsHandle Handle5, skHandle Handle5, relinKeyHandle Handle5, rotKeyHandle Handle5) Handle5 {
-	fmt.Println("lattigo_genBootstrappingKey2")
+//export lattigo_genBootstrapSwkPair
+func lattigo_genBootstrapSwkPair(paramHandle Handle5, btpParamsHandle Handle5, skHandle Handle5) C.struct_Lattigo_BootstrapSwkPairHandle {
 	var params *ckks.Parameters
-	params = getStoredParameters(paramHandle)
-
 	var btpParams *bootstrapping.Parameters
-	btpParams = getStoredBootstrappingParameters(btpParamsHandle)
-
 	var sk *rlwe.SecretKey
+
+	btpParams = getStoredBootstrappingParameters(btpParamsHandle)
+	params = getStoredParameters(paramHandle)
 	sk = getStoredSecretKey(skHandle)
+	swkDtS, swkStD := btpParams.GenEncapsulationSwitchingKeys(*params, sk)
+	var btsSwkHandle C.struct_Lattigo_BootstrapSwkPairHandle
+	btsSwkHandle.swkDtS = C.uint64_t(marshal.CrossLangObjMap.Add(unsafe.Pointer(swkDtS)))
+	btsSwkHandle.swkStD = C.uint64_t(marshal.CrossLangObjMap.Add(unsafe.Pointer(swkStD)))
+	return btsSwkHandle
+}
+
+//export lattigo_genBootstrappingKeyByParams
+func lattigo_genBootstrappingKeyByParams(relinKeyHandle Handle5, rotKeyHandle Handle5, swkDtShandle Handle5, swkStDhandle Handle5) Handle5 {
 	rotkeys := getStoredRotationKeys(rotKeyHandle)
 	rlk := getStoredRelinKey(relinKeyHandle)
-	swkDtS, swkStD := btpParams.GenEncapsulationSwitchingKeys(*params, sk)
+	swkStD := getStoredSwitchingKey(swkStDhandle)
+	swkDtS := getStoredSwitchingKey(swkDtShandle)
 
 	var btpKey bootstrapping.EvaluationKeys
 	btpKey = bootstrapping.EvaluationKeys{

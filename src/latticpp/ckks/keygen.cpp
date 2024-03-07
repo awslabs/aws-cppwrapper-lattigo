@@ -143,16 +143,13 @@ namespace latticpp {
         return BootstrappingKey(lattigo_genBootstrappingKey(keygen.getRawHandle(), params.getRawHandle(), bootParams.getRawHandle(), sk.getRawHandle(), relinKey.getRawHandle(), rotKeys.getRawHandle()));
     }
 
-    BootstrappingKey genBootstrappingKey2(const KeyGenerator &keygen, const Parameters &params, const BootstrappingParameters &bootParams, const SecretKey &sk, const RelinearizationKey &relinKey, const RotationKeys &rotKeys) {
-        return BootstrappingKey(lattigo_genBootstrappingKey2(keygen.getRawHandle(), params.getRawHandle(), bootParams.getRawHandle(), sk.getRawHandle(), relinKey.getRawHandle(), rotKeys.getRawHandle()));
+    BootstrappingKey genBootstrappingKey(const RelinearizationKey &relinKey, const RotationKeys &rotKeys, const SwitchingKey swkDtS, const SwitchingKey swkStD) {
+        return BootstrappingKey(lattigo_genBootstrappingKeyByParams(relinKey.getRawHandle(), rotKeys.getRawHandle(),swkDtS.getRawHandle() , swkStD.getRawHandle()));
     }
 
-    SwitchingKey genSwkDenseToSparse(const Parameters &params, const BootstrappingParameters &bootParams, const SecretKey &sk){
-      return SwitchingKey(lattigo_genSwkDenseToSparse(params.getRawHandle(), bootParams.getRawHandle(), sk.getRawHandle()));
-    }
-
-    SwitchingKey genSwkSparseToDense(const Parameters &params, const BootstrappingParameters &bootParams, const SecretKey &sk){
-      return SwitchingKey(lattigo_genSwkSparseToDense(params.getRawHandle(), bootParams.getRawHandle(), sk.getRawHandle()));
+    BootstrapSwkPairHandle genBootstrapSwkPair(const Parameters &params, const BootstrappingParameters &bootParams, const SecretKey &sk){
+      Lattigo_BootstrapSwkPairHandle btsSwkPairHandle = lattigo_genBootstrapSwkPair(params.getRawHandle(), bootParams.getRawHandle(), sk.getRawHandle());
+      return BootstrapSwkPairHandle{ SwitchingKey(btsSwkPairHandle.swkStD), SwitchingKey(btsSwkPairHandle.swkDtS) };
     }
 
     SwitchingKey newSwitchingKey(const Parameters &params, uint64_t levelQ, uint64_t levelP) {
