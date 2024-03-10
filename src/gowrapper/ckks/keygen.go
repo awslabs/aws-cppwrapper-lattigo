@@ -21,11 +21,12 @@ struct Lattigo_BootstrapSwkPairHandle {
 import "C"
 
 import (
+	"lattigo-cpp/marshal"
+	"unsafe"
+
 	"github.com/tuneinsight/lattigo/v4/ckks"
 	"github.com/tuneinsight/lattigo/v4/ckks/bootstrapping"
 	"github.com/tuneinsight/lattigo/v4/rlwe"
-	"lattigo-cpp/marshal"
-	"unsafe"
 )
 
 // https://github.com/golang/go/issues/35715#issuecomment-791039692
@@ -339,7 +340,7 @@ func lattigo_setRotKeysForEvaluationKey(evalKeyHandle Handle5, rotKeysHandle Han
 }
 
 //export lattigo_genBootstrappingKey
-func lattigo_genBootstrappingKey(keygenHandle Handle5, paramHandle Handle5, btpParamsHandle Handle5, skHandle Handle5, relinKeyHandle Handle5, rotKeyHandle Handle5) Handle5 {
+func lattigo_genBootstrappingKey(keygenHandle Handle5, paramHandle Handle5, btpParamsHandle Handle5, skHandle Handle5) Handle5 {
 	var params *ckks.Parameters
 	params = getStoredParameters(paramHandle)
 

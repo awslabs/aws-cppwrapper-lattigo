@@ -59,9 +59,7 @@ int main() {
     Encryptor encryptor = newEncryptor(params, kp.pk);
 
     cout << "Generating bootstrapping keys..." << endl;
-    RelinearizationKey relinKey = genRelinKey(kgen, kp.sk);
-    RotationKeys rotKeys = genRotationKeysForRotations(kgen, kp.sk, vector<int>());
-    BootstrappingKey btpKey = genBootstrappingKey(kgen, params, btpParams, kp.sk, relinKey, rotKeys);
+    BootstrappingKey btpKey = genBootstrappingKey(kgen, params, btpParams, kp.sk);
     Bootstrapper btp = newBootstrapper(params, btpParams, btpKey);
     cout << "Done" << endl;
 
