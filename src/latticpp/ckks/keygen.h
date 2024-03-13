@@ -82,7 +82,7 @@ namespace latticpp {
     void setRotKeysForEvaluationKey(const EvaluationKey &evalKey,
                                     const RotationKeys &rotKeys);
 
-    // DEPRACATED
+    // DEPRACATED: use genBootstrappingKey with the same list of parameters excluding RelinearizationKey, RotationKeys
     BootstrappingKey genBootstrappingKey(const KeyGenerator &keygen, const Parameters &params, const BootstrappingParameters &bootParams, const SecretKey &sk, const RelinearizationKey &relinKey, const RotationKeys &rotKeys);
 
     BootstrappingKey genBootstrappingKey(const KeyGenerator &keygen, const Parameters &params, const BootstrappingParameters &bootParams, const SecretKey &sk);
