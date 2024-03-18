@@ -14,6 +14,11 @@ namespace latticpp {
         PublicKey pk;
     };
 
+    struct BootstrapSwkPairHandle {
+        SwitchingKey swkStD;
+        SwitchingKey swkDtS;
+    };
+
     KeyGenerator newKeyGenerator(const Parameters &params);
 
     SwitchingKey getSwitchingKey(const RotationKeys &rtks, uint64_t galEl);
@@ -63,6 +68,8 @@ namespace latticpp {
 
     RotationKeys genRotationKeysForRotations(const KeyGenerator &keygen, const SecretKey &sk, std::vector<int> shifts);
 
+    RotationKeys genRotationKeysForRotations(const KeyGenerator &keygen, const SecretKey &sk, std::vector<int> shifts, int includeConjugate);
+
     EvaluationKey makeEvaluationKey(const RelinearizationKey &relinKey);
 
     EvaluationKey makeEvaluationKey(const RelinearizationKey &relinKey, const RotationKeys &rotKeys);
@@ -75,7 +82,14 @@ namespace latticpp {
     void setRotKeysForEvaluationKey(const EvaluationKey &evalKey,
                                     const RotationKeys &rotKeys);
 
+    // DEPRACATED: use genBootstrappingKey with the same list of parameters excluding RelinearizationKey, RotationKeys
     BootstrappingKey genBootstrappingKey(const KeyGenerator &keygen, const Parameters &params, const BootstrappingParameters &bootParams, const SecretKey &sk, const RelinearizationKey &relinKey, const RotationKeys &rotKeys);
+
+    BootstrappingKey genBootstrappingKey(const KeyGenerator &keygen, const Parameters &params, const BootstrappingParameters &bootParams, const SecretKey &sk);
+
+    BootstrappingKey genBootstrappingKey(const RelinearizationKey &relinKey, const RotationKeys &rotKeys, const SwitchingKey swkDtS, const SwitchingKey swkStD);
+ 
+    BootstrapSwkPairHandle genBootstrapSwkPair(const Parameters &params, const BootstrappingParameters &bootParams, const SecretKey &sk);
 
     PolyQP polyQP(const SecretKey &sk);
 

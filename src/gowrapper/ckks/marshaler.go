@@ -134,6 +134,21 @@ func lattigo_marshalBinaryRotationKeys(rotkeyHandle Handle9, callback C.streamWr
 	}
 }
 
+//export lattigo_marshalBinarySwitchingKey
+func lattigo_marshalBinarySwitchingKey(switchingKeyHandle Handle9, callback C.streamWriter, stream *C.void) {
+	var switchingKey *rlwe.SwitchingKey
+	switchingKey = getStoredSwitchingKey(switchingKeyHandle)
+
+	data, err := switchingKey.MarshalBinary()
+	if err != nil {
+		panic(err)
+	}
+
+	if len(data) > 0 {
+		C.callStreamWriter(callback, unsafe.Pointer(stream), unsafe.Pointer(&data[0]), C.uint64_t(len(data)))
+	}
+}
+
 // We need a way to convert C-allocated memory into a Go Slice.
 // One option is to use C.GoBytes. This is safe, but there are
 // two problems. First, it copies the data, which is not great
@@ -307,4 +322,16 @@ func lattigo_marshalBinarySizeRotationKeys(rotkeysHandle Handle9) uint64 {
 	var rotkeys *rlwe.RotationKeySet
 	rotkeys = getStoredRotationKeys(rotkeysHandle)
 	return uint64(rotkeys.MarshalBinarySize())
+}
+
+//export lattigo_unmarshalBinarySwitchingKey
+func lattigo_unmarshalBinarySwitchingKey(buf *C.char, len uint64) Handle9 {
+	var serializedBytes []byte = unsafeCPtrToSlice(buf, len)
+
+	switchingKey := new(rlwe.SwitchingKey)
+	err := switchingKey.UnmarshalBinary(serializedBytes)
+	if err != nil {
+		panic(err)
+	}
+	return marshal.CrossLangObjMap.Add(unsafe.Pointer(switchingKey))
 }
