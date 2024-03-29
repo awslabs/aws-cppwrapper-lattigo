@@ -42,6 +42,11 @@ namespace latticpp {
         lattigo_marshalBinaryRotationKeys(rotKeys.getRawHandle(), &writeToStream, (void*)(&stream));
     }
 
+    void marshalBinarySwitchingKey(const SwitchingKey &switchingKey, std::ostream &stream){
+        lattigo_marshalBinarySwitchingKey(switchingKey.getRawHandle(), &writeToStream, (void*)(&stream));
+    }
+
+
     Ciphertext unmarshalBinaryCiphertext(istream &stream) {
         // Note: the next line is a well-known hard parsing problem for C++.
         // See https://stackoverflow.com/questions/4423361/constructing-a-vector-with-istream-iterators
@@ -81,4 +86,11 @@ namespace latticpp {
         vector<char> buffer(istreambuf_iterator<char>{stream}, {});
         return RotationKeys(lattigo_unmarshalBinaryRotationKeys(buffer.data(), buffer.size()));
     }
+
+    SwitchingKey unmarshalBinarySwitchingKey(istream &stream){
+        vector<char> buffer(istreambuf_iterator<char>{stream}, {});
+        return SwitchingKey(lattigo_unmarshalBinarySwitchingKey(buffer.data(), buffer.size()));
+    }
+
+    
 }  // namespace latticpp

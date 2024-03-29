@@ -98,13 +98,13 @@ namespace latticpp {
         return RelinearizationKey(lattigo_genRelinearizationKey(keygen.getRawHandle(), sk.getRawHandle()));
     }
 
-    RotationKeys genRotationKeysForRotations(const KeyGenerator &keygen, const SecretKey &sk, vector<int> shifts) {
+    RotationKeys genRotationKeysForRotations(const KeyGenerator &keygen, const SecretKey &sk, vector<int> shifts, int includeConjugate) {
         // convert from variable-sized int to fixed-size SIGNED int64_t
         vector<int64_t> fixed_width_shifts(shifts.size());
         for (int i = 0; i < shifts.size(); i++) {
             fixed_width_shifts[i] = static_cast<int64_t>(shifts[i]);
         }
-        return RotationKeys(lattigo_genRotationKeysForRotations(keygen.getRawHandle(), sk.getRawHandle(), fixed_width_shifts.data(), shifts.size()));
+        return RotationKeys(lattigo_genRotationKeysForRotations(keygen.getRawHandle(), sk.getRawHandle(), fixed_width_shifts.data(), shifts.size(), includeConjugate));
     }
 
     CiphertextQP getCiphertextQP(const SwitchingKey &swk, uint64_t i, uint64_t j) {
@@ -139,8 +139,17 @@ namespace latticpp {
                                          rotKeys.getRawHandle());
     }
 
-    BootstrappingKey genBootstrappingKey(const KeyGenerator &keygen, const Parameters &params, const BootstrappingParameters &bootParams, const SecretKey &sk, const RelinearizationKey &relinKey, const RotationKeys &rotKeys) {
-        return BootstrappingKey(lattigo_genBootstrappingKey(keygen.getRawHandle(), params.getRawHandle(), bootParams.getRawHandle(), sk.getRawHandle(), relinKey.getRawHandle(), rotKeys.getRawHandle()));
+  BootstrappingKey genBootstrappingKey(const KeyGenerator &keygen, const Parameters &params, const BootstrappingParameters &bootParams, const SecretKey &sk) {
+        return BootstrappingKey(lattigo_genBootstrappingKey(keygen.getRawHandle(), params.getRawHandle(), bootParams.getRawHandle(), sk.getRawHandle()));
+    }
+
+    BootstrappingKey genBootstrappingKey(const RelinearizationKey &relinKey, const RotationKeys &rotKeys, const SwitchingKey swkDtS, const SwitchingKey swkStD) {
+        return BootstrappingKey(lattigo_genBootstrappingKeyByParams(relinKey.getRawHandle(), rotKeys.getRawHandle(),swkDtS.getRawHandle() , swkStD.getRawHandle()));
+    }
+
+    BootstrapSwkPairHandle genBootstrapSwkPair(const Parameters &params, const BootstrappingParameters &bootParams, const SecretKey &sk){
+      Lattigo_BootstrapSwkPairHandle btsSwkPairHandle = lattigo_genBootstrapSwkPair(params.getRawHandle(), bootParams.getRawHandle(), sk.getRawHandle());
+      return BootstrapSwkPairHandle{ SwitchingKey(btsSwkPairHandle.swkStD), SwitchingKey(btsSwkPairHandle.swkDtS) };
     }
 
     SwitchingKey newSwitchingKey(const Parameters &params, uint64_t levelQ, uint64_t levelP) {
