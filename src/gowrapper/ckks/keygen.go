@@ -196,8 +196,6 @@ func lattigo_genRotationKeysForRotations(keygenHandle Handle5, skHandle Handle5,
 	}
 	includeConjugateVal := (includeConjugate == 1)
 	var rotKeys *rlwe.RotationKeySet
-	// The second argument determines if conjugation keys are generated or not. This wrapper API does
-	// not support generating a conjugation key.
 	rotKeys = (*keygen).GenRotationKeysForRotations(rotations, includeConjugateVal, sk)
 	return marshal.CrossLangObjMap.Add(unsafe.Pointer(rotKeys))
 }

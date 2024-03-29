@@ -66,9 +66,7 @@ namespace latticpp {
 
     RelinearizationKey genRelinKey(const KeyGenerator &keygen, const SecretKey &sk);
 
-    RotationKeys genRotationKeysForRotations(const KeyGenerator &keygen, const SecretKey &sk, std::vector<int> shifts);
-
-    RotationKeys genRotationKeysForRotations(const KeyGenerator &keygen, const SecretKey &sk, std::vector<int> shifts, int includeConjugate);
+    RotationKeys genRotationKeysForRotations(const KeyGenerator &keygen, const SecretKey &sk, std::vector<int> shifts, int includeConjugate=0);
 
     EvaluationKey makeEvaluationKey(const RelinearizationKey &relinKey);
 
@@ -81,9 +79,6 @@ namespace latticpp {
 
     void setRotKeysForEvaluationKey(const EvaluationKey &evalKey,
                                     const RotationKeys &rotKeys);
-
-    // DEPRACATED: use genBootstrappingKey with the same list of parameters excluding RelinearizationKey, RotationKeys
-    BootstrappingKey genBootstrappingKey(const KeyGenerator &keygen, const Parameters &params, const BootstrappingParameters &bootParams, const SecretKey &sk, const RelinearizationKey &relinKey, const RotationKeys &rotKeys);
 
     BootstrappingKey genBootstrappingKey(const KeyGenerator &keygen, const Parameters &params, const BootstrappingParameters &bootParams, const SecretKey &sk);
 

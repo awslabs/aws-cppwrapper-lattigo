@@ -98,10 +98,6 @@ namespace latticpp {
         return RelinearizationKey(lattigo_genRelinearizationKey(keygen.getRawHandle(), sk.getRawHandle()));
     }
 
-    RotationKeys genRotationKeysForRotations(const KeyGenerator &keygen, const SecretKey &sk, vector<int> shifts) {
-      return genRotationKeysForRotations(keygen, sk, shifts, false);
-    }
-
     RotationKeys genRotationKeysForRotations(const KeyGenerator &keygen, const SecretKey &sk, vector<int> shifts, int includeConjugate) {
         // convert from variable-sized int to fixed-size SIGNED int64_t
         vector<int64_t> fixed_width_shifts(shifts.size());
@@ -141,11 +137,6 @@ namespace latticpp {
                                     const RotationKeys &rotKeys) {
       lattigo_setRotKeysForEvaluationKey(evalKey.getRawHandle(),
                                          rotKeys.getRawHandle());
-    }
-
-    // DEPRACATED
-    BootstrappingKey genBootstrappingKey(const KeyGenerator &keygen, const Parameters &params, const BootstrappingParameters &bootParams, const SecretKey &sk, const RelinearizationKey & /*relinKey*/, const RotationKeys &/*rotKeys*/) {
-        return genBootstrappingKey(keygen, params, bootParams, sk);
     }
 
   BootstrappingKey genBootstrappingKey(const KeyGenerator &keygen, const Parameters &params, const BootstrappingParameters &bootParams, const SecretKey &sk) {
